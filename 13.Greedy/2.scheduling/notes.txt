@@ -1,0 +1,30 @@
+==================================================
+GREEDY / 2. SCHEDULING GREEDY
+==================================================
+
+When to think of this?
+- jobs with deadlines / profits; choose which to run and when
+- often sort by profit (desc) and place each job in the latest free slot before its deadline
+
+Sub-patterns
+│
+├── Deadline Scheduling   place jobs before their deadlines
+├── Profit Maximization    take the most profitable feasible set
+├── Task Scheduling         cooldown-aware ordering
+└── Job Sequencing           classic profit + deadline
+
+--------------------------------------------------
+Template — job sequencing
+--------------------------------------------------
+jobs.sort(key=lambda j: -j.profit)
+slot = [False] * (max_deadline + 1)
+for j in jobs:
+    t = j.deadline
+    while t > 0 and slot[t]: t -= 1     # latest free slot before deadline
+    if t > 0: slot[t] = True; total += j.profit
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Job Sequencing Problem (max profit + count) -> 1.job_sequencing.py
+→ Task Scheduler  see ../../1.Arrays/10.greedy/3.local_exchange/2.task_scheduler.py

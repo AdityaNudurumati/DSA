@@ -1,0 +1,30 @@
+==================================================
+GREEDY / 5. MERGE COST / HUFFMAN PATTERN
+==================================================
+
+When to think of this?
+- repeatedly combine the two smallest items; cost accrues per merge
+- a min-heap supplies the two smallest in O(log n)
+
+Sub-patterns
+│
+├── Huffman Coding     merge two least-frequent symbols repeatedly
+├── Connect Ropes       min total cost to connect all ropes
+├── Merge Files          optimal merge of sorted files
+└── Optimal Merge         general two-smallest merging
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+import heapq
+heapq.heapify(weights)
+cost = 0
+while len(weights) > 1:
+    a = heapq.heappop(weights); b = heapq.heappop(weights)
+    cost += a + b; heapq.heappush(weights, a + b)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+→ Connect Ropes, Huffman Encoding  see ../../9.Heap/5.greedy_heap/
+(This pattern is fully covered in Heap; cross-referenced to avoid duplication.)

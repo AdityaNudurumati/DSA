@@ -1,0 +1,30 @@
+==================================================
+GREEDY / 11. EXCHANGE ARGUMENT GREEDY
+==================================================
+
+The "classic theoretical" greedy: a ratio / pairwise-comparison decides the order, and
+an EXCHANGE ARGUMENT proves it optimal (swapping any out-of-order pair doesn't help).
+
+Sub-patterns
+│
+├── Fractional Knapsack   sort by value/weight ratio, take greedily (fractions allowed)
+├── Min Cost Selection      pick by a cost-effectiveness ratio
+└── Optimal Ordering         sort by a pairwise comparator (e.g. a+b vs b+a)
+
+--------------------------------------------------
+Template — fractional knapsack
+--------------------------------------------------
+items.sort(key=lambda it: it.value / it.weight, reverse=True)
+total = 0.0
+for it in items:
+    take = min(it.weight, capacity)
+    total += take * (it.value / it.weight)
+    capacity -= take
+    if capacity == 0: break
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Fractional Knapsack -> 1.fractional_knapsack.py
+☑ Minimum Cost to Hire K Workers (ratio + heap) -> 2.min_cost_to_hire_k_workers.py
+→ Largest Number (a+b vs b+a comparator)  see ../../1.Arrays/11.advanced/4.sorting_tricks/

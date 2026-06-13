@@ -1,0 +1,28 @@
+==================================================
+GREEDY / 1. INTERVAL GREEDY
+==================================================
+
+The most common greedy pattern. Sort by END time, then greedily keep the earliest
+finisher — it leaves the most room for the rest.
+
+Sub-patterns
+│
+├── Activity Selection      max non-overlapping activities
+├── Non-Overlapping          min removals to make non-overlapping
+├── Minimum Removals          same, counted as removals
+└── Interval Covering          fewest points/arrows to hit all intervals
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+intervals.sort(key=lambda x: x[1])     # by end time
+prev_end = -inf
+for s, e in intervals:
+    if s >= prev_end:                  # keep it
+        prev_end = e
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Activity Selection (max non-overlapping intervals) -> 1.activity_selection.py
+→ Non-overlapping Intervals, Minimum Arrows  see ../../1.Arrays/7.intervals/3.line_sweep/

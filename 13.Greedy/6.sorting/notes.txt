@@ -1,0 +1,30 @@
+==================================================
+GREEDY / 6. SORTING GREEDY
+==================================================
+
+Many greedy problems begin with a sort, after which a single linear pass making the
+locally-best choice is optimal.
+
+Sub-patterns
+│
+├── Sort + Process        sort, then one greedy pass
+├── Earliest Finish Time    (intervals; see pattern 1)
+├── Smallest First           match smallest demand to smallest supply
+└── Largest First             match greedily from the top
+
+--------------------------------------------------
+Template — two-pointer match after sort
+--------------------------------------------------
+g.sort(); s.sort()
+i = j = 0
+while i < len(g) and j < len(s):
+    if s[j] >= g[i]: i += 1      # satisfied
+    j += 1
+return i
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Assign Cookies -> 1.assign_cookies.py
+☑ Lemonade Change -> 2.lemonade_change.py
+→ Boats to Save People  see ../../1.Arrays/1.two_pointer_problems/1.opposite_ends/8.boats_to_save_people.py

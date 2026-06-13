@@ -1,0 +1,56 @@
+==================================================
+GREEDY — ROADMAP
+==================================================
+
+GREEDY
+│
+├── 1. Interval Greedy        (activity selection, non-overlapping, covering)
+├── 2. Scheduling Greedy      (deadline scheduling, job sequencing, profit)
+├── 3. Resource Allocation    (meeting rooms, platforms, CPU/resource assignment)
+├── 4. Jump Game Pattern      (reachability, minimum jumps, range expansion)
+├── 5. Merge Cost / Huffman   (connect ropes, Huffman, optimal merge)
+├── 6. Sorting Greedy         (sort then make the local best choice)
+├── 7. String Greedy          (lexicographical, rearrangement, partition labels)
+├── 8. Array Greedy           (gas station, candy, wiggle, maximize gain)
+├── 9. Greedy + Heap          (reorganize string, task scheduler, IPO, furthest building)
+├── 10. Monotonic Greedy      (remove k digits, monotone increasing digits)
+├── 11. Exchange Argument     (fractional knapsack, optimal ordering)
+└── 12. Advanced Greedy       (sweep line, greedy + binary search, greedy + DSU)
+
+--------------------------------------------------
+The greedy mindset
+--------------------------------------------------
+1. Find a LOCAL rule (sort by end time, take the most frequent, pick the cheapest).
+2. Argue it's SAFE: an exchange argument shows swapping toward the greedy choice never
+   makes the answer worse. If you can't argue it, suspect DP instead.
+Common sorts: by end time (intervals), by ratio (fractional knapsack), by deadline.
+
+--------------------------------------------------
+FAANG focus
+--------------------------------------------------
+Highest ROI: Interval, Jump Game, Resource Allocation, Scheduling, String, Greedy+Heap.
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+☐/☑ checklist). When built out, a pattern is split into sub-folders.
+
+--------------------------------------------------
+Overlap with other sections (cross-reference, don't duplicate)
+--------------------------------------------------
+Non-overlapping Intervals, Minimum Arrows, Meeting Rooms II
+   -> ../1.Arrays/7.intervals/   (and ../9.Heap/6.interval_heap/ for platforms)
+Jump Game I/II, Gas Station, Candy
+   -> ../1.Arrays/10.greedy/
+Partition Labels, Remove Duplicate Letters, Reorganize String
+   -> ../2.Strings/9.greedy/
+Connect Ropes, Huffman, Task Scheduler, Min Platforms
+   -> ../9.Heap/5.greedy_heap/  and  ../9.Heap/6.interval_heap/
+Remove K Digits (monotonic stack)        -> ../1.Arrays/9.monotonic_stack/2.next_smaller/
+Boats to Save People                     -> ../1.Arrays/1.two_pointer_problems/1.opposite_ends/
+Split Array Largest Sum (search on answer) -> ../1.Arrays/5.binary_search/2.search_on_answer/
+
+High-value NEW: Job Sequencing, Assign Cookies, Lemonade Change, Wiggle Subsequence,
+IPO, Furthest Building You Can Reach, Monotone Increasing Digits, Fractional Knapsack,
+The Skyline Problem.

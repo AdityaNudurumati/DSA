@@ -1,0 +1,29 @@
+==================================================
+GREEDY / 8. ARRAY GREEDY
+==================================================
+
+When to think of this?
+- a running local choice (balance reset, two-pass adjustments, alternating signs)
+
+Sub-patterns
+│
+├── Gas Station       running tank; reset start on deficit
+├── Candy              two passes (L->R, R->L), take the max requirement
+├── Wiggle Sequence    count direction changes
+└── Maximize Gain       grab every favorable step
+
+--------------------------------------------------
+Template — wiggle subsequence
+--------------------------------------------------
+up = down = 1
+for i in range(1, n):
+    if nums[i] > nums[i-1]: up = down + 1
+    elif nums[i] < nums[i-1]: down = up + 1
+return max(up, down)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Wiggle Subsequence -> 1.wiggle_subsequence.py
+→ Gas Station  see ../../1.Arrays/10.greedy/2.resource/1.gas_station.py
+→ Candy        see ../../1.Arrays/10.greedy/3.local_exchange/1.candy.py

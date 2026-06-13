@@ -1,0 +1,31 @@
+==================================================
+GREEDY / 10. MONOTONIC GREEDY
+==================================================
+
+When to think of this?
+- build a result digit/char by digit, removing earlier choices that hurt
+- a monotonic stack enforces the greedy ordering
+
+Sub-patterns
+│
+├── Remove K Digits           drop larger leading digits (increasing stack)
+├── Monotone Increasing Digits  walk from the right, drop+borrow on a decrease
+└── Largest Number Variants     custom comparator ordering
+
+--------------------------------------------------
+Template — monotone increasing digits
+--------------------------------------------------
+d = list(str(n))
+mark = len(d)
+for i in range(len(d)-1, 0, -1):
+    if d[i-1] > d[i]:
+        d[i-1] = str(int(d[i-1]) - 1); mark = i
+for i in range(mark, len(d)): d[i] = '9'
+return int(''.join(d))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Monotone Increasing Digits (LC738) -> 1.monotone_increasing_digits.py
+→ Remove K Digits  see ../../1.Arrays/9.monotonic_stack/2.next_smaller/2.remove_k_digits.py
+→ Largest Number   see ../../1.Arrays/11.advanced/4.sorting_tricks/1.largest_number.py

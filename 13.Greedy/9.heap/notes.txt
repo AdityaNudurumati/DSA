@@ -1,0 +1,35 @@
+==================================================
+GREEDY / 9. GREEDY + HEAP
+==================================================
+
+When to think of this?
+- always pick the best-available option, where "best" changes as you go
+- a heap supplies the current best in O(log n)
+
+Sub-patterns
+│
+├── Reorganize String   most-frequent-first via max-heap
+├── Task Scheduler        cooldown scheduling
+├── IPO                   max-heap of affordable profits, min-heap by capital
+└── Furthest Building      spend ladders on the biggest climbs (min-heap of bricks-used)
+
+--------------------------------------------------
+Template — IPO
+--------------------------------------------------
+# sort projects by capital; push affordable profits to a max-heap; take k times
+import heapq
+projects.sort()                    # by capital
+maxprofit = []                     # max-heap (negated)
+i = 0
+for _ in range(k):
+    while i < n and projects[i][0] <= w:
+        heapq.heappush(maxprofit, -projects[i][1]); i += 1
+    if not maxprofit: break
+    w -= heapq.heappop(maxprofit)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ IPO (LC502) -> 1.ipo.py
+☑ Furthest Building You Can Reach (LC1642) -> 2.furthest_building.py
+→ Task Scheduler   see ../../1.Arrays/10.greedy/  ;  Reorganize String  see ../../2.Strings/9.greedy/

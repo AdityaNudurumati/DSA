@@ -1,0 +1,31 @@
+==================================================
+GREEDY / 12. ADVANCED GREEDY
+==================================================
+
+Greedy combined with another technique.
+
+Sub-patterns
+│
+├── Sweep Line             sort events, +1/-1, scan (skyline, overlaps)
+├── Greedy + Binary Search   binary search the answer; a greedy check tests feasibility
+├── Greedy + DSU             greedily union under a sorted order (Kruskal-flavored)
+└── Greedy Proof Problems     where the hard part is proving the greedy is correct
+
+--------------------------------------------------
+Template — sweep line (skyline events)
+--------------------------------------------------
+# events: (x, -h) on start, (x, +h) on end; sort; a max-heap of active heights
+# emit a key point whenever the current max height changes
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Sweep Line:
+☑ The Skyline Problem (LC218) -> 1.skyline_problem.py
+
+Greedy + Binary Search:
+→ Split Array Largest Sum  see ../../1.Arrays/5.binary_search/2.search_on_answer/
+  (Koko Eating Bananas / Capacity to Ship are the same shape)
+
+Greedy + DSU:
+→ Kruskal MST  see ../../10.Graphs/6.mst/1.kruskal_connect_points.py

@@ -1,0 +1,30 @@
+==================================================
+GREEDY / 7. STRING GREEDY
+==================================================
+
+When to think of this?
+- build the lexicographically smallest/largest result, or rearrange under constraints
+- monotonic stack (lexical) or most-frequent-first (rearrangement)
+
+Sub-patterns
+│
+├── Lexicographical        smallest subsequence via increasing stack
+├── Rearrangement           no two adjacent equal (most frequent first)
+├── Partition Labels         extend a segment to the last index of its chars
+└── Remove Duplicate Letters   monotonic stack keeping one of each char
+
+--------------------------------------------------
+Template — partition labels
+--------------------------------------------------
+last = {c: i for i, c in enumerate(s)}
+start = end = 0
+for i, c in enumerate(s):
+    end = max(end, last[c])
+    if i == end: emit(i - start + 1); start = i + 1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+All covered in 2.Strings/9.greedy/:
+→ Partition Labels, Remove Duplicate Letters, Reorganize String  see ../../2.Strings/9.greedy/
+☐ Smallest Subsequence of Distinct Characters (alias of Remove Duplicate Letters)

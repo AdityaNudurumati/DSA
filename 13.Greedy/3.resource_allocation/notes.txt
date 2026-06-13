@@ -1,0 +1,32 @@
+==================================================
+GREEDY / 3. RESOURCE ALLOCATION
+==================================================
+
+When to think of this?
+- "minimum rooms / platforms / machines" for overlapping demands
+- sort events; reuse the earliest-freeing resource (min-heap of end times)
+
+Sub-patterns
+│
+├── Meeting Rooms        peak concurrency = rooms needed
+├── Minimum Platforms     trains arriving/departing
+├── CPU Allocation         assign jobs to the soonest-free CPU
+└── Resource Assignment     generic reuse-earliest-free
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+import heapq
+intervals.sort(key=lambda x: x[0])
+ends = []
+for s, e in intervals:
+    if ends and ends[0] <= s: heapq.heappop(ends)
+    heapq.heappush(ends, e)
+return len(ends)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Car Pooling (capacity sweep)  -> 1.car_pooling.py
+→ Meeting Rooms II   see ../../1.Arrays/7.intervals/3.line_sweep/1.meeting_rooms_ii.py
+→ Minimum Platforms  see ../../9.Heap/6.interval_heap/1.minimum_platforms.py

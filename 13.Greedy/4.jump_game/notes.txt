@@ -1,0 +1,28 @@
+==================================================
+GREEDY / 4. JUMP GAME PATTERN
+==================================================
+
+When to think of this?
+- "can you reach the end" / "minimum jumps"
+- track the farthest reachable index; bump jumps at level boundaries
+
+Sub-patterns
+│
+├── Reachability      can you get to the last index?
+├── Minimum Jumps      fewest jumps (BFS-by-levels)
+└── Range Expansion     each index extends your reach
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+farthest = 0
+for i, jump in enumerate(nums):
+    if i > farthest: return False     # gap
+    farthest = max(farthest, i + jump)
+return True
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Jump Game III (reach any zero) -> 1.jump_game_iii.py
+→ Jump Game, Jump Game II  see ../../1.Arrays/10.greedy/1.reachability/
