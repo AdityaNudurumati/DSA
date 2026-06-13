@@ -1,0 +1,33 @@
+==================================================
+SLIDING WINDOW — 3. FREQUENCY WINDOW
+==================================================
+
+The window's state is a char-count (or word-count) map. We compare the window's
+counts against a "need" map built from the pattern to detect a match.
+
+When to think of this?
+- anagram / permutation detection
+- "does some substring contain exactly these characters / words?"
+- match driven by counts rather than a numeric sum
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+from collections import Counter
+need = Counter(pattern)
+window = Counter()
+
+for right in range(len(s)):
+    window[s[right]] += 1
+    if right >= k - 1:               # k = len(pattern)
+        if window == need:
+            # match at index right - k + 1
+        window[s[right - k + 1]] -= 1   # (drop zero-count keys to keep == clean)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Permutation in String                              -> 1.permutation_in_string.py
+☑ Substring with Concatenation of All Words          -> 2.substring_concatenation.py
+☐ Find All Anagrams in a String (count variant)
+☐ Smallest Window Containing All Distinct Characters

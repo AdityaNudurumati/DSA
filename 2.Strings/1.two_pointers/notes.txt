@@ -1,0 +1,55 @@
+==================================================
+STRINGS / 1. TWO POINTERS
+==================================================
+
+When to think of this?
+- Compare/process characters from both ends, or with a slow/fast pair
+- In-place edits on a mutable char array
+- Subsequence checks, reversing, compression
+
+Sub-patterns
+│
+├── 1.opposite_ends/    left/right move toward each other (palindrome, reverse, vowels)
+├── 2.same_direction/   slow/fast both move forward (subsequence, backspace, merge)
+└── 3.in_place/         write index + read index on a char list (reverse words, compress)
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# opposite ends
+left, right = 0, len(s) - 1
+while left < right:
+    ...
+    left += 1; right -= 1
+
+# same direction (subsequence check)
+i = 0
+for c in t:
+    if i < len(s) and s[i] == c:
+        i += 1
+return i == len(s)
+
+# in-place (slow write / fast read)
+write = 0
+for read in range(len(chars)):
+    ...
+    chars[write] = chars[read]; write += 1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Opposite Ends   (1.opposite_ends/):
+☑ Valid Palindrome             -> 1.opposite_ends/1.valid_palindrome.py
+☑ Valid Palindrome II          -> 1.opposite_ends/2.valid_palindrome_ii.py
+☑ Reverse String               -> 1.opposite_ends/3.reverse_string.py
+☑ Reverse Vowels of a String   -> 1.opposite_ends/4.reverse_vowels.py
+
+Same Direction  (2.same_direction/):
+☑ Is Subsequence               -> 2.same_direction/1.is_subsequence.py
+☑ Backspace String Compare     -> 2.same_direction/2.backspace_string_compare.py
+☑ Merge Strings Alternately    -> 2.same_direction/3.merge_strings_alternately.py
+
+In-place Processing  (3.in_place/):
+☑ Reverse Words in a String        -> 3.in_place/1.reverse_words.py
+☑ String Compression               -> 3.in_place/2.string_compression.py
+☑ Reverse Words in a String III    -> 3.in_place/3.reverse_words_iii.py

@@ -1,0 +1,33 @@
+==================================================
+STACK ON STRINGS — 1. BRACKETS
+==================================================
+
+Use a stack to match opens against closes and track validity / spans.
+
+When to think of this?
+- Balanced parentheses / brackets / tags
+- Need to know if a closer matches the most recent opener (LIFO)
+- Removing or measuring well-formed substrings
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+pairs = {')': '(', ']': '[', '}': '{'}
+stack = []
+for c in s:
+    if c in '([{':
+        stack.append(c)
+    elif not stack or stack.pop() != pairs[c]:
+        return False
+return not stack
+
+# index variant (for spans / removals): push indices, seed stack with -1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Valid Parentheses                       -> 1.valid_parentheses.py
+☑ Minimum Remove to Make Valid Parens     -> 2.minimum_remove_valid.py
+☑ Longest Valid Parentheses               -> 3.longest_valid_parentheses.py
+☐ Generate Parentheses
+☐ Remove Invalid Parentheses

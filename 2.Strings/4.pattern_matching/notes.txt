@@ -1,0 +1,52 @@
+==================================================
+STRINGS / 4. PATTERN MATCHING
+==================================================
+
+When to think of this?
+- "find pattern P inside text T" faster than O(n*m)
+- repeated-substring / prefix-suffix structure questions
+
+Sub-patterns
+│
+├── 1.kmp/          failure/LPS array -> O(n + m), text is never re-scanned
+├── 2.rabin_karp/   polynomial rolling hash of windows; O(n + m) average
+└── 3.z_algorithm/  Z-array (longest substring matching the prefix); O(n + m)
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# KMP prefix (LPS) array
+lps = [0] * len(p)
+k = 0
+for i in range(1, len(p)):
+    while k and p[i] != p[k]:
+        k = lps[k - 1]
+    if p[i] == p[k]:
+        k += 1
+    lps[i] = k
+
+# Rabin-Karp idea
+hash(window) rolled in O(1); compare hashes, verify on match
+
+# Z array
+z[0] = n; left = right = 0
+for i in range(1, n):
+    if i < right: z[i] = min(right - i, z[i - left])
+    while i + z[i] < n and s[z[i]] == s[i + z[i]]: z[i] += 1
+    if i + z[i] > right: left, right = i, i + z[i]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+1.kmp/
+☑ Find the Index of the First Occurrence (strStr)  -> 1.strstr_kmp.py
+☑ Repeated Substring Pattern                       -> 2.repeated_substring_pattern.py
+☑ Shortest Palindrome                              -> 3.shortest_palindrome.py
+
+2.rabin_karp/
+☑ strStr via Rolling Hash                          -> 1.strstr_rabin_karp.py
+☑ Repeated DNA Sequences                           -> 2.repeated_dna_sequences.py
+
+3.z_algorithm/
+☑ Find All Occurrences (Pattern Matching with Z)   -> 1.z_find_all_occurrences.py
+☑ Longest Happy Prefix (Prefix that is Suffix)     -> 2.longest_happy_prefix.py

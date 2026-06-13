@@ -1,0 +1,48 @@
+==================================================
+STRINGS / 2. SLIDING WINDOW
+==================================================
+
+When to think of this?
+- "longest / shortest / count substrings satisfying X"
+- fixed-length window, or a window with a frequency constraint
+- anagram / permutation detection
+
+Sub-patterns   (each maps to a sub-folder; see its notes.txt for the checklist)
+│
+├── 1.fixed_window/       window of exactly k chars; slide by 1, check a property
+│
+├── 2.variable_window/    grow right, shrink left while the window is invalid
+│
+└── 3.frequency_window/   window state is a char/word-count map (need vs have)
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# variable window
+left = 0
+for right in range(len(s)):
+    # add s[right]
+    while invalid:
+        # remove s[left]
+        left += 1
+    # update answer with window [left..right]
+
+# frequency window (anagram / permutation)
+from collections import Counter
+need = Counter(pattern)
+window = Counter()
+
+--------------------------------------------------
+Problems
+--------------------------------------------------
+Solved problems live in the sub-folders, each with its own checklist:
+
+  1.fixed_window/       Maximum Number of Vowels in a Substring of Given Length,
+                        Find All Anagrams in a String
+  2.variable_window/    Longest Substring Without Repeating Characters,
+                        Longest Repeating Character Replacement,
+                        Minimum Window Substring
+  3.frequency_window/   Permutation in String,
+                        Substring with Concatenation of All Words
+
+See each sub-folder's notes.txt for its full ☐/☑ checklist.

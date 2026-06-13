@@ -1,0 +1,29 @@
+==================================================
+HASHING — 3. SET BASED
+==================================================
+
+Use a set for O(1) membership and for deduplication. Often the string is first
+normalized into a canonical form, then thrown into a set.
+
+When to think of this?
+- "does this character / item belong to a group" (membership)
+- count distinct things after some normalization
+- dedup / uniqueness questions
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+members = set(group)                 # O(1) membership
+if x in members: ...
+
+seen = set()                         # dedup
+seen.add(canonical_form(item))
+answer = len(seen)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Jewels and Stones       -> 1.jewels_and_stones.py
+☑ Unique Email Addresses  -> 2.unique_email_addresses.py
+☐ Unique Morse Code Words
+☐ Number of Distinct Substrings

@@ -1,0 +1,35 @@
+==================================================
+DYNAMIC PROGRAMMING — 2. EDIT DISTANCE  (transform one string into another)
+==================================================
+
+dp[i][j] is the cost to turn word1[:i] into word2[:j] using insert / delete /
+replace. Matching characters carry the diagonal for free; otherwise we take
+the cheapest neighbouring state and add one operation.
+
+When to think of this?
+- "Minimum operations to convert / make equal"
+- Insert / delete / replace costs between two strings
+- Many delete-only or one-edit variants reduce to LCS or a single scan
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+dp = [[0]*(n+1) for _ in range(m+1)]
+for i in range(m+1): dp[i][0] = i
+for j in range(n+1): dp[0][j] = j
+for i in range(1, m+1):
+    for j in range(1, n+1):
+        if a[i-1] == b[j-1]:
+            dp[i][j] = dp[i-1][j-1]
+        else:
+            dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])
+return dp[m][n]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Edit Distance                       -> 1.edit_distance.py
+☑ Delete Operation for Two Strings    -> 2.delete_operation.py
+☑ One Edit Distance                   -> 3.one_edit_distance.py
+☐ Minimum ASCII Delete Sum
+☐ Uncrossed Lines

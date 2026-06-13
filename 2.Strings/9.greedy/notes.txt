@@ -1,0 +1,37 @@
+==================================================
+STRINGS / 9. GREEDY ON STRINGS
+==================================================
+
+When to think of this?
+- Rearrange characters to satisfy a rule (no two adjacent equal)
+- Build the lexicographically smallest/largest result
+- Partition the string by a greedy boundary
+
+Sub-patterns
+│
+├── 1.rearrangement/     most-frequent-first (often with a max-heap)
+├── 2.lexicographical/   increasing monotonic stack for the smallest subsequence
+└── 3.partitioning/      extend a segment to the last index of its chars
+
+--------------------------------------------------
+Notes
+--------------------------------------------------
+- Rearrange: place the highest-count char on alternating slots; feasible iff
+  maxCount <= (n + 1) // 2.
+- Lexicographically smallest subsequence: increasing monotonic stack, popping while
+  a later occurrence of the top still exists (or a removal budget k remains).
+- Partition Labels: last[c] = last index of c; extend the window to max(last[...]).
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+1.rearrangement/   (greedy + max-heap, spread the most frequent char out)
+☑ Reorganize String          -> 1.rearrangement/1.reorganize_string.py
+☑ Task Scheduler             -> 1.rearrangement/2.task_scheduler.py
+
+2.lexicographical/   (monotonic stack, smallest subsequence)
+☑ Remove Duplicate Letters   -> 2.lexicographical/1.remove_duplicate_letters.py
+☑ Remove K Digits            -> 2.lexicographical/2.remove_k_digits.py
+
+3.partitioning/   (greedy boundary extension)
+☑ Partition Labels           -> 3.partitioning/1.partition_labels.py

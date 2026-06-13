@@ -1,0 +1,29 @@
+==================================================
+STRINGS / TWO POINTERS — 2. SAME DIRECTION  (Slow → Fast →)
+==================================================
+
+Two indices both move forward, often one per string, advancing at their own pace.
+
+When to think of this?
+- Subsequence checks (does s appear inside t in order?)
+- Comparing two strings while processing them (backspaces, edits)
+- Merging / interleaving two strings
+- A read pointer feeding a slow write pointer
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+i = 0
+for c in t:                 # fast pointer scans t
+    if i < len(s) and s[i] == c:
+        i += 1              # slow pointer advances only on a match
+return i == len(s)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Is Subsequence               -> 1.is_subsequence.py
+☑ Backspace String Compare     -> 2.backspace_string_compare.py
+☑ Merge Strings Alternately    -> 3.merge_strings_alternately.py
+☐ Long Pressed Name
+☐ Number of Matching Subsequences

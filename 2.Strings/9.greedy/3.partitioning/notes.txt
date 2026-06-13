@@ -1,0 +1,29 @@
+==================================================
+GREEDY ON STRINGS — 3. PARTITIONING  (extend to last index)
+==================================================
+
+Cut the string into the maximum number of pieces under a constraint by greedily
+extending the current segment to the farthest index it is forced to cover.
+
+When to think of this?
+- "Each letter in at most one part"
+- Maximize the number of partitions / segments
+- A boundary that must stretch to include every member's last occurrence
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+last = {ch: i for i, ch in enumerate(s)}
+start = end = 0
+for i, ch in enumerate(s):
+    end = max(end, last[ch])
+    if i == end:                 # safe to cut
+        record(end - start + 1)
+        start = i + 1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Partition Labels           -> 1.partition_labels.py
+☐ Partition Array into Disjoint Intervals
+☐ Merge Intervals (boundary-extension cousin)

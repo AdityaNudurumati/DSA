@@ -1,0 +1,31 @@
+==================================================
+STRING CONSTRUCTION — 2. SIMULATION
+==================================================
+
+Follow the formatting rules of the problem step by step. There is rarely a
+clever trick — the skill is translating the layout rules into code exactly
+and handling edge cases (last line, single word, direction flips).
+
+When to think of this?
+- The problem describes a visual layout or aloud-reading rule to reproduce
+- Output is built by following a deterministic process, not by a formula
+- "Format", "justify", "say", "convert pattern" style prompts
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+buckets = [[] for _ in range(k)]   # or a running list of lines
+state = initial_state
+for ch / word in input:
+    place it according to the current state
+    update state per the rules (flip direction, flush a full line, ...)
+result = join the buckets / lines
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Zigzag Conversion    -> 1.zigzag_conversion.py
+☑ Count and Say        -> 2.count_and_say.py
+☑ Text Justification   -> 3.text_justification.py
+☐ Spiral Matrix
+☐ Reorganize String

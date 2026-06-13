@@ -1,0 +1,36 @@
+==================================================
+DYNAMIC PROGRAMMING — 4. SUBSEQUENCES  (count / match over prefixes)
+==================================================
+
+dp[i][j] relates a prefix of the text to a prefix of a target or pattern.
+We either skip a character or consume it on a match; wildcards ('*') add a
+branch that either skips or consumes more. Base row 0 (empty text) is the
+key starting condition.
+
+When to think of this?
+- "How many ways" to form one string from another (counting)
+- Pattern matching with wildcards ('?', '*', '.', 'x*')
+- Each pattern symbol can skip or consume text characters
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+dp = [[False]*(n+1) for _ in range(m+1)]   # or 0 for counting
+dp[0][0] = True
+# fill base row 0 for patterns that match empty (e.g. '*')
+for i in range(1, m+1):
+    for j in range(1, n+1):
+        if is_star(p[j-1]):
+            dp[i][j] = skip_branch or consume_branch
+        elif matches(p[j-1], s[i-1]):
+            dp[i][j] = dp[i-1][j-1]
+return dp[m][n]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Distinct Subsequences          -> 1.distinct_subsequences.py
+☑ Wildcard Matching              -> 2.wildcard_matching.py
+☑ Regular Expression Matching    -> 3.regex_matching.py
+☐ Interleaving String
+☐ Is Subsequence

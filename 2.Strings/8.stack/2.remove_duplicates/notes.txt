@@ -1,0 +1,39 @@
+==================================================
+STACK ON STRINGS — 2. REMOVE DUPLICATES
+==================================================
+
+Push chars onto a stack; pop when the incoming char cancels the top.
+
+When to think of this?
+- Adjacent equal items annihilate each other
+- "Repeatedly remove" until stable (the stack reaches the stable state in one pass)
+- Need to collapse runs of length k
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+# simple (pairs cancel)
+stack = []
+for c in s:
+    if stack and stack[-1] == c:
+        stack.pop()
+    else:
+        stack.append(c)
+
+# with counts (groups of k cancel)
+stack = []          # [char, count]
+for c in s:
+    if stack and stack[-1][0] == c:
+        stack[-1][1] += 1
+        if stack[-1][1] == k:
+            stack.pop()
+    else:
+        stack.append([c, 1])
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Remove All Adjacent Duplicates In String      -> 1.remove_adjacent_duplicates.py
+☑ Remove All Adjacent Duplicates In String II   -> 2.remove_adjacent_duplicates_ii.py
+☐ Make The String Great
+☐ Backspace String Compare

@@ -1,0 +1,33 @@
+==================================================
+DYNAMIC PROGRAMMING — 1. LCS  (prefix DP on two strings)
+==================================================
+
+dp[i][j] is built from prefixes of the two strings. A matching character
+extends the diagonal dp[i-1][j-1]; how a mismatch is handled is what
+separates "subsequence" (take best neighbour) from "substring" (reset to 0).
+
+When to think of this?
+- Two strings, measure how much they share
+- "Common" subsequence or substring length
+- Alignment-style problems where order matters
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+dp = [[0]*(n+1) for _ in range(m+1)]
+for i in range(1, m+1):
+    for j in range(1, n+1):
+        if a[i-1] == b[j-1]:
+            dp[i][j] = dp[i-1][j-1] + 1
+        else:
+            dp[i][j] = max(dp[i-1][j], dp[i][j-1])   # subsequence
+            # substring instead would leave dp[i][j] = 0 here
+return dp[m][n]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Longest Common Subsequence  -> 1.longest_common_subsequence.py
+☑ Longest Common Substring    -> 2.longest_common_substring.py
+☐ Shortest Common Supersequence
+☐ Longest Common Subsequence of Three Strings

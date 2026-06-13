@@ -1,0 +1,35 @@
+==================================================
+TRIE — 2. WORD DICTIONARY
+==================================================
+
+A trie whose lookups branch via DFS: a '.' wildcard tries every child, and a
+grid search reuses one trie to test many words at once with aggressive pruning.
+
+When to think of this?
+- Search keys contain a wildcard ('.') matching any single char
+- Match a whole set of words against a board/text in one pass
+- Need to prune the moment a path stops matching any prefix
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+def search(word):
+    def dfs(node, i):
+        if i == len(word):
+            return '#' in node
+        ch = word[i]
+        if ch == '.':                      # wildcard -> try all children
+            return any(dfs(child, i + 1)
+                       for k, child in node.items() if k != '#')
+        if ch not in node:
+            return False
+        return dfs(node[ch], i + 1)        # literal char -> one branch
+    return dfs(root, 0)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Add and Search Word (wildcard '.')  -> 1.add_and_search_word.py
+☑ Word Search II                      -> 2.word_search_ii.py
+☐ Concatenated Words
+☐ Stream of Characters

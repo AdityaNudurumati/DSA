@@ -1,0 +1,31 @@
+==================================================
+TRIE — 3. AUTO COMPLETE
+==================================================
+
+Insert words in sorted order and cache the best few completions at every node, so
+each typed character returns its top suggestions by a one-step descent.
+
+When to think of this?
+- Autocomplete / type-ahead: suggestions after each keystroke
+- Need the lexicographically smallest k completions of a prefix
+- Many prefix queries reuse the same dictionary
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+root = {}
+for word in sorted(words):              # sorted so caches stay ordered
+    node = root
+    for ch in word:
+        node = node.setdefault(ch, {'sug': []})
+        if len(node['sug']) < 3:        # keep top-3 smallest at each node
+            node['sug'].append(word)
+
+# query: walk the prefix, read node['sug'] at each step
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Search Suggestions System            -> 1.search_suggestions_system.py
+☐ Design Search Autocomplete System
+☐ Top K Frequent Words (prefix variant)

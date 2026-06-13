@@ -1,0 +1,31 @@
+==================================================
+HASHING — 2. HASHMAP BASED
+==================================================
+
+Map one token to another (char -> char, letter -> word) and verify the mapping
+is consistent and one-to-one. The classic "structure / pattern matching"
+hashing problems.
+
+When to think of this?
+- "do these two strings have the same shape / structure"
+- replace each char with another char to get the target string
+- a pattern of letters must match a sequence of words
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+forward = {}                         # a -> b
+backward = {}                        # b -> a  (enforces bijection)
+for a, b in zip(seqA, seqB):
+    if a in forward and forward[a] != b: return False
+    if b in backward and backward[b] != a: return False
+    forward[a] = b
+    backward[b] = a
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Isomorphic Strings   -> 1.isomorphic_strings.py
+☑ Word Pattern         -> 2.word_pattern.py
+☐ Word Pattern II
+☐ Find and Replace Pattern

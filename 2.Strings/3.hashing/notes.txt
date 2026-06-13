@@ -1,0 +1,40 @@
+==================================================
+STRINGS / 3. HASHING / FREQUENCY COUNTING
+==================================================
+
+When to think of this?
+- Compare strings by their character composition (anagrams)
+- Map characters/words to each other (isomorphism, patterns)
+- O(1) membership / dedup with a set
+
+Sub-patterns   (each maps to a sub-folder; see its notes.txt for the checklist)
+│
+├── 1.character_frequency/   Counter of letters; compare/sort by counts
+├── 2.hashmap_based/         char -> char / word mapping (bijection checks)
+└── 3.set_based/             membership, uniqueness, dedup
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+from collections import Counter
+Counter(a) == Counter(b)            # anagram check
+
+mapping = {}                        # isomorphism / pattern
+if a in mapping and mapping[a] != b: return False
+mapping[a] = b
+
+members = set(group)                # set-based membership / dedup
+if x in members: ...
+
+--------------------------------------------------
+Problems
+--------------------------------------------------
+Solved problems live in the sub-folders, each with its own ☐/☑ checklist:
+
+  1.character_frequency/  Valid Anagram, Group Anagrams,
+                          First Unique Character in a String, Ransom Note,
+                          Sort Characters By Frequency
+  2.hashmap_based/        Isomorphic Strings, Word Pattern
+  3.set_based/            Jewels and Stones, Unique Email Addresses
+
+See each sub-folder's notes.txt for its full ☐/☑ checklist.

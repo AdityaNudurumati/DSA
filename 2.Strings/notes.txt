@@ -1,0 +1,81 @@
+==================================================
+STRINGS — ROADMAP
+==================================================
+
+STRINGS
+│
+├── 1. Two Pointers
+│   ├── Opposite Ends
+│   ├── Same Direction
+│   └── In-place Processing
+│
+├── 2. Sliding Window
+│   ├── Fixed Window
+│   ├── Variable Window
+│   └── Frequency Window
+│
+├── 3. Hashing / Frequency Counting
+│   ├── Character Frequency
+│   ├── HashMap Based
+│   └── Set Based
+│
+├── 4. Pattern Matching
+│   ├── KMP
+│   ├── Rabin-Karp
+│   └── Z Algorithm
+│
+├── 5. Palindrome Techniques
+│   ├── Two Pointer
+│   ├── Expand Around Center
+│   └── Manacher's Algorithm
+│
+├── 6. String Construction
+│   ├── String Builder
+│   ├── Simulation
+│   └── Encoding/Decoding
+│
+├── 7. Trie
+│   ├── Prefix Search
+│   ├── Word Dictionary
+│   └── Auto Complete
+│
+├── 8. Stack on Strings
+│   ├── Brackets
+│   ├── Remove Duplicates
+│   └── Decode String
+│
+├── 9. Greedy on Strings
+│   ├── Rearrangement
+│   ├── Lexicographical
+│   └── Partitioning
+│
+├── 10. Dynamic Programming
+│   ├── LCS
+│   ├── Edit Distance
+│   ├── Palindromic DP
+│   └── Subsequences
+│
+└── 11. Rolling Hash / Advanced
+    ├── Double Hashing
+    ├── Substring Search
+    └── String Matching Optimization
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+and a ☐/☑ problems checklist). When a pattern is "built out", it is split into
+sub-folders (one per sub-pattern), each holding one runnable .py per problem.
+
+Trigger phrases (identify the pattern before coding):
+- Sorted/compare ends            -> Two Pointers (opposite ends)
+- Contiguous substring + window  -> Sliding Window
+- Counts / anagrams / dedup      -> Hashing / Frequency
+- "find pattern in text"         -> Pattern Matching (KMP / Rabin-Karp / Z)
+- "palindrome"                   -> Palindrome Techniques
+- Build/format/parse output      -> String Construction
+- Prefix / dictionary / autocomplete -> Trie
+- Balanced / nested / decode     -> Stack
+- Rearrange / lexicographically smallest -> Greedy
+- Two strings, optimal transform -> Dynamic Programming
+- Many substring comparisons     -> Rolling Hash

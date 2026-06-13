@@ -1,0 +1,49 @@
+==================================================
+STRINGS / 7. TRIE
+==================================================
+
+When to think of this?
+- Many prefix / word-membership queries
+- Autocomplete / dictionary with wildcards
+- Shared-prefix compression
+
+Sub-patterns
+│
+├── 1.prefix_search/    insert / search / startsWith; longest common prefix; root replacement
+├── 2.word_dictionary/  DFS lookups: '.' wildcard match, and one trie vs a whole board
+└── 3.auto_complete/    cache top suggestions at each node for type-ahead
+
+--------------------------------------------------
+Template — trie node as nested dict
+--------------------------------------------------
+trie = {}
+def insert(word):
+    node = trie
+    for ch in word:
+        node = node.setdefault(ch, {})
+    node['#'] = True          # end-of-word marker
+
+def search_prefix(prefix):
+    node = trie
+    for ch in prefix:
+        if ch not in node: return None
+        node = node[ch]
+    return node
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+1.prefix_search/
+☑ Implement Trie (Prefix Tree)        -> 1.implement_trie.py
+☑ Longest Common Prefix               -> 2.longest_common_prefix.py
+☑ Replace Words                       -> 3.replace_words.py
+
+2.word_dictionary/
+☑ Add and Search Word (wildcard '.')  -> 1.add_and_search_word.py
+☑ Word Search II                      -> 2.word_search_ii.py
+
+3.auto_complete/
+☑ Search Suggestions System           -> 1.search_suggestions_system.py
+☐ Design Search Autocomplete System
+
+Note: bitwise-trie XOR problems live in ../../1.Arrays/11.advanced/7.trie/

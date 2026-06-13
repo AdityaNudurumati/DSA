@@ -1,0 +1,32 @@
+==================================================
+HASHING — 1. CHARACTER FREQUENCY
+==================================================
+
+Count letters with a dict / Counter, then compare counts, look for a unique
+character, check containment, or order characters by frequency. The default
+move whenever a problem is about a string's character composition.
+
+When to think of this?
+- "are these anagrams" / "same letters" comparisons
+- "first / only character that appears once"
+- "can string A be built from the letters of string B"
+- sort or rank characters by how often they appear
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+from collections import Counter
+freq = Counter(s)                    # char -> count
+Counter(a) == Counter(b)             # anagram check
+freq.most_common()                   # chars ordered by count desc
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Valid Anagram                  -> 1.valid_anagram.py
+☑ Group Anagrams                 -> 2.group_anagrams.py
+☑ First Unique Character         -> 3.first_unique_character.py
+☑ Ransom Note                    -> 4.ransom_note.py
+☑ Sort Characters By Frequency   -> 5.sort_characters_by_frequency.py
+☐ Find All Anagrams in a String
+☐ Determine if Two Strings Are Close

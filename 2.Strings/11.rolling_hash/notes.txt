@@ -1,0 +1,38 @@
+==================================================
+STRINGS / 11. ROLLING HASH / ADVANCED
+==================================================
+
+When to think of this?
+- Compare MANY substrings quickly (equality in O(1) after O(n) prep)
+- "longest duplicate / repeated substring", binary-search on length
+- Speed up substring search beyond naive
+
+Sub-patterns   (each maps to a sub-folder; see its notes.txt for the checklist)
+│
+├── 1.double_hashing/         two mod bases to crush collision risk; used when
+│                             a wrong hash match would silently break the answer
+├── 2.substring_search/       Rabin-Karp window hashing to find a pattern in text
+└── 3.matching_optimization/  binary search on length + prefix hashing for
+                              longest-common / longest-X-with-property problems
+
+--------------------------------------------------
+Template — polynomial rolling hash
+--------------------------------------------------
+BASE, MOD = 131, (1 << 61) - 1
+# prefix hash so any substring hash is O(1):
+h[i+1] = (h[i] * BASE + ord(s[i])) % MOD
+# substring [l, r): (h[r] - h[l] * pow(BASE, r-l)) % MOD
+# Double hashing: keep a second (BASE2, MOD2) pair; compare both.
+
+--------------------------------------------------
+Problems
+--------------------------------------------------
+Solved problems live in the sub-folders, each with its own checklist:
+
+  1.double_hashing/         Longest Duplicate Substring, Distinct Echo Substrings
+  2.substring_search/       Find All Occurrences of a Pattern
+  3.matching_optimization/  Longest Common Substring (hashing)
+
+See each sub-folder's notes.txt for its full ☐/☑ checklist.
+
+Note: KMP / Z-algorithm classics live in ../4.pattern_matching/

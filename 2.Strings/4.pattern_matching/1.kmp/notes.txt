@@ -1,0 +1,36 @@
+==================================================
+PATTERN MATCHING — 1. KMP  (Knuth-Morris-Pratt)
+==================================================
+
+KMP precomputes a failure / LPS array of the pattern so that on a mismatch
+the pattern shifts by its longest border and the text is never re-scanned.
+
+When to think of this?
+- "find pattern P in text T" in O(n + m)
+- periodicity / smallest-period questions (repeated substring)
+- longest prefix that is also a suffix (borders)
+- palindrome-by-prepending via s + '#' + reverse(s)
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+# LPS (failure) array of a pattern p
+lps = [0] * len(p)
+k = 0
+for i in range(1, len(p)):
+    while k and p[i] != p[k]:
+        k = lps[k - 1]
+    if p[i] == p[k]:
+        k += 1
+    lps[i] = k
+
+# Search: slide once over text, fall back via lps on mismatch.
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Find First Occurrence (strStr)  -> 1.strstr_kmp.py
+☑ Repeated Substring Pattern      -> 2.repeated_substring_pattern.py
+☑ Shortest Palindrome             -> 3.shortest_palindrome.py
+☐ Longest Prefix Suffix (KMP)
+☐ Count Pattern Occurrences

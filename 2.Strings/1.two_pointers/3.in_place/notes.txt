@@ -1,0 +1,33 @@
+==================================================
+STRINGS / TWO POINTERS — 3. IN-PLACE PROCESSING  (write idx + read idx)
+==================================================
+
+A read pointer scans the char array while a write pointer rebuilds the answer
+in the same buffer (or each word is reversed in place by an end-swap).
+
+When to think of this?
+- Rewriting a char list with O(1) extra space
+- Run-length / compression style problems
+- Reversing words or characters inside a buffer
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+write = 0
+read = 0
+while read < len(chars):
+    ch = chars[read]
+    while read < len(chars) and chars[read] == ch:
+        read += 1               # measure the run
+    chars[write] = ch; write += 1
+    # ...write count digits if needed...
+return write
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Reverse Words in a String        -> 1.reverse_words.py
+☑ String Compression               -> 2.string_compression.py
+☑ Reverse Words in a String III    -> 3.reverse_words_iii.py
+☐ Remove Duplicates (adjacent)
+☐ Move Spaces to the End

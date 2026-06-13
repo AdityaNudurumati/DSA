@@ -1,0 +1,32 @@
+==================================================
+STRINGS / TWO POINTERS — 1. OPPOSITE ENDS  (Left → ← Right)
+==================================================
+
+Two pointers start at the two ends of the string and move toward each other.
+
+When to think of this?
+- Palindrome checking (with or without one allowed deletion)
+- Reversing a string / char array in place
+- Swapping selected characters (e.g. only the vowels)
+- Comparing mirrored characters
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+left, right = 0, len(s) - 1
+while left < right:
+    # optionally skip chars you don't care about
+    if s[left] != s[right]:
+        ...
+    left += 1
+    right -= 1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Valid Palindrome             -> 1.valid_palindrome.py
+☑ Valid Palindrome II          -> 2.valid_palindrome_ii.py
+☑ Reverse String               -> 3.reverse_string.py
+☑ Reverse Vowels of a String   -> 4.reverse_vowels.py
+☐ Reverse Only Letters
+☐ Reverse Prefix of Word

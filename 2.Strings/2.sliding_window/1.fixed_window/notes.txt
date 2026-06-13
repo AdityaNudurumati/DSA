@@ -1,0 +1,27 @@
+==================================================
+SLIDING WINDOW — 1. FIXED WINDOW
+==================================================
+
+The window is always exactly k characters long. Slide it one step at a time:
+add the entering right char, drop the leaving left char, and check a property.
+
+When to think of this?
+- "substring of length exactly k" (k often given, or k = len(pattern))
+- count / max / anagram check over every window of a fixed length
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+for right in range(len(s)):
+    # add s[right] to window state
+    if right >= k - 1:
+        # use window state (covers s[right-k+1 .. right])
+        # then remove s[right - k + 1]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Maximum Number of Vowels in a Substring of Given Length  -> 1.max_vowels.py
+☑ Find All Anagrams in a String                            -> 2.find_all_anagrams.py
+☐ Count Occurrences of Anagrams
+☐ First Unique Character in Every Window of Size K

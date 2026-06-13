@@ -1,0 +1,32 @@
+==================================================
+GREEDY ON STRINGS — 1. REARRANGEMENT  (most-frequent-first)
+==================================================
+
+Place / schedule the most frequent character first, spreading copies out so
+the same char never lands too close to itself.
+
+When to think of this?
+- "No two adjacent equal" rearrangement
+- Cooldown / cooling-interval scheduling
+- Anything where the bottleneck is the single most frequent element
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+counts = Counter(s)
+maxCount = max(counts.values())
+
+# Feasibility for "no two adjacent equal":
+#   maxCount <= (n + 1) // 2
+
+# Heap variant: pop most-frequent, place it, hold it back one turn:
+heap = [(-c, ch) for ch, c in counts.items()]
+heapq.heapify(heap)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Reorganize String          -> 1.reorganize_string.py
+☑ Task Scheduler             -> 2.task_scheduler.py
+☐ Distant Barcodes
+☐ Rearrange String k Distance Apart

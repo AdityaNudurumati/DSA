@@ -1,0 +1,34 @@
+==================================================
+PATTERN MATCHING — 2. RABIN-KARP  (Rolling Hash)
+==================================================
+
+Treat each fixed-length window as a polynomial number mod a large prime.
+Sliding the window updates the hash in O(1) (drop leading digit, add trailing
+digit), so scanning the text is linear on average. Verify on hash matches to
+defeat collisions.
+
+When to think of this?
+- substring search where average O(n + m) is fine
+- finding / counting repeated fixed-length windows
+- multi-pattern search (hash all patterns once)
+- 2D / grid pattern matching
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+BASE, MOD = 256, 10**9 + 7
+highest_pow = pow(BASE, m - 1, MOD)
+h = 0
+for i in range(m):                 # initial window hash
+    h = (h * BASE + ord(text[i])) % MOD
+# roll: drop text[start], add text[start+m]
+h = (h - ord(text[start]) * highest_pow) % MOD
+h = (h * BASE + ord(text[start + m])) % MOD
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ strStr via Rolling Hash    -> 1.strstr_rabin_karp.py
+☑ Repeated DNA Sequences     -> 2.repeated_dna_sequences.py
+☐ Longest Duplicate Substring (binary search + hash)
+☐ Distinct Substrings count

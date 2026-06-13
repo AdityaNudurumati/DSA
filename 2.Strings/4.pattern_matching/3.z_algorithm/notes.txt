@@ -1,0 +1,35 @@
+==================================================
+PATTERN MATCHING — 3. Z ALGORITHM  (Z-array)
+==================================================
+
+Z[i] = length of the longest substring starting at i that matches a prefix
+of the string. Computed in one linear pass using a "Z-box" [left, right] to
+reuse previously matched ranges, avoiding re-comparison.
+
+When to think of this?
+- find ALL occurrences of a pattern (pat + '#' + text)
+- longest prefix that is also a suffix (borders)
+- prefix-matching / periodicity questions
+- a simpler alternative to KMP's failure function
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+z = [0] * n
+z[0] = n
+left = right = 0
+for i in range(1, n):
+    if i < right:
+        z[i] = min(right - i, z[i - left])
+    while i + z[i] < n and s[z[i]] == s[i + z[i]]:
+        z[i] += 1
+    if i + z[i] > right:
+        left, right = i, i + z[i]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Find All Occurrences (Z-array)  -> 1.z_find_all_occurrences.py
+☑ Longest Happy Prefix            -> 2.longest_happy_prefix.py
+☐ Count Distinct Patterns
+☐ String Periodicity via Z

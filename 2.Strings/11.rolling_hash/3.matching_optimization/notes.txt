@@ -1,0 +1,31 @@
+==================================================
+ROLLING HASH — 3. STRING MATCHING OPTIMIZATION
+==================================================
+
+Use rolling hashes to turn an expensive matching question into a fast
+"is there a match of length L?" check, then BINARY SEARCH on L. Each check
+hashes every window of the relevant strings (O(1) per window via prefix hashes)
+and looks for an equal hash in a set/dict; verify hits to dodge collisions.
+
+When to think of this?
+- "longest common substring of two strings" (binary search on length)
+- "longest substring of a that is also in b"
+- any longest-X-with-property where the property is monotonic in length
+
+--------------------------------------------------
+Template — binary search on length + hashing
+--------------------------------------------------
+lo, hi = 0, min(len(a), len(b))
+while lo <= hi:
+    mid = (lo + hi) // 2
+    if has_common_of_length(mid):   # hash a's windows into a set, scan b's
+        ans, lo = mid, mid + 1
+    else:
+        hi = mid - 1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Longest Common Substring (hashing)   -> 1.longest_common_substring_hashing.py
+☐ Longest Happy Prefix
+☐ Longest Common Subpath (k arrays)

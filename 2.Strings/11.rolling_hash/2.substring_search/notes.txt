@@ -1,0 +1,28 @@
+==================================================
+ROLLING HASH — 2. SUBSTRING SEARCH (Rabin-Karp)
+==================================================
+
+Hash the pattern once, then slide a same-size window over the text updating its
+hash in O(1). On a hash match, verify the characters to rule out collisions.
+Prefix hashing of the text gives any window's hash directly in O(1).
+
+When to think of this?
+- find one / all occurrences of a pattern in a text
+- "does text contain pattern?" / strStr-style problems
+- multiple-pattern search (hash each pattern, one pass over text)
+
+--------------------------------------------------
+Template — prefix hash + window
+--------------------------------------------------
+BASE, MOD = 131, (1 << 61) - 1
+h[i+1] = (h[i] * BASE + ord(text[i])) % MOD
+p[i+1] = (p[i] * BASE) % MOD
+# window text[l:r):  (h[r] - h[l] * p[r-l]) % MOD
+# compare to pattern hash, then verify text[i:i+m] == pat
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Find All Occurrences of a Pattern   -> 1.find_all_occurrences.py
+☐ Repeated DNA Sequences
+☐ Implement strStr() via Rabin-Karp

@@ -1,0 +1,29 @@
+==================================================
+GREEDY ON STRINGS — 2. LEXICOGRAPHICAL  (monotonic stack)
+==================================================
+
+Build the lexicographically smallest result by keeping a (mostly) increasing
+stack and popping a larger top when a better choice is still possible.
+
+When to think of this?
+- "Smallest / largest subsequence" after removals
+- Keep each char once, smallest order
+- Remove k characters/digits to minimize the value
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+stack = []
+for i, ch in enumerate(s):
+    while stack and stack[-1] > ch and can_pop(stack[-1], i):
+        stack.pop()
+    stack.append(ch)
+# can_pop = "a later occurrence exists" OR "removal budget k remains"
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Remove Duplicate Letters   -> 1.remove_duplicate_letters.py
+☑ Remove K Digits            -> 2.remove_k_digits.py
+☐ Smallest Subsequence of Distinct Characters (same as #1)
+☐ Find the Most Competitive Subsequence

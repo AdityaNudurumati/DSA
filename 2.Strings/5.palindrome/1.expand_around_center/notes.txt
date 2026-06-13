@@ -1,0 +1,32 @@
+==================================================
+PALINDROME — 1. EXPAND AROUND CENTER
+==================================================
+
+Grow outward from each possible center and stop when characters stop matching.
+
+When to think of this?
+- "longest palindromic substring"
+- "count palindromic substrings"
+- Any palindrome question where O(n²) is acceptable and you want O(1) space
+- A string has 2n-1 centers: n single-char (odd) + n-1 gaps (even)
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+def expand(s, left, right):
+    while left >= 0 and right < len(s) and s[left] == s[right]:
+        left -= 1
+        right += 1
+    return left + 1, right - 1     # inclusive bounds of the palindrome
+
+for i in range(len(s)):
+    expand(s, i, i)        # odd-length center
+    expand(s, i, i + 1)    # even-length center
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Longest Palindromic Substring  -> 1.longest_palindromic_substring.py
+☑ Palindromic Substrings (count) -> 2.count_palindromic_substrings.py
+☐ Palindrome Partitioning (uses expand to precheck)
+☐ Longest Palindromic Substring in O(n) -> see ../2.manacher/

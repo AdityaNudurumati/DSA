@@ -1,0 +1,39 @@
+==================================================
+STRINGS / 6. STRING CONSTRUCTION
+==================================================
+
+When to think of this?
+- Build or format an output string carefully (digits, layout, encoding)
+- Parse input into a value; serialize a value into text
+
+Sub-patterns
+│
+├── 1.string_builder/      accumulate chars in a list, ''.join at the end
+│                          (digit-by-digit arithmetic on number strings)
+├── 2.simulation/          follow formatting / layout rules step by step
+└── 3.encoding_decoding/   serialize <-> parse (length-prefix, atoi, etc.)
+
+--------------------------------------------------
+Notes
+--------------------------------------------------
+- In Python, build with a list then "".join(parts) (strings are immutable).
+- Grade-school arithmetic on digit strings: process from the least significant end,
+  carry forward.
+- Length-prefix encoding ("4#word") makes decoding unambiguous.
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+1.string_builder/:
+☑ Add Strings          -> 1.string_builder/1.add_strings.py
+☑ Multiply Strings     -> 1.string_builder/2.multiply_strings.py
+☑ Add Binary           -> 1.string_builder/3.add_binary.py
+
+2.simulation/:
+☑ Zigzag Conversion    -> 2.simulation/1.zigzag_conversion.py
+☑ Count and Say        -> 2.simulation/2.count_and_say.py
+☑ Text Justification   -> 2.simulation/3.text_justification.py
+
+3.encoding_decoding/:
+☑ Encode and Decode Strings   -> 3.encoding_decoding/1.encode_decode_strings.py
+☑ String to Integer (atoi)    -> 3.encoding_decoding/2.string_to_integer_atoi.py

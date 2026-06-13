@@ -1,0 +1,33 @@
+==================================================
+DYNAMIC PROGRAMMING — 3. PALINDROMIC DP  (DP over [i..j] ranges)
+==================================================
+
+State is a substring range s[i..j] instead of a prefix. Equal endpoints let
+us reuse the inner range s[i+1..j-1]; we usually fill by increasing range
+length so inner ranges are ready before outer ones.
+
+When to think of this?
+- "Palindrome" appears: longest, count, min cuts, partition
+- Answer for a range depends on a smaller inner range
+- Need a precomputed isPalindrome[i][j] table
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+dp = [[0]*n for _ in range(n)]
+for i in range(n): dp[i][i] = 1
+for length in range(2, n+1):
+    for i in range(n-length+1):
+        j = i + length - 1
+        if s[i] == s[j]:
+            dp[i][j] = dp[i+1][j-1] + 2
+        else:
+            dp[i][j] = max(dp[i+1][j], dp[i][j-1])
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Longest Palindromic Subsequence  -> 1.longest_palindromic_subsequence.py
+☑ Palindrome Partitioning II       -> 2.palindrome_partitioning_ii.py
+☐ Count Different Palindromic Subsequences
+☐ Longest Palindromic Substring

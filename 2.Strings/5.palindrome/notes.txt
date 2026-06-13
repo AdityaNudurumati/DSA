@@ -1,0 +1,52 @@
+==================================================
+STRINGS / 5. PALINDROME TECHNIQUES
+==================================================
+
+When to think of this?
+- "is it a palindrome", "longest palindromic substring/subsequence", "count palindromes"
+
+Sub-patterns
+│
+├── 1.expand_around_center/   grow outward from each of the 2n-1 centers (O(n²), O(1) space)
+└── 2.manacher/               all palindrome radii in O(n) via mirror reuse
+│
+│   (The two-pointer "Valid Palindrome" checks are NOT duplicated here.
+│    For verifying a palindrome from both ends, see ../1.two_pointers/
+│    — specifically ../1.two_pointers/1.opposite_ends/.)
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# expand around center
+def expand(s, l, r):
+    while l >= 0 and r < len(s) and s[l] == s[r]:
+        l -= 1; r += 1
+    return r - l - 1            # length of palindrome
+# try center i (odd) and i,i+1 (even) for every i
+
+# manacher (linear time)
+t = "^#" + "#".join(s) + "#$"
+p = [0] * len(t); center = right = 0
+for i in range(1, len(t) - 1):
+    if i < right:
+        p[i] = min(right - i, p[2 * center - i])
+    while t[i + p[i] + 1] == t[i - p[i] - 1]:
+        p[i] += 1
+    if i + p[i] > right:
+        center, right = i, i + p[i]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Two Pointer (lives in ../1.two_pointers/1.opposite_ends/ — cross-reference only):
+☑ Valid Palindrome           -> ../1.two_pointers/ (do not duplicate here)
+☐ Valid Palindrome II        -> ../1.two_pointers/
+
+Expand Around Center  (1.expand_around_center/):
+☑ Longest Palindromic Substring  -> 1.expand_around_center/1.longest_palindromic_substring.py
+☑ Palindromic Substrings (count) -> 1.expand_around_center/2.count_palindromic_substrings.py
+
+Manacher's Algorithm  (2.manacher/):
+☑ Longest Palindromic Substring (O(n)) -> 2.manacher/1.longest_palindrome_manacher.py
+
+Note: Palindromic SUBSEQUENCE (DP) lives in ../10.dynamic_programming/

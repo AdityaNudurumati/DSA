@@ -1,0 +1,50 @@
+==================================================
+STRINGS / 8. STACK ON STRINGS
+==================================================
+
+When to think of this?
+- Balanced / nested structure (brackets, tags)
+- Cancel adjacent items (remove duplicates)
+- Decode nested encodings; evaluate expressions
+
+Sub-patterns
+│
+├── 1.brackets/           match opens/closes; track validity & valid spans
+├── 2.remove_duplicates/  push; pop when an item cancels the top
+└── 3.decode_string/      push outer context (counts / terms); resolve on ']' or operator
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# brackets
+pairs = {')': '(', ']': '[', '}': '{'}
+stack = []
+for c in s:
+    if c in '([{': stack.append(c)
+    elif not stack or stack.pop() != pairs[c]: return False
+return not stack
+
+# remove adjacent duplicates
+stack = []
+for c in s:
+    if stack and stack[-1] == c: stack.pop()
+    else: stack.append(c)
+
+# decode string (k[encoded])
+stack = []     # (prev_string, repeat_count)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+1.brackets/
+☑ Valid Parentheses                      -> 1.brackets/1.valid_parentheses.py
+☑ Minimum Remove to Make Valid Parens    -> 1.brackets/2.minimum_remove_valid.py
+☑ Longest Valid Parentheses              -> 1.brackets/3.longest_valid_parentheses.py
+
+2.remove_duplicates/
+☑ Remove All Adjacent Duplicates In String     -> 2.remove_duplicates/1.remove_adjacent_duplicates.py
+☑ Remove All Adjacent Duplicates In String II  -> 2.remove_duplicates/2.remove_adjacent_duplicates_ii.py
+
+3.decode_string/
+☑ Decode String        -> 3.decode_string/1.decode_string.py
+☑ Basic Calculator II  -> 3.decode_string/2.basic_calculator_ii.py

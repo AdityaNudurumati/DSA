@@ -1,0 +1,30 @@
+==================================================
+ROLLING HASH — 1. DOUBLE HASHING
+==================================================
+
+Keep TWO independent (base, mod) pairs and compare both. A wrong collision now
+needs to happen on both hashes at once — essentially impossible. Use it whenever
+the answer is decided purely by hash equality (no cheap verify available) or you
+store many substring signatures in a set.
+
+When to think of this?
+- "longest duplicate / repeated substring" with binary search on length
+- counting DISTINCT substrings by signature (dedup in a set)
+- any time a single hash collision would silently give a wrong answer
+
+--------------------------------------------------
+Template — two hashes, rolling window
+--------------------------------------------------
+B1, M1 = 131, (1 << 61) - 1
+B2, M2 = 137, 1_000_000_007
+# build h1,h2 over the first window, then roll:
+#   h = (h * B - ord(out) * pow(B,L,M) + ord(in)) % M  for each pair
+# key = (h1, h2)  -> store / look up in a set or dict
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Longest Duplicate Substring   -> 1.longest_duplicate_substring.py
+☑ Distinct Echo Substrings      -> 2.distinct_echo_substrings.py
+☐ Distinct Substrings of a String (count all)
+☐ Longest Repeating Substring (min one repeat)

@@ -1,0 +1,40 @@
+==================================================
+PALINDROME — 2. MANACHER'S ALGORITHM
+==================================================
+
+Find every palindrome's radius in a single linear pass by reusing already
+computed radii through a mirror around the current rightmost palindrome.
+
+When to think of this?
+- "longest palindromic substring" with an O(n) requirement
+- Need all palindrome centers/radii cheaply (e.g. counting palindromes fast)
+- Expand-around-center O(n²) is too slow for the constraints
+
+Key idea:
+- Transform s -> "^#a#b#c#$" so every palindrome is odd-length and sentinels
+  (^, $) stop expansion safely at the boundaries.
+- Track (center, right) of the rightmost palindrome. For position i inside it,
+  seed p[i] = min(right - i, p[mirror]) where mirror = 2*center - i, then only
+  expand beyond `right`. Each character is added to `right` at most once -> O(n).
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+t = "^#" + "#".join(s) + "#$"
+p = [0] * len(t)
+center = right = 0
+for i in range(1, len(t) - 1):
+    if i < right:
+        p[i] = min(right - i, p[2 * center - i])
+    while t[i + p[i] + 1] == t[i - p[i] - 1]:
+        p[i] += 1
+    if i + p[i] > right:
+        center, right = i, i + p[i]
+# answer: max radius -> map back with start = (center_index - max_len) // 2
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Longest Palindromic Substring (O(n)) -> 1.longest_palindrome_manacher.py
+☐ Count Palindromic Substrings in O(n) (sum of (p[i]+1)//2 over centers)
+☐ Shortest Palindrome (Manacher / KMP variant)

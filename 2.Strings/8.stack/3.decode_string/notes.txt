@@ -1,0 +1,35 @@
+==================================================
+STACK ON STRINGS — 3. DECODE STRING / EXPRESSIONS
+==================================================
+
+Push the outer context (partial string / running terms) and resolve it when a
+closing token or operator is reached.
+
+When to think of this?
+- Nested encodings: k[encoded]
+- Evaluate expressions without recursion
+- Precedence handling (defer + / -, fold * and / immediately)
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+# decode string k[encoded]
+stack = []          # (prev_string, repeat_count)
+cur, num = '', 0
+for c in s:
+    if c.isdigit():   num = num * 10 + int(c)
+    elif c == '[':    stack.append((cur, num)); cur, num = '', 0
+    elif c == ']':    prev, k = stack.pop(); cur = prev + cur * k
+    else:             cur += c
+
+# basic calculator (+ - * /)
+stack, num, op = [], 0, '+'
+# on each operator/end: +num / -num push, * and / fold with stack.pop()
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Decode String          -> 1.decode_string.py
+☑ Basic Calculator II    -> 2.basic_calculator_ii.py
+☐ Basic Calculator (with parentheses)
+☐ Number of Atoms
