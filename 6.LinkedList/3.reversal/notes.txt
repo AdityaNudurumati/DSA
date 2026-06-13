@@ -1,0 +1,32 @@
+==================================================
+LINKED LIST / 3. REVERSAL PATTERN
+==================================================
+
+The most-asked linked-list pattern. Re-point next pointers as you walk; keep prev.
+
+Sub-patterns
+│
+├── Full Reverse            reverse the whole list
+├── Reverse Between          reverse positions [left, right]
+├── Reverse K Group           reverse every consecutive k nodes
+└── Reverse Alternate K       reverse k, skip k, repeat
+
+--------------------------------------------------
+Template — full reverse
+--------------------------------------------------
+prev = None
+curr = head
+while curr:
+    nxt = curr.next
+    curr.next = prev
+    prev = curr
+    curr = nxt
+return prev
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Reverse Linked List -> 1.reverse_linked_list.py
+☑ Reverse Linked List II (between) -> 2.reverse_linked_list_ii.py
+☑ Reverse Nodes in k-Group -> 3.reverse_k_group.py
+☑ Reverse Alternate K Nodes -> 4.reverse_alternate_k.py

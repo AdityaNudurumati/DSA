@@ -1,0 +1,30 @@
+==================================================
+LINKED LIST / 9. CIRCULAR LINKED LISTS
+==================================================
+
+When to think of this?
+- the tail points back into the list (full circle or a cycle)
+- insertion into a sorted circular list, circular traversal
+
+Sub-patterns
+│
+├── Cycle Problems       detect / locate cycles (fast-slow; see pattern 2)
+├── Circular Insert       insert into a sorted circular list (wrap-around case)
+└── Circular Traversal     iterate exactly once around the ring
+
+--------------------------------------------------
+Template — stop after one loop
+--------------------------------------------------
+curr = head
+while curr:
+    # process curr
+    curr = curr.next
+    if curr is head: break        # completed the circle
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Insert into a Sorted Circular Linked List -> 1.insert_into_sorted_circular_list.py
+☑ Josephus Problem -> 2.josephus_problem.py
+☐ Circular Linked List Traversal / Split
+→ Linked List Cycle II   see ../2.pointer_techniques/

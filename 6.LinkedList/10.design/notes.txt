@@ -1,0 +1,32 @@
+==================================================
+LINKED LIST / 10. DESIGN PROBLEMS
+==================================================
+
+When to think of this?
+- O(1) updates that need both fast lookup AND ordering
+- classic combo: HashMap + Doubly Linked List
+
+Sub-patterns
+│
+├── LRU Cache       hashmap + DLL; evict least-recently-used
+├── LFU Cache        hashmap + frequency buckets of DLLs
+└── Browser History   doubly linked list (or array + pointer)
+
+--------------------------------------------------
+Template — node of a doubly linked list
+--------------------------------------------------
+class Node:
+    def __init__(self, key=0, val=0):
+        self.key, self.val = key, val
+        self.prev = self.next = None
+# keep head/tail sentinels; move-to-front on access, drop from tail on evict
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ LRU Cache (from scratch: HashMap + Doubly Linked List) -> 1.lru_cache/1.lru_cache.py
+☑ LFU Cache -> 2.lfu_cache/1.lfu_cache.py
+☑ Design Browser History -> 3.browser_history/1.browser_history.py
+
+Note: an OrderedDict-based LRU lives in ../../3.Hashing/8.ordered_hashing/1.lru_cache/.
+The version here builds the doubly-linked-list by hand (the interview-expected answer).

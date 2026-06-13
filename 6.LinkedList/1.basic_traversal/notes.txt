@@ -1,0 +1,28 @@
+==================================================
+LINKED LIST / 1. BASIC TRAVERSAL
+==================================================
+
+When to think of this?
+- walk the list once; count, search, print, or transform node-by-node
+- the foundation for every other pattern
+
+Sub-patterns
+│
+├── Iterative Traversal   while curr: curr = curr.next
+├── Recursive Traversal    process(head) then recurse on head.next
+└── Length / Count          count nodes / values
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+curr = head
+while curr:
+    # process curr.val
+    curr = curr.next
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Count Nodes / Get Length -> 1.iterative/1.count_nodes.py
+☑ Print Linked List (forward and reversed) -> 2.recursive/1.print_reverse_recursive.py
+☑ Search Value in Linked List -> 1.iterative/2.search_value.py

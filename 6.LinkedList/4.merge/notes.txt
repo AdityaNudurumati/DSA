@@ -1,0 +1,30 @@
+==================================================
+LINKED LIST / 4. MERGE PATTERN
+==================================================
+
+When to think of this?
+- combine sorted lists into one sorted list
+- the merge step of merge sort
+
+Sub-patterns
+│
+├── Merge Two Sorted Lists   two pointers + dummy node
+├── Merge K Lists             min-heap of heads, or pairwise merge
+└── Sorted Merge Variations    in-place, with extra conditions
+
+--------------------------------------------------
+Template — merge two sorted
+--------------------------------------------------
+dummy = tail = ListNode()
+while a and b:
+    if a.val <= b.val: tail.next, a = a, a.next
+    else:              tail.next, b = b, b.next
+    tail = tail.next
+tail.next = a or b
+return dummy.next
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Merge Two Sorted Lists -> 1.merge_two_sorted_lists.py
+☑ Merge k Sorted Lists   (heap; array version in ../../1.Arrays/11.advanced/1.heap/) -> 2.merge_k_sorted_lists.py

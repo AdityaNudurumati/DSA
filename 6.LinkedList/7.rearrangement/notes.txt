@@ -1,0 +1,29 @@
+==================================================
+LINKED LIST / 7. LIST REARRANGEMENT
+==================================================
+
+When to think of this?
+- reorder nodes by position parity, halves, or rotation
+- often combines find-middle + reverse + merge
+
+Sub-patterns
+│
+├── Odd Even List    group odd-indexed then even-indexed nodes
+├── Reorder List      L0->Ln->L1->Ln-1->... (middle + reverse + merge)
+├── Rotate List        rotate right by k (make circular, then cut)
+└── Partition List      nodes < x before nodes >= x, order preserved
+
+--------------------------------------------------
+Template — reorder list
+--------------------------------------------------
+# 1) find middle (fast-slow)
+# 2) reverse the second half
+# 3) merge the two halves alternately
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Odd Even Linked List -> 1.odd_even_linked_list.py
+☑ Reorder List -> 2.reorder_list.py
+☑ Rotate List -> 3.rotate_list.py
+☑ Partition List -> 4.partition_list.py

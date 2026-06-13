@@ -1,0 +1,66 @@
+==================================================
+LINKED LIST — ROADMAP
+==================================================
+
+LINKED LIST
+│
+├── 1. Basic Traversal          (iterative / recursive / counting)
+├── 2. Pointer Techniques       (fast-slow, cycle detection, middle, nth-from-end)
+├── 3. Reversal Pattern         (full, between, K-group, alternate-K)
+├── 4. Merge Pattern            (two sorted, K lists, merge variations)
+├── 5. Dummy Node Pattern       (remove / insert / partition / rearrange)
+├── 6. Intersection Pattern     (Y-shaped lists, common node, length alignment)
+├── 7. List Rearrangement       (odd-even, reorder, rotate, partition)
+├── 8. Sorting Linked Lists     (merge sort, insertion sort, sort list)
+├── 9. Circular Linked Lists    (cycle problems, circular insert/traverse)
+├── 10. Design Problems         (LRU Cache, LFU Cache, Browser History)
+└── 11. Advanced Pointer        (copy random pointer, flatten, multilevel)
+
+--------------------------------------------------
+Suggested interview order
+--------------------------------------------------
+Basic Traversal → Fast-Slow → Reverse → Reverse Between → Merge Two →
+Remove Nth → Dummy Node → Intersection → Reorder List → Reverse K Group →
+Sort List → LRU Cache → Copy Random Pointer
+
+Must-solve: Reverse Linked List, Middle of Linked List, Merge Two Sorted Lists,
+Linked List Cycle (easy); Remove Nth From End, Cycle II, Odd Even, Reorder List,
+Partition List (medium); Reverse Nodes in K-Group, Merge K Sorted Lists, LRU Cache,
+Copy List with Random Pointer (hard).
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+☐/☑ checklist). When built out, a pattern is split into sub-folders, each with one
+runnable .py per problem. Every file defines its own minimal ListNode plus helpers
+to build a list from a Python list and to convert back, so each stays self-contained.
+
+--------------------------------------------------
+Overlap with other sections (cross-reference, don't duplicate)
+--------------------------------------------------
+LRU Cache        -> ../3.Hashing/8.ordered_hashing/1.lru_cache/1.lru_cache.py
+Happy Number     -> ../3.Hashing/2.lookup/3.membership_testing/1.happy_number.py
+Merge K Sorted (heap idea) -> ../1.Arrays/11.advanced/1.heap/3.merge_k_sorted_arrays.py
+(The linked-list versions are still implemented here for a self-contained section.)
+
+--------------------------------------------------
+Core idea & boilerplate
+--------------------------------------------------
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def build(values):           # list -> linked list
+    dummy = cur = ListNode()
+    for v in values: cur.next = ListNode(v); cur = cur.next
+    return dummy.next
+
+def to_list(head):           # linked list -> list
+    out = []
+    while head: out.append(head.val); head = head.next
+    return out
+
+Two ideas unlock most problems: the DUMMY NODE (uniform head handling) and the
+FAST-SLOW pointer (middle, cycle, nth-from-end).

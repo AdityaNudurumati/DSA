@@ -1,0 +1,37 @@
+==================================================
+LINKED LIST / 5. DUMMY NODE PATTERN
+==================================================
+
+A dummy head node removes special-casing of the real head (deletions/insertions at
+the front become uniform). Many candidates miss this; it simplifies a lot of code.
+
+Sub-patterns
+│
+├── Remove Nodes      delete by value / position without head edge cases
+├── Insert Nodes       splice new nodes anywhere
+├── Partition Lists     build two sublists behind dummies, then join
+└── Rearrangement       pair swaps, grouping
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+dummy = ListNode(0, head)
+prev = dummy
+while prev.next:
+    if should_remove(prev.next):
+        prev.next = prev.next.next   # unlink
+    else:
+        prev = prev.next
+return dummy.next
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Remove:
+☑ Remove Linked List Elements -> 1.remove_linked_list_elements.py
+
+Rearrange:
+☑ Swap Nodes in Pairs -> 2.swap_nodes_in_pairs.py
+
+Partition:
+☐ Partition List   (also in ../7.rearrangement/)

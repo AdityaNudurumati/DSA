@@ -1,0 +1,27 @@
+==================================================
+LINKED LIST / 6. INTERSECTION PATTERN
+==================================================
+
+When to think of this?
+- two lists share a common tail (Y-shape); find the join node
+- length-difference alignment
+
+Sub-patterns
+│
+├── Y-Shaped Lists       two heads converge to one node
+├── Common Node Detection  the first shared node by reference
+└── Length Alignment       advance the longer list by the length diff first
+
+--------------------------------------------------
+Template — two-pointer switch trick
+--------------------------------------------------
+a, b = headA, headB
+while a is not b:
+    a = a.next if a else headB
+    b = b.next if b else headA
+return a        # the intersection node, or None
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Intersection of Two Linked Lists -> 1.intersection_of_two_linked_lists.py

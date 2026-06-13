@@ -1,0 +1,30 @@
+==================================================
+LINKED LIST / 8. SORTING LINKED LISTS
+==================================================
+
+When to think of this?
+- sort a list in O(n log n) without random access
+- merge sort fits linked lists perfectly (split by middle, merge sorted halves)
+
+Sub-patterns
+│
+├── Merge Sort       split at middle, recurse, merge  -> O(n log n), O(log n) stack
+├── Insertion Sort    build a sorted list node by node -> O(n^2)
+└── Sort List          the canonical LC148
+
+--------------------------------------------------
+Template — merge sort
+--------------------------------------------------
+def sort(head):
+    if not head or not head.next: return head
+    # split with slow/fast
+    slow, fast = head, head.next
+    while fast and fast.next: slow, fast = slow.next, fast.next.next
+    mid, slow.next = slow.next, None
+    return merge(sort(head), sort(mid))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Sort List (merge sort) -> 1.sort_list.py
+☑ Insertion Sort List -> 2.insertion_sort_list.py

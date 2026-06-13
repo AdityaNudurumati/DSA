@@ -1,0 +1,28 @@
+==================================================
+LINKED LIST / 11. ADVANCED POINTER MANIPULATION
+==================================================
+
+When to think of this?
+- nodes carry EXTRA pointers (random, child, down) beyond next
+- deep-copy or flatten complex node structures
+
+Sub-patterns
+│
+├── Copy Random Pointer    interleave clones, or a hashmap old->new
+├── Flatten List            flatten a multilevel doubly linked list
+├── Multilevel List          DFS/iterative flattening with child pointers
+└── Complex Node Structures   general extra-pointer rewiring
+
+--------------------------------------------------
+Template — copy with random pointer (O(1) space, interleave)
+--------------------------------------------------
+# 1) clone each node right after the original: A -> A' -> B -> B' ...
+# 2) wire clones' random: A'.random = A.random.next
+# 3) unweave the two lists
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Copy List with Random Pointer -> 1.copy_random_pointer.py
+☑ Flatten a Multilevel Doubly Linked List -> 2.flatten_multilevel_dll.py
+☑ Flatten a Linked List (nested/down pointers) -> 3.flatten_linked_list.py
