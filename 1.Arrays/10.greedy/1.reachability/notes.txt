@@ -1,0 +1,37 @@
+==================================================
+GREEDY — 1. REACHABILITY / JUMPS
+==================================================
+
+Track the farthest index reachable so far. For "can you reach", just check you never
+fall behind it; for "minimum jumps", count level boundaries (implicit BFS).
+
+When to think of this?
+- "can you reach the end" / "minimum jumps to the end"
+- coverage problems where each position extends your reach
+
+--------------------------------------------------
+Template — can reach
+--------------------------------------------------
+farthest = 0
+for i, jump in enumerate(nums):
+    if i > farthest: return False
+    farthest = max(farthest, i + jump)
+return True
+
+--------------------------------------------------
+Template — min jumps (level BFS)
+--------------------------------------------------
+jumps = cur_end = farthest = 0
+for i in range(len(nums) - 1):
+    farthest = max(farthest, i + nums[i])
+    if i == cur_end:
+        jumps += 1
+        cur_end = farthest
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Jump Game      -> 1.jump_game.py
+☑ Jump Game II   -> 2.jump_game_ii.py
+☐ Jump Game III
+☐ Video Stitching

@@ -1,0 +1,35 @@
+==================================================
+HASHING — 3. PREFIX HASHING  (incl. Remainder Hashing)
+==================================================
+
+Combine a running prefix (sum / xor / remainder) with a hashmap that counts how
+often each prefix value has appeared. Lets you count subarrays by a property in
+one pass — the bridge between Hashing and Prefix-Based.
+
+When to think of this?
+- "count subarrays whose sum / xor satisfies X" on UNSORTED data
+- divisibility: hash the prefix sum's remainder mod k
+
+--------------------------------------------------
+Template — subarrays divisible by k
+--------------------------------------------------
+count = {0: 1}            # remainder -> frequency
+running = result = 0
+for x in nums:
+    running += x
+    r = running % k       # Python keeps r in [0, k)
+    result += count.get(r, 0)
+    count[r] = count.get(r, 0) + 1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Subarray Sums Divisible by K   -> 1.subarray_sums_divisible_by_k.py
+☐ Continuous Subarray Sum (multiple of k)
+☐ Make Sum Divisible by P
+
+--------------------------------------------------
+Related (live elsewhere)
+--------------------------------------------------
+Subarray Sum = K, Subarray XOR = K  -> ../../3.prefix_based/
+(same prefix + hashmap idea, exact-value keys instead of remainders)

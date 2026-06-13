@@ -1,0 +1,36 @@
+==================================================
+SLIDING WINDOW — 3. MONOTONIC WINDOW  (Deque)
+==================================================
+
+A deque holds indices in monotonic order (decreasing for max, increasing for min).
+The front is always the window's extreme. Each index is pushed and popped once → O(n).
+
+When to think of this?
+- "maximum / minimum of every window of size k"
+- a sliding-window max/min hidden inside a DP transition
+
+--------------------------------------------------
+Template — window maximum
+--------------------------------------------------
+from collections import deque
+dq = deque()                       # indices, values decreasing
+for i, x in enumerate(nums):
+    if dq and dq[0] <= i - k:      # front slid out of window
+        dq.popleft()
+    while dq and nums[dq[-1]] < x: # smaller values are useless
+        dq.pop()
+    dq.append(i)
+    if i >= k - 1:
+        answer.append(nums[dq[0]]) # front = max
+
+Rule of thumb:
+- window MAX → keep deque DECREASING (pop while back < current)
+- window MIN → keep deque INCREASING (pop while back > current)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Sliding Window Maximum       -> 1.sliding_window_maximum.py
+☑ Constrained Subsequence Sum  -> 2.constrained_subsequence_sum.py
+☐ Shortest Subarray with Sum at Least K
+☐ Jump Game VI

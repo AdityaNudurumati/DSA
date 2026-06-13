@@ -1,0 +1,28 @@
+==================================================
+MATRIX — 2. ROTATION
+==================================================
+
+Rotate a square matrix in-place by composing simple in-place steps. The trick is
+that rotation = transpose + a reverse.
+
+When to think of this?
+- "rotate the image 90° in-place"
+- reflect / flip a square grid without extra space
+
+--------------------------------------------------
+Cheat sheet (in-place, n x n)
+--------------------------------------------------
+clockwise 90°          : transpose, then reverse each ROW
+counter-clockwise 90°  : transpose, then reverse each COLUMN
+180°                   : reverse every row, then reverse the row order
+
+transpose:
+for i in range(n):
+    for j in range(i+1, n):
+        m[i][j], m[j][i] = m[j][i], m[i][j]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Rotate Image (90° clockwise)   -> 1.rotate_image.py
+☐ Rotate by 180 / counter-clockwise (variants)

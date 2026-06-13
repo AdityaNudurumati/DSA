@@ -1,0 +1,30 @@
+==================================================
+INTERVALS — 2. INSERT
+==================================================
+
+The list is already sorted and non-overlapping, so inserting a new interval is a
+single linear pass in three phases: keep the ones before, absorb the overlapping
+ones into the new interval, keep the ones after.
+
+When to think of this?
+- "insert a new interval into a sorted, non-overlapping list and merge"
+- streaming updates to a maintained set of ranges
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+result, i, n = [], 0, len(intervals)
+while i < n and intervals[i][1] < new[0]:      # before
+    result.append(intervals[i]); i += 1
+while i < n and intervals[i][0] <= new[1]:     # overlapping -> absorb
+    new[0] = min(new[0], intervals[i][0])
+    new[1] = max(new[1], intervals[i][1]); i += 1
+result.append(new)
+while i < n:                                   # after
+    result.append(intervals[i]); i += 1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Insert Interval    -> 1.insert_interval.py
+☐ Range Module (advanced)

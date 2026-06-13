@@ -1,0 +1,32 @@
+==================================================
+ADVANCED — 5. MATH / NUMBER THEORY
+==================================================
+
+A grab-bag where a numeric insight (a formula, a sieve, a reversal identity, cycle
+detection) replaces brute force.
+
+When to think of this?
+- digit manipulation, primality, divisibility
+- in-place rearrangement via index arithmetic
+- "does this sequence terminate / cycle"
+
+--------------------------------------------------
+Tricks
+--------------------------------------------------
+- Rotate by k:   reverse all, reverse first k, reverse rest.
+- Sieve:         mark multiples from i*i; outer loop to sqrt(n).
+- Cycle detect:  a set, or Floyd's tortoise & hare for O(1) space.
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Rotate Array    -> 1.rotate_array.py
+☑ Count Primes    -> 2.count_primes.py
+☑ Happy Number    -> 3.happy_number.py
+☐ Pow(x, n) (fast exponentiation)
+☐ Excel Sheet Column Number
+
+--------------------------------------------------
+Related (live elsewhere)
+--------------------------------------------------
+Product of Array Except Self  -> ../../3.prefix_based/3.prefix_product/1.product_except_self.py

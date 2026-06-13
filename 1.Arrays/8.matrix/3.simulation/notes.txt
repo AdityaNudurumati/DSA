@@ -1,0 +1,32 @@
+==================================================
+MATRIX — 3. SIMULATION
+==================================================
+
+No clever algorithm — just step through the rules carefully. The recurring trick is
+doing it IN-PLACE: encode extra state into existing cells (markers / bit flags) so
+you don't allocate a second matrix.
+
+When to think of this?
+- "apply these state-transition rules to the grid"
+- in-place updates where naive copying would cost O(m*n) extra space
+
+--------------------------------------------------
+Tricks
+--------------------------------------------------
+- Markers: reuse row 0 / col 0 to flag which rows/cols to zero (Set Matrix Zeroes).
+- Bit-encoding: store next state in a higher bit so the current pass still reads the
+  original via "& 1"; shift at the end (Game of Life).
+- Directions: dirs = [(-1,0),(1,0),(0,-1),(0,1)]  (+ diagonals for 8-neighbor).
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Set Matrix Zeroes   -> 1.set_matrix_zeroes.py
+☑ Game of Life        -> 2.game_of_life.py
+☐ Spiral Matrix II
+☐ Rotate Array / Image variants
+
+--------------------------------------------------
+Related (live elsewhere)
+--------------------------------------------------
+2D Prefix Sum (Range Sum Query 2D)  -> ../../3.prefix_based/5.two_d_prefix_sum/

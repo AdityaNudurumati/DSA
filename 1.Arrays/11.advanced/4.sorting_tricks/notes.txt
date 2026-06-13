@@ -1,0 +1,35 @@
+==================================================
+ADVANCED — 4. SORTING-BASED TRICKS
+==================================================
+
+Sometimes the whole problem is "sort by the right key / comparator", then the answer
+falls out in one pass. The insight is choosing the ordering.
+
+When to think of this?
+- a custom pairwise comparison decides order (Largest Number)
+- sorting by a derived key (end time, frequency, distance) simplifies a greedy/scan
+
+--------------------------------------------------
+Template — custom comparator
+--------------------------------------------------
+from functools import cmp_to_key
+def compare(a, b):
+    if better(a, b): return -1
+    if better(b, a): return 1
+    return 0
+arr.sort(key=cmp_to_key(compare))
+
+# or a derived key
+arr.sort(key=lambda x: (x.end, -x.weight))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Largest Number     -> 1.largest_number.py
+☐ Sort Colors (counting; or Dutch flag in ../../1.two_pointer_problems/)
+☐ Wiggle Sort
+
+--------------------------------------------------
+Related (live elsewhere — sorting is the core idea there too)
+--------------------------------------------------
+Merge Intervals, Meeting Rooms, Minimum Arrows  -> ../../7.intervals/

@@ -1,0 +1,29 @@
+==================================================
+INTERVALS — 1. MERGE
+==================================================
+
+Sort by start, then sweep once: an interval overlaps the previous kept one iff its
+start <= that one's end. Extend or append.
+
+When to think of this?
+- "merge overlapping intervals" / "union of ranges"
+- "can one person attend all meetings" (just detect any overlap)
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+intervals.sort(key=lambda x: x[0])
+merged = []
+for s, e in intervals:
+    if merged and s <= merged[-1][1]:
+        merged[-1][1] = max(merged[-1][1], e)
+    else:
+        merged.append([s, e])
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Merge Intervals    -> 1.merge_intervals.py
+☑ Meeting Rooms       -> 2.meeting_rooms.py
+☐ Interval List Intersections
+☐ Employee Free Time

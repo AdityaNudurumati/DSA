@@ -1,0 +1,38 @@
+==================================================
+PREFIX BASED — 1. PREFIX SUM
+==================================================
+
+prefix[i] = sum of the first i elements. Then sum(l..r) = prefix[r+1] - prefix[l]
+in O(1). Pair it with a hashmap to count/locate subarrays by their sum.
+
+When to think of this?
+- Many range-sum queries on a static array
+- "count / longest subarray with sum = K" (works with negatives — sliding window does not)
+- Balance problems via a 0 -> -1 remapping
+
+--------------------------------------------------
+Template — build
+--------------------------------------------------
+prefix = [0] * (n + 1)
+for i in range(n):
+    prefix[i + 1] = prefix[i] + nums[i]
+# sum(l..r) = prefix[r + 1] - prefix[l]
+
+--------------------------------------------------
+Template — count subarrays with sum K
+--------------------------------------------------
+seen = {0: 1}
+running = count = 0
+for x in nums:
+    running += x
+    count += seen.get(running - k, 0)
+    seen[running] = seen.get(running, 0) + 1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Range Sum Query - Immutable   -> 1.range_sum_query_immutable.py
+☑ Subarray Sum Equals K         -> 2.subarray_sum_equals_k.py
+☑ Contiguous Array (0s and 1s)  -> 3.contiguous_array.py
+☐ Subarray Sums Divisible by K
+☐ Maximum Size Subarray Sum Equals K

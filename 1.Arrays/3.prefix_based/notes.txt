@@ -7,13 +7,13 @@ When to think of this?
 - "subarray sum equals K" / "count subarrays with property"
 - Range updates (difference array)
 
-Sub-patterns
+Sub-patterns   (each maps to a sub-folder; see its notes.txt for the checklist)
 │
-├── Prefix Sum        prefix[i] = nums[0..i-1] sum
-├── Prefix XOR        same idea with ^ instead of +
-├── Prefix Product    products; watch zeros
-├── Difference Array  O(1) range updates, rebuild at end
-└── 2D Prefix Sum     submatrix sums in O(1)
+├── 1.prefix_sum/        prefix[i] = nums[0..i-1] sum
+├── 2.prefix_xor/        same idea with ^ instead of +
+├── 3.prefix_product/    products; watch zeros
+├── 4.difference_array/  O(1) range updates, rebuild at end
+└── 5.two_d_prefix_sum/  submatrix sums in O(1)
 
 --------------------------------------------------
 Template — Prefix Sum
@@ -35,12 +35,14 @@ for x in nums:
     seen[running] = seen.get(running, 0) + 1
 
 --------------------------------------------------
-Problems  (☐ = todo, ☑ = done)
+Problems
 --------------------------------------------------
-☐ Range Sum Query - Immutable
-☐ Subarray Sum Equals K
-☐ Contiguous Array (0s and 1s)
-☐ Subarray XOR Equals K
-☐ Product of Array Except Self
-☐ Range Addition (Difference Array)
-☐ Range Sum Query 2D - Immutable
+Solved problems live in the sub-folders, each with its own checklist:
+
+  1.prefix_sum/        Range Sum Query, Subarray Sum = K, Contiguous Array
+  2.prefix_xor/        Subarray XOR = K
+  3.prefix_product/    Product of Array Except Self
+  4.difference_array/  Range Addition
+  5.two_d_prefix_sum/  Range Sum Query 2D
+
+See each sub-folder's notes.txt for its full ☐/☑ checklist.

@@ -1,0 +1,26 @@
+==================================================
+SUBARRAY TECHNIQUES — 1. KADANE
+==================================================
+
+DP over "best subarray ending at index i". At each step, either extend the running
+sum or restart from the current element. The global best is the answer.
+
+When to think of this?
+- "maximum sum contiguous subarray"
+- any running-state problem where a prefix can be discarded once it turns harmful
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+best = cur = nums[0]
+for x in nums[1:]:
+    cur = max(x, cur + x)   # extend or restart
+    best = max(best, cur)
+return best
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Maximum Subarray            -> 1.maximum_subarray.py
+☐ Maximum Absolute Sum of Any Subarray
+☐ Best Time to Buy and Sell Stock (Kadane on diffs)

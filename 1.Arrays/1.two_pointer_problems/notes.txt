@@ -37,9 +37,8 @@ Two Pointers
 │   ├── Sort Array By Parity
 │   └── Merge Sorted Array
 │
-├── Sliding Window
-│   ├── Fixed Window
-│   └── Variable Window
+│   (Sliding Window is a same-direction variant — promoted to its
+│    own pattern. See ../2.sliding_window/)
 │
 └── Partition / Dutch Flag
     ├── Sort Colors
@@ -107,7 +106,9 @@ for fast in range(len(nums)):
 
 3. Sliding Window (Special Same Direction)
 
-Technically a Two Pointer pattern.
+Technically a Two Pointer pattern, but promoted to its own pattern in this
+roadmap. Full notes, templates, and problems live in ../2.sliding_window/.
+The summary below is kept just to show the relationship.
 
 Both pointers move forward, maintaining a window.
 

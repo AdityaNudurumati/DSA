@@ -1,0 +1,35 @@
+==================================================
+HASHING — 1. FREQUENCY COUNTING
+==================================================
+
+Use a dict / Counter to count occurrences, look up complements, or group by a
+canonical signature. The workhorse pattern for unsorted-array problems.
+
+When to think of this?
+- "how many times does X appear", top-K, most/least common
+- complement lookup ("does target - x exist?")
+- group items by a key (anagram signature, etc.)
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+from collections import Counter, defaultdict
+freq = Counter(nums)                 # value -> count
+
+seen = {}                            # complement lookup
+for i, x in enumerate(nums):
+    if target - x in seen: ...
+    seen[x] = i
+
+groups = defaultdict(list)           # group by signature
+groups[key].append(item)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Two Sum (unsorted)        -> 1.two_sum.py
+☑ Group Anagrams            -> 2.group_anagrams.py
+☑ Top K Frequent Elements   -> 3.top_k_frequent.py
+☐ Valid Anagram
+☐ Sort Characters By Frequency
+☐ First Unique Character

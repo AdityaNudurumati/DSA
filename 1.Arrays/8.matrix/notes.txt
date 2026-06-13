@@ -6,12 +6,14 @@ When to think of this?
 - 2D grid input
 - Traversal in a specific order, in-place rotation, simulation
 
-Sub-patterns
+Sub-patterns   (each maps to a sub-folder; see its notes.txt for the checklist)
 │
-├── Traversal       spiral, diagonal, boundary
-├── Rotation        90° in-place (transpose + reverse)
-├── Simulation      step-by-step state change
-└── 2D Prefix Sum    submatrix sums (see prefix_based)
+├── 1.traversal/   spiral, diagonal, sorted-matrix search
+├── 2.rotation/    90° in-place (transpose + reverse)
+└── 3.simulation/  step-by-step in-place state change
+
+Related (NOT here):
+  2D Prefix Sum (submatrix sums) -> ../3.prefix_based/5.two_d_prefix_sum/
 
 --------------------------------------------------
 Template — Rotate 90° clockwise (in-place)
@@ -29,11 +31,12 @@ Template — Directions (4-way)
 dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
 --------------------------------------------------
-Problems  (☐ = todo, ☑ = done)
+Problems
 --------------------------------------------------
-☐ Spiral Matrix
-☐ Rotate Image
-☐ Set Matrix Zeroes
-☐ Game of Life
-☐ Search a 2D Matrix
-☐ Diagonal Traverse
+Solved problems live in the sub-folders, each with its own checklist:
+
+  1.traversal/   Spiral Matrix, Diagonal Traverse, Search a 2D Matrix
+  2.rotation/    Rotate Image
+  3.simulation/  Set Matrix Zeroes, Game of Life
+
+See each sub-folder's notes.txt for its full ☐/☑ checklist.

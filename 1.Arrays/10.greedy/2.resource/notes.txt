@@ -1,0 +1,30 @@
+==================================================
+GREEDY — 2. RESOURCE / TANK
+==================================================
+
+Carry a running balance of a resource. When it dips below zero, the current segment
+can't work — reset the start to just after the failure point. A global feasibility
+check (total >= 0) guarantees a valid answer exists.
+
+When to think of this?
+- circular "where can I start to survive the whole loop"
+- running fuel / budget / battery that must stay non-negative
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+if sum(gain) < 0: return -1          # impossible overall
+tank = start = 0
+for i in range(n):
+    tank += gain[i]                  # gain[i] = gas[i] - cost[i]
+    if tank < 0:
+        start = i + 1
+        tank = 0
+return start
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Gas Station    -> 1.gas_station.py
+☐ Minimum Start Value to Stay Positive
+☐ Maximum Subarray (Kadane is a resource-reset cousin -> ../../4.subarray_techniques/)

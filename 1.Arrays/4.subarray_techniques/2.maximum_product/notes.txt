@@ -1,0 +1,28 @@
+==================================================
+SUBARRAY TECHNIQUES — 2. MAXIMUM PRODUCT
+==================================================
+
+A Kadane variant. Products differ from sums: a negative value flips a large
+negative into a large positive, so you must track BOTH the running max and min.
+
+When to think of this?
+- "maximum product contiguous subarray"
+- running state where sign/order flips the optimum (negatives, reciprocals)
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+best = cur_max = cur_min = nums[0]
+for x in nums[1:]:
+    if x < 0:
+        cur_max, cur_min = cur_min, cur_max   # negative swaps roles
+    cur_max = max(x, cur_max * x)
+    cur_min = min(x, cur_min * x)
+    best = max(best, cur_max)
+return best
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Maximum Product Subarray   -> 1.maximum_product_subarray.py
+☐ Subarray Product Less Than K (sliding window)

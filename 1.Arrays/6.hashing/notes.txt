@@ -7,12 +7,12 @@ When to think of this?
 - Counting frequencies / grouping
 - Pair/complement problems on UNSORTED data
 
-Sub-patterns
+Sub-patterns   (each maps to a sub-folder; see its notes.txt for the checklist)
 │
-├── Frequency Counting   dict / Counter
-├── Prefix Hashing       prefix sum stored in a map (see prefix_based)
-├── Remainder Hashing    group by value % k
-└── Set-Based Problems    membership / dedup with set
+├── 1.frequency_counting/  dict / Counter, complement lookup, group by signature
+├── 2.set_based/           membership / dedup with set
+└── 3.prefix_hashing/      prefix sum/xor/remainder stored in a map
+                           (remainder hashing lives here)
 
 --------------------------------------------------
 Template — Frequency
@@ -30,12 +30,13 @@ for i, x in enumerate(nums):
     seen[x] = i
 
 --------------------------------------------------
-Problems  (☐ = todo, ☑ = done)
+Problems
 --------------------------------------------------
-☐ Two Sum (unsorted)
-☐ Contains Duplicate
-☐ Group Anagrams
-☐ Top K Frequent Elements
-☐ Longest Consecutive Sequence
-☐ Subarray Sums Divisible by K
-☐ Intersection of Two Arrays
+Solved problems live in the sub-folders, each with its own checklist:
+
+  1.frequency_counting/  Two Sum, Group Anagrams, Top K Frequent
+  2.set_based/           Contains Duplicate, Longest Consecutive Sequence,
+                         Intersection of Two Arrays
+  3.prefix_hashing/      Subarray Sums Divisible by K
+
+See each sub-folder's notes.txt for its full ☐/☑ checklist.

@@ -1,0 +1,43 @@
+==================================================
+INTERVALS — 3. LINE SWEEP / GREEDY SCHEDULING
+==================================================
+
+Two closely related ideas:
+- Line sweep: walk the time axis, +1 at each start and -1 at each end, track the
+  peak concurrency (e.g. minimum rooms).
+- Greedy scheduling: sort by END and keep the earliest finisher; it leaves the most
+  room for the rest (non-overlapping count, minimum arrows).
+
+When to think of this?
+- "minimum rooms / max concurrent intervals"  -> sweep
+- "min removals to make non-overlapping", "min points/arrows to cover" -> sort by end
+
+--------------------------------------------------
+Template — sweep (min rooms)
+--------------------------------------------------
+starts = sorted(s for s, e in intervals)
+ends   = sorted(e for s, e in intervals)
+rooms = peak = s = e = 0
+while s < len(starts):
+    if starts[s] < ends[e]:
+        rooms += 1; s += 1; peak = max(peak, rooms)
+    else:
+        rooms -= 1; e += 1
+
+--------------------------------------------------
+Template — greedy (sort by end)
+--------------------------------------------------
+intervals.sort(key=lambda x: x[1])
+prev_end = -inf
+for s, e in intervals:
+    if s >= prev_end:    # non-overlapping -> keep, advance boundary
+        prev_end = e
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Meeting Rooms II            -> 1.meeting_rooms_ii.py
+☑ Non-overlapping Intervals   -> 2.non_overlapping_intervals.py
+☑ Minimum Arrows to Burst Balloons -> 3.minimum_arrows.py
+☐ Car Pooling (sweep)
+☐ My Calendar I / II

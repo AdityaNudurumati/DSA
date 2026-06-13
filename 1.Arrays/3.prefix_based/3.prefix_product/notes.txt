@@ -1,0 +1,29 @@
+==================================================
+PREFIX BASED — 3. PREFIX PRODUCT
+==================================================
+
+answer[i] combines a prefix product (everything left of i) with a suffix product
+(everything right of i). Avoids division, which is the usual trap when zeros exist.
+
+When to think of this?
+- "product of all elements except self"
+- running products where you must exclude the current index
+
+--------------------------------------------------
+Template — product except self
+--------------------------------------------------
+result = [1] * n
+prefix = 1
+for i in range(n):           # left products
+    result[i] = prefix
+    prefix *= nums[i]
+suffix = 1
+for i in range(n - 1, -1, -1):   # multiply in right products
+    result[i] *= suffix
+    suffix *= nums[i]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Product of Array Except Self   -> 1.product_except_self.py
+☐ Maximum Product Subarray (see ../../4.subarray_techniques/)

@@ -7,16 +7,13 @@ When to think of this?
 - "longest / shortest / max / min window that satisfies X"
 - Fixed size k, or variable size with a constraint
 
-Sub-patterns
+Sub-patterns   (each maps to a sub-folder; see its notes.txt for the checklist)
 │
-├── Fixed Size
-│   └── window of exactly k elements; slide by 1
+├── 1.fixed_size/        window of exactly k elements; slide by 1
 │
-├── Variable Size (Expand-Shrink)
-│   └── grow right; shrink left while window invalid
+├── 2.variable_size/     grow right; shrink left while window invalid
 │
-└── Monotonic Window
-    └── deque keeps max/min of current window in O(1)
+└── 3.monotonic_window/  deque keeps max/min of current window in O(1)
 
 --------------------------------------------------
 Template — Fixed Size
@@ -40,18 +37,13 @@ for right in range(len(nums)):
     # record answer (window = left..right)
 
 --------------------------------------------------
-Problems  (☐ = todo, ☑ = done)
+Problems
 --------------------------------------------------
-Fixed:
-☐ Maximum Sum Subarray of Size K
-☐ Average of Subarrays of Size K
+Solved problems live in the sub-folders, each with its own checklist:
 
-Variable:
-☐ Longest Substring Without Repeating Characters
-☐ Minimum Window Substring
-☐ Fruits Into Baskets
-☐ Longest Substring with At Most K Distinct
+  1.fixed_size/        Max Sum Subarray of K, Average of Subarrays of K
+  2.variable_size/     Longest Substring No Repeat, Min Window Substring,
+                       Fruits Into Baskets, Longest Substring K Distinct
+  3.monotonic_window/  Sliding Window Maximum, Constrained Subsequence Sum
 
-Monotonic:
-☐ Sliding Window Maximum
-☐ Constrained Subsequence Sum
+See each sub-folder's notes.txt for its full ☐/☑ checklist.

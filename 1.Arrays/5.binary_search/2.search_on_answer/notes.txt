@@ -1,0 +1,35 @@
+==================================================
+BINARY SEARCH — 2. SEARCH ON ANSWER
+==================================================
+
+Don't search the array — search the RANGE OF POSSIBLE ANSWERS. Works whenever
+feasibility is monotonic: if value v works, everything above (or below) it works too.
+Binary search the smallest/largest feasible value.
+
+When to think of this?
+- "minimum capacity / speed / time such that ..."
+- "maximize the minimum" / "minimize the maximum"
+- a feasibility check feasible(v) that is monotonic in v
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+lo, hi = min_possible, max_possible
+while lo < hi:
+    mid = (lo + hi) // 2
+    if feasible(mid):
+        hi = mid          # mid works -> try to do better (smaller)
+    else:
+        lo = mid + 1
+return lo
+
+The hard part is writing feasible(); the binary search is boilerplate.
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Koko Eating Bananas                 -> 1.koko_eating_bananas.py
+☑ Capacity to Ship Packages in D Days -> 2.capacity_to_ship_packages.py
+☐ Split Array Largest Sum
+☐ Minimum Number of Days to Make Bouquets
+☐ Aggressive Cows / Magnetic Force

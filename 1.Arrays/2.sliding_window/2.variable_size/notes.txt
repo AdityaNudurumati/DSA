@@ -1,0 +1,32 @@
+==================================================
+SLIDING WINDOW — 2. VARIABLE SIZE  (Expand / Shrink)
+==================================================
+
+Grow the window by moving right. Whenever the window breaks a constraint, shrink
+it from the left until it is valid again. Track the best window seen.
+
+When to think of this?
+- "longest / shortest subarray or substring satisfying X"
+- at most / exactly K distinct, no repeats, contains all of T
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+left = 0
+for right in range(len(s)):
+    # add s[right] to the window state
+    while window_is_invalid:
+        # remove s[left] from the window state
+        left += 1
+    # window [left..right] is valid here -> update answer
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Longest Substring Without Repeating Characters -> 1.longest_substring_without_repeat.py
+☑ Minimum Window Substring                       -> 2.minimum_window_substring.py
+☑ Fruits Into Baskets (at most 2 distinct)       -> 3.fruits_into_baskets.py
+☑ Longest Substring with At Most K Distinct      -> 4.longest_substring_k_distinct.py
+☐ Longest Repeating Character Replacement
+☐ Permutation in String
+☐ Subarray Product Less Than K

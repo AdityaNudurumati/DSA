@@ -30,9 +30,9 @@ while mid <= high:
 --------------------------------------------------
 Problems  (☐ = todo, ☑ = done)
 --------------------------------------------------
-☐ Sort Colors
-☐ Quick Sort Partition
-☐ Quick Select (Kth Largest Element)
-☐ Partition Around Pivot
-☐ Segregate Even and Odd
-☐ Move Negatives to One Side
+☑ Sort Colors                        -> 1.sort_colors.py
+☑ Quick Sort Partition               -> 2.quick_sort_partition.py
+☑ Quick Select (Kth Largest Element) -> 3.quick_select.py
+☑ Partition Around Pivot             -> 4.partition_around_pivot.py
+☑ Segregate Even and Odd             -> 5.segregate_even_odd.py
+☑ Move Negatives to One Side         -> 6.move_negatives.py

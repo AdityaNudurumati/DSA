@@ -1,0 +1,29 @@
+==================================================
+GREEDY — 3. LOCAL EXCHANGE / GREEDY CHOICE
+==================================================
+
+Make the locally-optimal choice at each step and argue it can't be beaten globally
+(an "exchange argument": swapping toward the greedy choice never worsens the result).
+Often a two-pass sweep, a counting formula, or grabbing every positive step.
+
+When to think of this?
+- a clear per-step best move that compounds to the global optimum
+- two-direction constraints (satisfy each side in its own pass)
+- "as many profitable moves as possible"
+
+--------------------------------------------------
+Examples of the move
+--------------------------------------------------
+Candy        : two passes (L->R then R->L), take max of both requirements
+Stock II     : sum every positive prices[i] - prices[i-1]
+Task Sched.  : frame from the most frequent task: (maxF-1)*(n+1)+ties
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Candy                                 -> 1.candy.py
+☑ Task Scheduler                        -> 2.task_scheduler.py
+☑ Best Time to Buy and Sell Stock II    -> 3.best_time_to_buy_sell_stock_ii.py
+☐ Assign Cookies
+☐ Partition Labels
+☐ Queue Reconstruction by Height

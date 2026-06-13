@@ -1,0 +1,44 @@
+==================================================
+BINARY SEARCH — 3. ROTATED ARRAY
+==================================================
+
+A sorted array rotated at an unknown pivot. After any rotation, at least one half
+[lo..mid] or [mid..hi] is still sorted. Decide which half is sorted, then test
+whether the target / minimum lies inside it.
+
+When to think of this?
+- "sorted array that has been rotated"
+- find a value, the minimum, or the rotation pivot in O(log n)
+
+--------------------------------------------------
+Template — search target
+--------------------------------------------------
+lo, hi = 0, len(nums) - 1
+while lo <= hi:
+    mid = (lo + hi) // 2
+    if nums[mid] == target: return mid
+    if nums[lo] <= nums[mid]:            # left half sorted
+        if nums[lo] <= target < nums[mid]: hi = mid - 1
+        else: lo = mid + 1
+    else:                                # right half sorted
+        if nums[mid] < target <= nums[hi]: lo = mid + 1
+        else: hi = mid - 1
+return -1
+
+--------------------------------------------------
+Template — find minimum (pivot)
+--------------------------------------------------
+lo, hi = 0, len(nums) - 1
+while lo < hi:
+    mid = (lo + hi) // 2
+    if nums[mid] > nums[hi]: lo = mid + 1
+    else: hi = mid
+return nums[lo]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Search in Rotated Sorted Array      -> 1.search_in_rotated.py
+☑ Find Minimum in Rotated Sorted Array -> 2.find_minimum_rotated.py
+☐ Search in Rotated Sorted Array II (with duplicates)
+☐ Find Minimum in Rotated Sorted Array II

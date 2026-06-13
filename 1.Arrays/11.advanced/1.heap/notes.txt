@@ -1,0 +1,38 @@
+==================================================
+ADVANCED — 1. HEAP / PRIORITY QUEUE
+==================================================
+
+Use a heap when you repeatedly need the smallest/largest element, or must balance
+two halves of a stream. Python's heapq is a MIN-heap; negate values for a max-heap.
+
+When to think of this?
+- "k-th largest / smallest", "top k", "merge k sorted"
+- running median (two heaps)
+- repeatedly pull the current extreme
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+import heapq
+heapq.heappush(h, x); heapq.heappop(h)      # min-heap
+heapq.heappush(h, -x)                        # max-heap via negation
+
+# size-k min-heap -> k-th largest at h[0]
+for x in nums:
+    heapq.heappush(h, x)
+    if len(h) > k: heapq.heappop(h)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Kth Largest Element        -> 1.kth_largest_element.py
+☑ Find Median from Data Stream -> 2.find_median_from_data_stream.py
+☑ Merge K Sorted Arrays      -> 3.merge_k_sorted_arrays.py
+☐ K Closest Points to Origin
+☐ Task Scheduler (heap variant; greedy version in ../../10.greedy/)
+
+--------------------------------------------------
+Related (live elsewhere)
+--------------------------------------------------
+Top K Frequent Elements  -> ../../6.hashing/1.frequency_counting/3.top_k_frequent.py
+Kth Largest (Quick Select) -> ../../1.two_pointer_problems/3.partition_dutch_flag/3.quick_select.py

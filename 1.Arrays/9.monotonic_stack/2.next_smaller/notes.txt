@@ -1,0 +1,32 @@
+==================================================
+MONOTONIC STACK — 2. NEXT / PREVIOUS SMALLER
+==================================================
+
+Mirror image of next-greater: keep an INCREASING stack, pop while the top is larger
+than the current value. Powers "contribution" counting (how many subarrays an
+element is the minimum of) and greedy "remove to minimize" problems.
+
+When to think of this?
+- "previous / next smaller element", subarray-minimum contributions
+- greedy lexicographic minimization (remove k digits, build smallest sequence)
+
+--------------------------------------------------
+Template — next smaller (indices)
+--------------------------------------------------
+stack = []                          # indices, values increasing
+for i, x in enumerate(nums):
+    while stack and nums[stack[-1]] > x:
+        result[stack.pop()] = i     # i is the next-smaller index
+    stack.append(i)
+
+Contribution trick (Sum of Subarray Minimums):
+count = (i - prev_smaller[i]) * (next_smaller[i] - i)
+Use STRICT on one side, NON-STRICT on the other to avoid double counting equals.
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Sum of Subarray Minimums   -> 1.sum_of_subarray_minimums.py
+☑ Remove K Digits            -> 2.remove_k_digits.py
+☐ Sum of Subarray Ranges
+☐ Remove Duplicate Letters / Smallest Subsequence

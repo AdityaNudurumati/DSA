@@ -1,0 +1,28 @@
+==================================================
+SLIDING WINDOW — 1. FIXED SIZE
+==================================================
+
+The window is always exactly k elements. Slide it one step at a time: add the
+new right element, drop the leftmost.
+
+When to think of this?
+- "subarray / substring of size exactly k"
+- average / sum / count over every window of length k
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+window_sum = 0
+for right in range(len(nums)):
+    window_sum += nums[right]
+    if right >= k - 1:
+        # use window_sum (it covers nums[right-k+1 .. right])
+        window_sum -= nums[right - k + 1]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Maximum Sum Subarray of Size K  -> 1.max_sum_subarray_k.py
+☑ Average of Subarrays of Size K  -> 2.average_subarrays_k.py
+☐ First Negative in Every Window of Size K
+☐ Count Occurrences of Anagrams

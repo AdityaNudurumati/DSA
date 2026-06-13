@@ -1,0 +1,30 @@
+==================================================
+PREFIX BASED — 4. DIFFERENCE ARRAY
+==================================================
+
+The inverse of prefix sum. To add inc to a whole range [l, r], record +inc at l
+and -inc at r+1; a final prefix-sum pass turns these boundary marks back into the
+actual values. Many range updates become O(1) each.
+
+When to think of this?
+- Lots of "add X to range [l, r]" updates, queried once at the end
+- Booking / interval-count problems (car pooling, meeting overlaps)
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+diff = [0] * (n + 1)
+for l, r, inc in updates:
+    diff[l] += inc
+    diff[r + 1] -= inc
+running = 0
+for i in range(n):
+    running += diff[i]
+    nums[i] = running
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Range Addition            -> 1.range_addition.py
+☐ Corporate Flight Bookings
+☐ Car Pooling

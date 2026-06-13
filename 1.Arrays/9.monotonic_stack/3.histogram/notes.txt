@@ -1,0 +1,37 @@
+==================================================
+MONOTONIC STACK — 3. HISTOGRAM / AREA
+==================================================
+
+Area problems where each bar's reach is bounded by the nearest shorter bar on each
+side. A monotonic stack finds those bounds in O(n); the area is computed as a bar
+pops.
+
+When to think of this?
+- "largest rectangle in a histogram"
+- "trapped rain water" (stack layer-fill variant)
+- maximal rectangle in a binary matrix (row-by-row histogram)
+
+--------------------------------------------------
+Template — largest rectangle
+--------------------------------------------------
+stack = []                       # indices, increasing heights
+heights = heights + [0]          # sentinel flushes the stack
+for i, h in enumerate(heights):
+    while stack and heights[stack[-1]] > h:
+        height = heights[stack.pop()]
+        width = i if not stack else i - stack[-1] - 1
+        max_area = max(max_area, height * width)
+    stack.append(i)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Largest Rectangle in Histogram    -> 1.largest_rectangle.py
+☑ Trapping Rain Water (stack)        -> 2.trapping_rain_water.py
+☐ Maximal Rectangle (2D)
+
+--------------------------------------------------
+Related (live elsewhere)
+--------------------------------------------------
+Trapping Rain Water (two-pointer, O(1) space)
+  -> ../../1.two_pointer_problems/1.opposite_ends/7.trapping_rain_water.py

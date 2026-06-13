@@ -30,6 +30,6 @@ Problems  (☐ = todo, ☑ = done)
 ☑ Container With Most Water  -> 3.container_with_most_water.py
 ☑ Squares of a Sorted Array  -> 4.sorted_array_squares.py
 ☑ 3Sum                       -> 5.three_sum.py
-☐ 4Sum
-☐ Trapping Rain Water
-☐ Boats to Save People
+☑ 4Sum                       -> 6.four_sum.py
+☑ Trapping Rain Water        -> 7.trapping_rain_water.py
+☑ Boats to Save People       -> 8.boats_to_save_people.py

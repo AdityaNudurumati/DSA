@@ -1,0 +1,28 @@
+==================================================
+PREFIX BASED — 2. PREFIX XOR
+==================================================
+
+Same idea as prefix sum, but with XOR. prefix_xor[i] = nums[0] ^ ... ^ nums[i-1].
+Then xor(l..r) = prefix[r+1] ^ prefix[l]. XOR is its own inverse, so subtraction
+becomes another XOR.
+
+When to think of this?
+- "count / find subarrays with XOR = K"
+- problems about parity / toggling that XOR captures
+
+--------------------------------------------------
+Template — count subarrays with xor K
+--------------------------------------------------
+seen = {0: 1}
+running = count = 0
+for x in nums:
+    running ^= x
+    count += seen.get(running ^ k, 0)   # need prefix == running ^ k
+    seen[running] = seen.get(running, 0) + 1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Subarray XOR Equals K          -> 1.subarray_xor_equals_k.py
+☐ Maximum XOR of Two Numbers (trie)
+☐ Count Triplets with XOR Zero

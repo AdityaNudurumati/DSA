@@ -1,0 +1,30 @@
+==================================================
+PREFIX BASED — 5. 2D PREFIX SUM
+==================================================
+
+Extends prefix sum to a matrix. prefix[i+1][j+1] = sum of the rectangle from
+(0,0) to (i,j). Any submatrix sum is then O(1) via inclusion-exclusion.
+
+When to think of this?
+- Many submatrix-sum queries on a static grid
+- Counting / area problems over a 2D region
+
+--------------------------------------------------
+Template — build
+--------------------------------------------------
+P = [[0]*(n+1) for _ in range(m+1)]
+for i in range(m):
+    for j in range(n):
+        P[i+1][j+1] = matrix[i][j] + P[i][j+1] + P[i+1][j] - P[i][j]
+
+--------------------------------------------------
+Template — query (r1,c1) .. (r2,c2)
+--------------------------------------------------
+sum = P[r2+1][c2+1] - P[r1][c2+1] - P[r2+1][c1] + P[r1][c1]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Range Sum Query 2D - Immutable   -> 1.range_sum_query_2d.py
+☐ Matrix Block Sum
+☐ Maximal Square (DP variant)

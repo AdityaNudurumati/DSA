@@ -1,0 +1,35 @@
+==================================================
+ADVANCED — 2. BIT MANIPULATION
+==================================================
+
+XOR tricks dominate array bit problems: a ^ a = 0 and a ^ 0 = a, so pairs cancel.
+Other staples: x & (x-1) clears the lowest set bit; (x >> i) & 1 reads bit i.
+
+When to think of this?
+- "find the unique / missing number" with O(1) space
+- parity, toggling, set membership encoded in bits
+- maximize/minimize an XOR (often pairs with a bitwise trie)
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+result = 0
+for x in nums: result ^= x          # cancel pairs
+
+bit = (x >> i) & 1                  # read bit i
+x &= (x - 1)                        # drop lowest set bit (Brian Kernighan)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Single Number          -> 1.single_number.py
+☑ Missing Number         -> 2.missing_number.py
+☑ XOR of a Range         -> 3.xor_of_range.py
+☐ Single Number II (every other appears 3x)
+☐ Counting Bits
+
+--------------------------------------------------
+Related (live elsewhere)
+--------------------------------------------------
+Maximum XOR Pair / of Two Numbers (needs a bitwise trie) -> ../7.trie/1.maximum_xor_of_two_numbers.py
+Subarray XOR = K (prefix xor)      -> ../../3.prefix_based/2.prefix_xor/

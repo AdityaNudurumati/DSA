@@ -7,12 +7,11 @@ When to think of this?
 - Histogram / span / temperatures problems
 - Each element pushed and popped at most once → O(n)
 
-Sub-patterns
+Sub-patterns   (each maps to a sub-folder; see its notes.txt for the checklist)
 │
-├── Next Greater Element
-├── Previous Greater Element
-├── Next Smaller Element
-└── Histogram Problems    (largest rectangle, etc.)
+├── 1.next_greater/  next / previous GREATER (decreasing stack)
+├── 2.next_smaller/  next / previous SMALLER (increasing stack); contributions, greedy
+└── 3.histogram/     area problems (largest rectangle, trapping rain water)
 
 --------------------------------------------------
 Template — Next Greater Element
@@ -30,11 +29,12 @@ Rule of thumb:
 - next smaller  → pop while stack top >  current
 
 --------------------------------------------------
-Problems  (☐ = todo, ☑ = done)
+Problems
 --------------------------------------------------
-☐ Next Greater Element I / II
-☐ Daily Temperatures
-☐ Largest Rectangle in Histogram
-☐ Trapping Rain Water (stack variant)
-☐ Sum of Subarray Minimums
-☐ Remove K Digits
+Solved problems live in the sub-folders, each with its own checklist:
+
+  1.next_greater/  Next Greater Element I, Next Greater Element II, Daily Temperatures
+  2.next_smaller/  Sum of Subarray Minimums, Remove K Digits
+  3.histogram/     Largest Rectangle in Histogram, Trapping Rain Water (stack)
+
+See each sub-folder's notes.txt for its full ☐/☑ checklist.

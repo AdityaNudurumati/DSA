@@ -6,13 +6,15 @@ When to think of this?
 - "maximum / minimum subarray ..." with running state
 - DP-on-array where each step depends on the previous
 
-Sub-patterns
+Sub-patterns   (each maps to a sub-folder; see its notes.txt for the checklist)
 │
-├── Kadane's Algorithm       max subarray sum
-├── Maximum Product Subarray  track max AND min (negatives flip)
-├── Subarray Sum = K          prefix sum + hashmap (see prefix_based)
-├── Subarray XOR = K          prefix xor + hashmap
-└── Circular Subarray         total - min_subarray, or Kadane wrap
+├── 1.kadane/            max subarray sum
+├── 2.maximum_product/   track max AND min (negatives flip)
+└── 3.circular_subarray/ total - min_subarray, or Kadane wrap
+
+Related (NOT here — prefix-hashmap problems):
+  Subarray Sum = K, Subarray XOR = K, Longest Subarray with Sum K
+  -> see ../3.prefix_based/
 
 --------------------------------------------------
 Template — Kadane
@@ -24,10 +26,12 @@ for x in nums[1:]:
 return best
 
 --------------------------------------------------
-Problems  (☐ = todo, ☑ = done)
+Problems
 --------------------------------------------------
-☐ Maximum Subarray (Kadane)
-☐ Maximum Product Subarray
-☐ Maximum Sum Circular Subarray
-☐ Subarray Sum Equals K
-☐ Longest Subarray with Sum K
+Solved problems live in the sub-folders, each with its own checklist:
+
+  1.kadane/             Maximum Subarray
+  2.maximum_product/    Maximum Product Subarray
+  3.circular_subarray/  Maximum Sum Circular Subarray
+
+Subarray Sum = K / XOR = K / Longest Subarray Sum K  -> ../3.prefix_based/

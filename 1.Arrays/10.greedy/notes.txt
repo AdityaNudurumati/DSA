@@ -7,11 +7,11 @@ When to think of this?
 - "minimum jumps / can you reach / max profit"
 - Must be able to ARGUE why the greedy choice is safe
 
-Sub-patterns
+Sub-patterns   (each maps to a sub-folder; see its notes.txt for the checklist)
 │
-├── Reachability / Jumps    track farthest reachable
-├── Resource / Tank          running balance, reset on deficit
-└── Local exchange argument   sort + pick
+├── 1.reachability/    track farthest reachable (jumps)
+├── 2.resource/        running balance, reset on deficit (tank)
+└── 3.local_exchange/  per-step greedy choice (two-pass, counting, positive steps)
 
 --------------------------------------------------
 Template — Jump Game (can reach end?)
@@ -24,11 +24,12 @@ for i, jump in enumerate(nums):
 return True
 
 --------------------------------------------------
-Problems  (☐ = todo, ☑ = done)
+Problems
 --------------------------------------------------
-☐ Jump Game
-☐ Jump Game II
-☐ Gas Station
-☐ Candy
-☐ Task Scheduler
-☐ Best Time to Buy and Sell Stock II
+Solved problems live in the sub-folders, each with its own checklist:
+
+  1.reachability/    Jump Game, Jump Game II
+  2.resource/        Gas Station
+  3.local_exchange/  Candy, Task Scheduler, Best Time to Buy and Sell Stock II
+
+See each sub-folder's notes.txt for its full ☐/☑ checklist.

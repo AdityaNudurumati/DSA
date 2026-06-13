@@ -1,0 +1,37 @@
+==================================================
+HASHING — 2. SET-BASED
+==================================================
+
+A set gives O(1) membership and automatic dedup. Reach for it when you only care
+"is this present?" rather than "how many times".
+
+When to think of this?
+- detect duplicates / uniqueness
+- membership checks while scanning (consecutive runs, complements)
+- intersection / union / difference of collections
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+seen = set()
+for x in nums:
+    if x in seen: ...
+    seen.add(x)
+
+common = set(a) & set(b)     # intersection
+only_a = set(a) - set(b)     # difference
+
+# start-of-run trick (Longest Consecutive Sequence)
+s = set(nums)
+for x in s:
+    if x - 1 not in s:       # x begins a run
+        ...
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Contains Duplicate              -> 1.contains_duplicate.py
+☑ Longest Consecutive Sequence    -> 2.longest_consecutive_sequence.py
+☑ Intersection of Two Arrays      -> 3.intersection_of_two_arrays.py
+☐ Happy Number
+☐ Missing Number

@@ -1,0 +1,40 @@
+==================================================
+MATRIX — 1. TRAVERSAL
+==================================================
+
+Visit cells in a specific order: spiral (shrinking boundaries), diagonal (group by
+r + c), or navigate a sorted matrix with binary search.
+
+When to think of this?
+- "return elements in spiral / diagonal order"
+- search a matrix whose rows/cols have sorted structure
+
+--------------------------------------------------
+Template — spiral (boundary shrink)
+--------------------------------------------------
+top, bottom, left, right = 0, m-1, 0, n-1
+while top <= bottom and left <= right:
+    for c in range(left, right+1):  ...      # top row
+    top += 1
+    for r in range(top, bottom+1): ...       # right col
+    right -= 1
+    if top <= bottom: ...                    # bottom row (reverse)
+    if left <= right: ...                    # left col (reverse)
+
+--------------------------------------------------
+Template — fully-sorted matrix search
+--------------------------------------------------
+lo, hi = 0, m*n - 1
+while lo <= hi:
+    mid = (lo + hi)//2
+    val = matrix[mid // n][mid % n]
+    ...
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Spiral Matrix        -> 1.spiral_matrix.py
+☑ Diagonal Traverse    -> 2.diagonal_traverse.py
+☑ Search a 2D Matrix   -> 3.search_2d_matrix.py
+☐ Spiral Matrix II (fill)
+☐ Search a 2D Matrix II (staircase, O(m+n))

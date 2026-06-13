@@ -1,0 +1,38 @@
+==================================================
+ADVANCED — 6. UNION FIND (DSU)
+==================================================
+
+Disjoint Set Union tracks connected groups under merges. With path compression +
+union by rank/size, find/union are near-O(1) (inverse Ackermann). Great for dynamic
+connectivity and "group things that share something".
+
+When to think of this?
+- count connected components / merge groups
+- "are a and b connected", incremental unions
+- problems also solvable by DFS/BFS but needing dynamic merging
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+parent = list(range(n))
+def find(x):
+    while parent[x] != x:
+        parent[x] = parent[parent[x]]   # path compression
+        x = parent[x]
+    return x
+def union(a, b):
+    ra, rb = find(a), find(b)
+    if ra != rb: parent[ra] = rb
+
+(2D grid: map cell (i, j) -> i * cols + j)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Number of Islands   -> 1.number_of_islands.py
+☑ Accounts Merge      -> 2.accounts_merge.py
+☐ Redundant Connection
+☐ Number of Connected Components in an Undirected Graph
+
+Note: these are really graph problems — included here as the DSU-on-arrays layer of
+the advanced roadmap.

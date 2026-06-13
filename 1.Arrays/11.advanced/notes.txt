@@ -1,0 +1,40 @@
+==================================================
+11. ADVANCED (the remaining ~10-20%)
+==================================================
+
+The core 10 patterns cover the bulk of array interviews. This folder holds the
+advanced layer — less frequent, but high-signal at product companies. Each concept
+is a sub-folder with its own notes.txt + solved problems.
+
+Sub-patterns   (each maps to a sub-folder; see its notes.txt for the checklist)
+│
+├── 1.heap/             k-th / top-k / median / merge-k via priority queue
+├── 2.bit_manipulation/ XOR tricks, single/missing number, bit counting
+├── 3.divide_conquer/   merge-sort counting (inversions, reverse pairs), majority
+├── 4.sorting_tricks/   custom comparators / derived sort keys
+├── 5.math/             rotate, sieve, cycle detection, number theory
+├── 6.union_find/       disjoint-set connectivity (graph-flavored)
+└── 7.trie/             prefix tree + bitwise trie (string/XOR-flavored)
+
+--------------------------------------------------
+Already covered in the core 10 (not duplicated here)
+--------------------------------------------------
+Monotonic Queue      -> ../2.sliding_window/3.monotonic_window/
+Simulation           -> ../8.matrix/
+Advanced Greedy      -> ../10.greedy/
+Top K Frequent       -> ../6.hashing/1.frequency_counting/
+Merge Intervals etc. -> ../7.intervals/
+Product Except Self  -> ../3.prefix_based/3.prefix_product/
+
+--------------------------------------------------
+Problems
+--------------------------------------------------
+Solved problems live in the sub-folders, each with its own ☐/☑ checklist:
+
+  1.heap/             Kth Largest, Median from Data Stream, Merge K Sorted
+  2.bit_manipulation/ Single Number, Missing Number, XOR of a Range
+  3.divide_conquer/   Count Inversions, Reverse Pairs, Majority Element
+  4.sorting_tricks/   Largest Number
+  5.math/             Rotate Array, Count Primes, Happy Number
+  6.union_find/       Number of Islands, Accounts Merge
+  7.trie/             Maximum XOR of Two Numbers, Word Search II

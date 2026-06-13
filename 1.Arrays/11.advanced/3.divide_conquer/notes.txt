@@ -1,0 +1,31 @@
+==================================================
+ADVANCED — 3. DIVIDE & CONQUER
+==================================================
+
+Split the array, solve each half, then do O(n) work to combine. The combine step is
+where the real algorithm lives — often a merge that also COUNTS something.
+
+When to think of this?
+- counting pairs across a split (inversions, reverse pairs)
+- "majority of the whole = majority of a half"
+- anything naturally expressed via merge-sort thinking
+
+--------------------------------------------------
+Template — merge-sort with a count
+--------------------------------------------------
+def solve(a):
+    if len(a) <= 1: return a, 0
+    mid = len(a)//2
+    left, lc = solve(a[:mid])
+    right, rc = solve(a[mid:])
+    # ... count cross-half contributions using both sorted halves ...
+    return merge(left, right), lc + rc + cross
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Count Inversions    -> 1.count_inversions.py
+☑ Reverse Pairs       -> 2.reverse_pairs.py
+☑ Majority Element    -> 3.majority_element.py  (Boyer-Moore is the O(n) alternative)
+☐ Maximum Subarray (D&C view; Kadane in ../../4.subarray_techniques/)
+☐ The Skyline Problem

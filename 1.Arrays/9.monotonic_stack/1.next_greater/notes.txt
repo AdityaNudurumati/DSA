@@ -1,0 +1,34 @@
+==================================================
+MONOTONIC STACK — 1. NEXT / PREVIOUS GREATER
+==================================================
+
+Keep a DECREASING stack. When the current value is bigger than the stack top, the
+current value is that top's "next greater". Store values for lookups, or indices for
+distances.
+
+When to think of this?
+- "next greater element", "next warmer day", "next higher price"
+- circular variants (iterate indices 0..2n-1 with i % n)
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+stack = []                          # indices, values decreasing
+for i, x in enumerate(nums):
+    while stack and nums[stack[-1]] < x:
+        j = stack.pop()
+        result[j] = x               # or i - j for a distance
+    stack.append(i)
+
+Rule of thumb:
+- NEXT greater     -> scan left->right, pop while top < current
+- PREVIOUS greater -> after the while-loop, stack[-1] is the prev-greater index
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Next Greater Element I    -> 1.next_greater_element_i.py
+☑ Next Greater Element II   -> 2.next_greater_element_ii.py
+☑ Daily Temperatures        -> 3.daily_temperatures.py
+☐ Online Stock Span
+☐ Next Greater Node in Linked List

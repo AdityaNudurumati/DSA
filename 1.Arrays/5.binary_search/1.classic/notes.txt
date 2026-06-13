@@ -1,0 +1,43 @@
+==================================================
+BINARY SEARCH — 1. CLASSIC  (Search on Index)
+==================================================
+
+Halve a sorted range each step. Two forms worth knowing cold:
+- inclusive  [lo, hi]  with lo <= hi   -> exact match
+- half-open  [lo, hi)  with lo <  hi   -> lower/upper bound (insert position)
+
+When to think of this?
+- Sorted array, find a value or a boundary
+- "first index >= x", "count of values < x", duplicates' first/last index
+- Even the partition trick for Median of Two Sorted Arrays
+
+--------------------------------------------------
+Template — exact match (inclusive)
+--------------------------------------------------
+lo, hi = 0, len(nums) - 1
+while lo <= hi:
+    mid = (lo + hi) // 2
+    if nums[mid] == target: return mid
+    elif nums[mid] < target: lo = mid + 1
+    else: hi = mid - 1
+return -1
+
+--------------------------------------------------
+Template — lower bound (half-open)
+--------------------------------------------------
+lo, hi = 0, len(nums)
+while lo < hi:
+    mid = (lo + hi) // 2
+    if nums[mid] < target: lo = mid + 1
+    else: hi = mid
+return lo   # first index with nums[index] >= target
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Binary Search                    -> 1.binary_search.py
+☑ Search Insert Position           -> 2.search_insert_position.py
+☑ First and Last Position          -> 3.first_last_position.py
+☑ Median of Two Sorted Arrays      -> 4.median_two_sorted_arrays.py
+☐ Find Peak Element
+☐ Sqrt(x)

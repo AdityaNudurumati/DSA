@@ -7,11 +7,11 @@ When to think of this?
 - "merge / insert / overlap / minimum rooms"
 - Almost always: SORT first (by start, sometimes by end)
 
-Sub-patterns
+Sub-patterns   (each maps to a sub-folder; see its notes.txt for the checklist)
 │
-├── Merge Intervals     sort by start, merge overlaps
-├── Insert Interval      add one, then merge
-└── Line Sweep Basics    +1 at start, -1 at end, scan
+├── 1.merge/       sort by start, merge overlaps
+├── 2.insert/      add one to a sorted list, then merge
+└── 3.line_sweep/  +1 at start / -1 at end (sweep); also greedy sort-by-end
 
 --------------------------------------------------
 Template — Merge
@@ -26,11 +26,12 @@ for s, e in intervals:
 return merged
 
 --------------------------------------------------
-Problems  (☐ = todo, ☑ = done)
+Problems
 --------------------------------------------------
-☐ Merge Intervals
-☐ Insert Interval
-☐ Non-overlapping Intervals
-☐ Meeting Rooms
-☐ Meeting Rooms II (min rooms / line sweep)
-☐ Minimum Arrows to Burst Balloons
+Solved problems live in the sub-folders, each with its own checklist:
+
+  1.merge/       Merge Intervals, Meeting Rooms
+  2.insert/      Insert Interval
+  3.line_sweep/  Meeting Rooms II, Non-overlapping Intervals, Minimum Arrows
+
+See each sub-folder's notes.txt for its full ☐/☑ checklist.
