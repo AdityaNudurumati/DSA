@@ -1,0 +1,43 @@
+==================================================
+STACK / 3. NEAREST ELEMENT PROBLEMS
+==================================================
+
+When to think of this?
+- "next/previous greater or smaller element" for every index
+- the canonical application of the monotonic stack
+
+Sub-patterns
+│
+├── Next Greater Element     decreasing stack, scan left->right
+├── Next Smaller Element      increasing stack, scan left->right
+├── Previous Greater Element   decreasing stack; answer = stack top after popping
+└── Previous Smaller Element   increasing stack; answer = stack top after popping
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+res = [-1] * n
+stack = []                      # store indices
+for i, x in enumerate(nums):
+    while stack and nums[stack[-1]] < x:   # next GREATER
+        res[stack.pop()] = x
+    stack.append(i)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Next Greater:
+☑ Next Greater Element I        -> 1.next_greater/1.next_greater_element_i.py
+☑ Next Greater Element II       -> 1.next_greater/2.next_greater_element_ii.py
+
+Next Smaller:
+☑ Next Smaller Element          -> 2.next_smaller/1.next_smaller_element.py
+→ Sum of Subarray Minimums      see ../1.Arrays/9.monotonic_stack/2.next_smaller/
+
+Previous Greater:
+☑ Previous Greater Element      -> 3.previous_greater/1.previous_greater_element.py
+☐ Online Stock Span             (also lives in ../4.range_span/)
+
+Previous Smaller:
+☑ Previous Smaller Element      -> 4.previous_smaller/1.previous_smaller_element.py
+→ Histogram width bounds        see ../5.histogram/

@@ -1,0 +1,34 @@
+==================================================
+STACK / 8. MIN / MAX STACK
+==================================================
+
+When to think of this?
+- need O(1) access to the min/max (or most frequent) alongside push/pop
+- design-style problems
+
+Sub-patterns
+│
+├── Min Stack        main stack + auxiliary stack of running minima
+├── Max Stack         symmetric; or a balanced structure for popMax
+└── Frequency Stack    counts + a stack per frequency level
+
+--------------------------------------------------
+Template — Min Stack
+--------------------------------------------------
+stack = []          # (value, current_min)
+def push(x):
+    m = x if not stack else min(x, stack[-1][1])
+    stack.append((x, m))
+def getMin(): return stack[-1][1]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Min Stack:
+☑ Min Stack  -> 1.min_stack/1.min_stack.py
+
+Max Stack:
+☑ Max Stack  -> 2.max_stack/1.max_stack.py
+
+Frequency Stack:
+☑ Maximum Frequency Stack  -> 3.frequency_stack/1.max_frequency_stack.py

@@ -1,0 +1,31 @@
+==================================================
+STACK / 1. BASIC STACK OPERATIONS
+==================================================
+
+When to think of this?
+- LIFO processing; "undo", running history, simple simulations
+- the foundation every other stack pattern builds on
+
+Sub-patterns
+│
+├── Push / Pop / Peek    the core operations
+└── Simulation            replay a sequence of ops on a stack
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+stack = []
+stack.append(x)     # push
+stack.pop()         # pop (LIFO)
+top = stack[-1]     # peek
+empty = not stack
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Easy:
+☑ Baseball Game  -> 2.simulation/1.baseball_game.py
+☑ Implement Stack  -> 1.core_operations/1.implement_stack.py
+
+Medium:
+☐ Browser History (see also ../10.design/)

@@ -1,0 +1,31 @@
+==================================================
+STACK / 10. DESIGN PROBLEMS
+==================================================
+
+When to think of this?
+- "implement structure X" using stacks/queues
+- amortized analysis (two-stack queue is amortized O(1))
+
+Sub-patterns
+│
+├── Implement Stack        from scratch (list-backed) or with extra ops
+├── Stack Using Queues      one/two queues simulate LIFO
+├── Queue Using Stacks       two stacks (in/out) simulate FIFO, amortized O(1)
+└── Browser History          back/forward via two stacks (or array + pointer)
+
+--------------------------------------------------
+Template — Queue using two stacks
+--------------------------------------------------
+in_s, out_s = [], []
+def push(x): in_s.append(x)
+def pop():
+    if not out_s:
+        while in_s: out_s.append(in_s.pop())
+    return out_s.pop()
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Implement Stack using Queues  -> 1.stack_using_queues/1.implement_stack_using_queues.py
+☑ Implement Queue using Stacks  -> 2.queue_using_stacks/1.implement_queue_using_stacks.py
+☑ Browser History  -> 3.browser_history/1.browser_history.py

@@ -1,0 +1,29 @@
+==================================================
+STACK / 11. ADVANCED MONOTONIC STACK
+==================================================
+
+When to think of this?
+- sum/aggregate over ALL subarrays via each element's contribution
+- "an element is the min/max of how many subarrays?"
+
+Sub-patterns
+│
+├── Contribution Technique   value * left_count * right_count
+├── Subarray Minimums         sum of mins over all subarrays
+├── Subarray Maximums          symmetric (sum of maxes)
+└── Rain Water Variants         stack-based trapping / 2D variants
+
+--------------------------------------------------
+Template — contribution
+--------------------------------------------------
+# each element contributes: value * (#subarrays where it is the min/max)
+# count = (i - prev_smaller[i]) * (next_smaller[i] - i)
+# use STRICT on one side, NON-STRICT on the other to avoid double counting
+contribution = value * left_count * right_count
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Sum of Subarray Ranges        -> 1.contribution/2.sum_of_subarray_ranges.py
+☑ Sum of Subarray Minimums       -> 1.contribution/1.sum_of_subarray_minimums.py
+☑ Trapping Rain Water (stack)    -> 2.rain_water/1.trapping_rain_water_stack.py

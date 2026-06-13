@@ -1,0 +1,30 @@
+==================================================
+STACK / 4. RANGE / SPAN PROBLEMS
+==================================================
+
+When to think of this?
+- "how far does this element extend" until a greater/smaller one
+- spans, waiting days, visibility counts
+
+Sub-patterns
+│
+├── Stock Span             consecutive days with price <= today
+├── Daily Temperatures      days until a warmer temperature
+├── Online Stock Span        streaming span via a stack of (value, span)
+└── Visibility Problems      who can see whom over a line
+
+--------------------------------------------------
+Template — span via monotonic stack of (value, width)
+--------------------------------------------------
+stack = []                       # (value, accumulated_span)
+span = 1
+while stack and stack[-1][0] <= x:
+    span += stack.pop()[1]
+stack.append((x, span))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Online Stock Span                    -> 1.span/1.online_stock_span.py
+☑ Number of Visible People in a Queue   -> 2.visibility/1.number_of_visible_people.py
+☑ Daily Temperatures                    -> 1.span/2.daily_temperatures.py

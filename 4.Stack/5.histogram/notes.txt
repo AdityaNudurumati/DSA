@@ -1,0 +1,31 @@
+==================================================
+STACK / 5. HISTOGRAM / RECTANGLE PATTERN
+==================================================
+
+When to think of this?
+- "largest rectangle" in a bar chart or binary matrix
+- each bar's reach is bounded by the nearest shorter bar on each side
+
+Sub-patterns
+│
+├── Largest Rectangle    monotonic stack: width = next_smaller - prev_smaller - 1
+├── Maximal Rectangle     run Largest Rectangle on each row's histogram
+└── Area Problems          general "bounded area" via boundaries
+
+--------------------------------------------------
+Template — width from boundaries
+--------------------------------------------------
+# for each bar, area = height * (right_smaller - left_smaller - 1)
+stack = []                       # increasing heights (indices)
+for i, h in enumerate(heights + [0]):
+    while stack and heights[stack[-1]] > h:
+        height = heights[stack.pop()]
+        width = i if not stack else i - stack[-1] - 1
+        best = max(best, height * width)
+    stack.append(i)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Largest Rectangle in Histogram  -> 1.rectangle/1.largest_rectangle.py
+☑ Maximal Rectangle  -> 1.rectangle/2.maximal_rectangle.py

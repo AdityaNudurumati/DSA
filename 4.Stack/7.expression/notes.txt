@@ -1,0 +1,44 @@
+==================================================
+STACK / 7. EXPRESSION HANDLING
+==================================================
+
+When to think of this?
+- evaluate or convert arithmetic expressions
+- operator precedence, parentheses, RPN
+
+Sub-patterns
+│
+├── Infix -> Postfix     shunting-yard: operator stack + precedence
+├── Infix -> Prefix       reverse, convert, reverse
+├── Evaluate Postfix       operand stack; pop two on each operator
+├── Evaluate Prefix        scan right-to-left, operand stack
+└── Calculator Problems     +,-,*,/ with/without parentheses
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# evaluate postfix (RPN)
+stack = []
+for tok in tokens:
+    if tok in '+-*/':
+        b, a = stack.pop(), stack.pop()
+        stack.append(apply(a, b, tok))
+    else:
+        stack.append(int(tok))
+
+# calculator: keep a running stack of terms; apply * / immediately, + - deferred
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Evaluate:
+☑ Evaluate Reverse Polish Notation  -> 1.evaluate/1.evaluate_rpn.py
+
+Calculator:
+☑ Basic Calculator        (+, -, parentheses)        -> 2.calculator/1.basic_calculator.py
+☑ Basic Calculator III    (+, -, *, /, parentheses)  -> 2.calculator/3.basic_calculator_iii.py
+☑ Basic Calculator II     (+, -, *, /, no parens)    -> 2.calculator/2.basic_calculator_ii.py
+
+Conversion:
+☑ Infix to Postfix  -> 3.conversion/1.infix_to_postfix.py
+☑ Infix to Prefix   -> 3.conversion/2.infix_to_prefix.py

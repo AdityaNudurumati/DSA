@@ -1,0 +1,37 @@
+==================================================
+STACK / 2. MONOTONIC STACK
+==================================================
+
+The highest-ROI stack pattern. Keep the stack sorted; each element is pushed and
+popped at most once -> O(n).
+
+Sub-patterns
+│
+├── Increasing Stack    pop while top > current  (finds smaller boundaries)
+└── Decreasing Stack    pop while top < current  (finds greater boundaries)
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# increasing stack (next/previous SMALLER)
+while stack and stack[-1] > nums[i]:
+    stack.pop()
+
+# decreasing stack (next/previous GREATER)
+while stack and stack[-1] < nums[i]:
+    stack.pop()
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Increasing Stack (smaller-boundary):
+→ Next Smaller Element            see ../1.Arrays/9.monotonic_stack/2.next_smaller/  (Arrays)
+→ Sum of Subarray Minimums        see ../1.Arrays/9.monotonic_stack/2.next_smaller/ and ../11.advanced_monotonic/
+→ Largest Rectangle               see ../1.Arrays/9.monotonic_stack/3.histogram/  and ../5.histogram/
+
+Decreasing Stack (greater-boundary):
+→ Next Greater Element            see ../3.nearest_element/ and ../1.Arrays/9.monotonic_stack/1.next_greater/
+→ Daily Temperatures              see ../4.range_span/ and ../1.Arrays/9.monotonic_stack/1.next_greater/
+
+Note: this folder is the CONCEPT hub; concrete problems live in patterns 3/4/5/11
+(and the Arrays monotonic-stack section). See those for runnable solutions.

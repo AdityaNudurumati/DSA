@@ -1,0 +1,34 @@
+==================================================
+STACK / 9. STACK SIMULATION
+==================================================
+
+When to think of this?
+- process a sequence where each item may cancel / nest with what's on top
+- "decode", path normalization, collisions, adjacent removals
+
+Sub-patterns
+│
+├── Decode String        push (count, partial) contexts; resolve on ']'
+├── Simplify Path         push dir names; '..' pops, '.' / '' skip
+├── Asteroid Collision     push; resolve collisions against the top
+└── Remove Duplicates      push; pop when the incoming item cancels the top
+
+--------------------------------------------------
+Template — Asteroid Collision
+--------------------------------------------------
+stack = []
+for a in asteroids:
+    alive = True
+    while alive and a < 0 and stack and stack[-1] > 0:
+        if stack[-1] < -a: stack.pop(); continue
+        elif stack[-1] == -a: stack.pop()
+        alive = False
+    if alive: stack.append(a)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Simplify Path             -> 2.simplify_path/1.simplify_path.py
+☑ Asteroid Collision        -> 3.asteroid_collision/1.asteroid_collision.py
+☑ Decode String             -> 1.decode_string/1.decode_string.py
+☑ Remove Adjacent Duplicates -> 4.remove_duplicates/1.remove_adjacent_duplicates.py

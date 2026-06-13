@@ -1,0 +1,62 @@
+==================================================
+STACK — ROADMAP
+==================================================
+
+STACK
+│
+├── 1. Basic Stack Operations   (Push / Pop / Peek / Simulation)
+├── 2. Monotonic Stack          (Increasing / Decreasing)
+├── 3. Nearest Element          (Next/Prev Greater/Smaller)
+├── 4. Range / Span             (Stock Span, Daily Temperatures, Visibility)
+├── 5. Histogram / Rectangle    (Largest Rectangle, Maximal Rectangle)
+├── 6. Parentheses / Brackets   (Validation, Matching, Longest Valid, Removal)
+├── 7. Expression Handling      (Infix↔Postfix/Prefix, Evaluate, Calculators)
+├── 8. Min / Max Stack          (Min Stack, Max Stack, Frequency Stack)
+├── 9. Stack Simulation         (Decode String, Simplify Path, Asteroids, Dedup)
+├── 10. Design Problems         (Stack↔Queue, Browser History)
+└── 11. Advanced Monotonic      (Contribution technique, Subarray Min/Max, Rain Water)
+
+--------------------------------------------------
+Suggested interview learning order
+--------------------------------------------------
+1 Basic → 6 Parentheses → 9 Simulation → 2 Monotonic → 3 Nearest →
+4 Range/Span → 5 Histogram → 8 Min Stack → 7 Expression → 10 Design →
+11 Advanced Monotonic
+
+Must-solve: Valid Parentheses, Implement Stack, Min Stack (easy);
+Daily Temperatures, Next Greater Element, Online Stock Span, Decode String,
+Simplify Path, Asteroid Collision (medium);
+Largest Rectangle, Maximal Rectangle, Sum of Subarray Minimums, Basic Calculator III (hard).
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+☐/☑ checklist). When built out, a pattern is split into sub-folders, each with one
+runnable .py per problem — same as 1.Arrays / 2.Strings / 3.Hashing.
+
+--------------------------------------------------
+Overlap with other sections (cross-reference, don't duplicate)
+--------------------------------------------------
+Monotonic core (NGE I/II, Daily Temperatures, Sum of Subarray Minimums,
+Largest Rectangle, Trapping Rain Water stack)
+   -> ../1.Arrays/9.monotonic_stack/
+Parentheses (Valid, Min Remove, Longest Valid), Decode String, Basic Calculator II,
+Remove Adjacent Duplicates I/II
+   -> ../2.Strings/8.stack/
+
+High-value NEW material unique to this section:
+  1. Basic Stack (Baseball Game, Browser History)
+  4. Online Stock Span, Number of Visible People in a Queue
+  5. Maximal Rectangle
+  7. Expression Handling (Eval RPN, Basic Calculator I/III, Infix conversions)
+  8. Min/Max/Frequency Stack
+  9. Simplify Path, Asteroid Collision
+  10. Stack-using-Queues, Queue-using-Stacks, Browser History
+  11. Sum of Subarray Ranges (contribution technique)
+
+--------------------------------------------------
+Core idea
+--------------------------------------------------
+LIFO. Python uses a plain list: append() to push, pop() to pop, s[-1] to peek.
+The monotonic-stack variant keeps elements sorted so each is pushed/popped once → O(n).
