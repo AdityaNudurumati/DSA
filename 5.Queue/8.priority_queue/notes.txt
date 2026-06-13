@@ -1,0 +1,30 @@
+==================================================
+QUEUE / 8. PRIORITY QUEUE / HEAP CONNECTION
+==================================================
+
+Not a FIFO queue, but lives nearby: serve by PRIORITY rather than arrival order.
+Python's heapq is a min-heap (negate for max-heap).
+
+Sub-patterns
+│
+├── Task Priority             pull the highest/lowest priority next
+├── Top-K Problems             heap of size k
+└── Scheduling Optimization     greedy + heap (rooms, intervals)
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+import heapq
+h = []
+heapq.heappush(h, x); heapq.heappop(h)      # min-heap
+heapq.heappush(h, -x)                        # max-heap via negation
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Single-Threaded CPU  -> 1.single_threaded_cpu.py
+☐ Reorganize String (heap variant)
+→ Kth Largest Element        see ../1.Arrays/11.advanced/1.heap/1.kth_largest_element.py
+→ Top K Frequent Elements    see ../1.Arrays/6.hashing/1.frequency_counting/3.top_k_frequent.py
+→ Meeting Rooms II           see ../1.Arrays/7.intervals/3.line_sweep/1.meeting_rooms_ii.py
+→ Find Median from Data Stream  see ../1.Arrays/11.advanced/1.heap/2.find_median_from_data_stream.py

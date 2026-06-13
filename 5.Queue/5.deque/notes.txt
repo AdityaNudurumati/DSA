@@ -1,0 +1,30 @@
+==================================================
+QUEUE / 5. DOUBLE ENDED QUEUE (DEQUE)
+==================================================
+
+When to think of this?
+- need O(1) insert/remove at BOTH ends
+- palindrome-ish checks, undo/redo, sliding structures, custom multi-ended designs
+
+Sub-patterns
+│
+├── Front Insert/Delete    appendleft / popleft
+├── Rear Insert/Delete      append / pop
+└── Simulation Problems      maintain a window/state from both ends
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+from collections import deque
+dq = deque()
+dq.appendleft(x); dq.popleft()      # front
+dq.append(x);     dq.pop()          # rear
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Design Front Middle Back Queue  -> 1.design_front_middle_back_queue.py
+☐ Moving Average from Data Stream (deque-backed)
+☐ Teque (Triple Ended Queue)
+
+Note: Design Circular Deque lives in ../3.circular_queue/

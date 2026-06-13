@@ -1,0 +1,32 @@
+==================================================
+QUEUE / 7. DESIGN PROBLEMS
+==================================================
+
+When to think of this?
+- "implement a queue/deque" or build one from another structure
+- amortized analysis (two-stack queue is amortized O(1))
+
+Sub-patterns
+│
+├── Implement Queue        array- or linked-list-backed
+├── Queue Using Stacks      two stacks (in/out), amortized O(1) dequeue
+├── Stack Using Queue        one/two queues simulate LIFO
+└── Circular Queue Design     fixed capacity via modulo
+
+--------------------------------------------------
+Template — queue from two stacks
+--------------------------------------------------
+in_s, out_s = [], []
+def push(x): in_s.append(x)
+def pop():
+    if not out_s:
+        while in_s: out_s.append(in_s.pop())
+    return out_s.pop()
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☐ Implement Queue using Array / Linked List
+→ Implement Queue using Stacks  see ../4.Stack/10.design/2.queue_using_stacks/
+→ Implement Stack using Queues  see ../4.Stack/10.design/1.stack_using_queues/
+→ Design Circular Queue          see ../3.circular_queue/

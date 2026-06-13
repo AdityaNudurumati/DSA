@@ -1,0 +1,26 @@
+==================================================
+QUEUE / 3. CIRCULAR QUEUE PATTERN
+==================================================
+
+When to think of this?
+- fixed-capacity queue with O(1) ops and no shifting
+- ring buffers, bounded streams
+
+Sub-patterns
+│
+├── Ring Buffer            fixed array + front/rear indices via modulo
+├── Fixed Capacity Queue    enqueue fails when full
+└── Circular Deque          insert/delete at both ends, modulo arithmetic
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+rear  = (rear + 1) % capacity
+front = (front + 1) % capacity
+# track size (or a is_full flag) to distinguish empty vs full
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Design Circular Queue  -> 3.circular_queue/1.design_circular_queue.py
+☑ Design Circular Deque  -> 3.circular_queue/2.design_circular_deque.py

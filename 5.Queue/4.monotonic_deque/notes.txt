@@ -1,0 +1,35 @@
+==================================================
+QUEUE / 4. MONOTONIC DEQUE
+==================================================
+
+A deque holding indices in monotonic order; the front is always the window's
+extreme. Each index is pushed and popped once -> O(n). The deque analogue of the
+monotonic stack, but it can also drop from the front when indices leave the window.
+
+Sub-patterns
+│
+├── Decreasing Deque    front = window MAXIMUM (pop back while < current)
+├── Increasing Deque     front = window MINIMUM (pop back while > current)
+└── Constrained Window    DP transitions that need a sliding-window extreme
+
+--------------------------------------------------
+Template — window maximum
+--------------------------------------------------
+from collections import deque
+dq = deque()                       # indices, values decreasing
+for i, x in enumerate(nums):
+    if dq and dq[0] <= i - k: dq.popleft()    # drop out-of-window front
+    while dq and nums[dq[-1]] < x: dq.pop()   # drop useless smaller values
+    dq.append(i)
+    if i >= k - 1: ans.append(nums[dq[0]])
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Decreasing Deque (maximum):
+→ Sliding Window Maximum   see ../1.Arrays/2.sliding_window/3.monotonic_window/1.sliding_window_maximum.py
+☑ Jump Game VI  -> 1.decreasing/1.jump_game_vi.py
+
+Increasing Deque (minimum):
+☑ Sliding Window Minimum  -> 2.increasing/1.sliding_window_minimum.py
+☑ Shortest Subarray with Sum at Least K  -> 2.increasing/2.shortest_subarray_sum_at_least_k.py

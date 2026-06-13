@@ -1,0 +1,30 @@
+==================================================
+QUEUE / 6. PRODUCER-CONSUMER / SCHEDULING
+==================================================
+
+When to think of this?
+- process work in rounds / arrival order, sometimes re-queueing
+- systems-flavored: CPU scheduling, packet processing, round-robin
+
+Sub-patterns
+│
+├── CPU Scheduling      round-robin / cooldown processing
+├── Task Scheduler       order tasks under constraints
+└── Packet Processing     FIFO with re-insertion
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+from collections import deque
+q = deque(items)
+while q:
+    item = q.popleft()
+    if not done(item):
+        q.append(item)        # re-queue for a later round
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Dota2 Senate  -> 1.dota2_senate.py
+☑ Time Needed to Buy Tickets  -> 2.time_needed_to_buy_tickets.py
+→ Task Scheduler (greedy/heap)  see ../1.Arrays/10.greedy/3.local_exchange/2.task_scheduler.py

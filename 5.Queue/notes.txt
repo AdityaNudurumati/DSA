@@ -1,0 +1,62 @@
+==================================================
+QUEUE / DEQUE — ROADMAP
+==================================================
+
+QUEUE / DEQUE
+│
+├── 1. Basic FIFO Processing      (Queue ops, task scheduling, stream processing)
+├── 2. Level Order / BFS          (Tree BFS, Graph BFS, Multi-Source, Shortest Path unweighted)
+├── 3. Circular Queue             (Ring buffer, fixed-capacity queue, circular deque)
+├── 4. Monotonic Deque            (Sliding Window Max / Min, constrained windows)
+├── 5. Double Ended Queue (Deque) (front/rear insert-delete, simulation)
+├── 6. Producer-Consumer / Scheduling (CPU scheduling, task scheduler, packets)
+├── 7. Design Problems            (Implement Queue, Queue↔Stack, Circular Queue design)
+├── 8. Priority Queue / Heap      (task priority, top-K, scheduling optimization)
+└── 9. Advanced BFS Queue         (0-1 BFS, bidirectional BFS, state BFS, grid BFS)
+
+--------------------------------------------------
+Three ideas behind almost every queue question
+--------------------------------------------------
+Queue            -> BFS and processing in arrival order
+Deque            -> sliding windows and specialized BFS (0-1 BFS)
+Priority Queue   -> ordering by priority instead of arrival time
+
+--------------------------------------------------
+Suggested interview order
+--------------------------------------------------
+1 Basic FIFO → 7 Design → 2 BFS/Level Order → 3 Circular → 5 Deque →
+4 Monotonic Deque → 6 Scheduling → 9 (Multi-Source → State BFS → 0-1 BFS → Bidirectional)
+
+Must-solve: Implement Queue, Number of Recent Calls, Queue using Stacks (easy);
+Binary Tree Level Order, Rotting Oranges, Design Circular Queue/Deque,
+Sliding Window Maximum, Dota2 Senate (medium); Word Ladder, Shortest Subarray with
+Sum at Least K, Jump Game VI, Open the Lock (hard).
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+☐/☑ checklist). When built out, a pattern is split into sub-folders, each with one
+runnable .py per problem. BFS files define their own minimal TreeNode / adjacency /
+grid inputs so each stays self-contained and runnable.
+
+--------------------------------------------------
+Overlap with other sections (cross-reference, don't duplicate)
+--------------------------------------------------
+Sliding Window Maximum (monotonic deque)
+   -> ../1.Arrays/2.sliding_window/3.monotonic_window/1.sliding_window_maximum.py
+Queue using Stacks / Stack using Queues
+   -> ../4.Stack/10.design/
+Priority-queue problems (Kth Largest, Top K Frequent)
+   -> ../1.Arrays/11.advanced/1.heap/  and  ../1.Arrays/6.hashing/
+Task Scheduler -> ../1.Arrays/10.greedy/  ;  Meeting Rooms II -> ../1.Arrays/7.intervals/
+
+High-value NEW material unique to this section: all BFS (level-order, multi-source,
+state, 0-1, bidirectional), Circular Queue/Deque, Sliding Window Minimum + window
+variants, Number of Recent Calls, Moving Average, Dota2 Senate.
+
+--------------------------------------------------
+Core idea
+--------------------------------------------------
+FIFO. Python: collections.deque — append()/popleft() for a queue,
+appendleft()/pop() for the other end. heapq for priority queues.

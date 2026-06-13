@@ -1,0 +1,44 @@
+==================================================
+QUEUE / 9. ADVANCED BFS QUEUE PATTERNS
+==================================================
+
+Stronger-company BFS variants. The queue stays central; what changes is what a
+"node" is (a state) and how edges are weighted.
+
+Sub-patterns
+│
+├── 0-1 BFS              edges weighted 0/1: deque, appendleft for 0, append for 1
+├── Bidirectional BFS    search from both ends, meet in the middle
+├── State BFS            a node is an encoded STATE (lock combo, gene string)
+└── BFS on Grids          4/8-directional grid traversal (often multi-source)
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# 0-1 BFS
+dq = deque([start]); dist[start] = 0
+while dq:
+    u = dq.popleft()
+    for v, w in edges(u):
+        if dist[u] + w < dist[v]:
+            dist[v] = dist[u] + w
+            dq.appendleft(v) if w == 0 else dq.append(v)
+
+# State BFS: treat each configuration string as a graph node; neighbors = legal moves
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Multi-Source BFS:  (live in ../2.bfs/3.grid_bfs/ — cross-reference, not rebuilt here)
+→ Rotting Oranges    -> ../2.bfs/3.grid_bfs/
+→ Walls and Gates    -> ../2.bfs/3.grid_bfs/
+
+State BFS:
+☑ Open the Lock            -> 2.state_bfs/1.open_the_lock.py
+☑ Minimum Genetic Mutation -> 2.state_bfs/2.minimum_genetic_mutation.py
+
+Bidirectional BFS:
+☑ Word Ladder              -> 3.bidirectional/1.word_ladder.py
+
+0-1 BFS:
+☑ Minimum Cost to Make at Least One Valid Path in a Grid -> 4.zero_one_bfs/1.min_cost_valid_path.py

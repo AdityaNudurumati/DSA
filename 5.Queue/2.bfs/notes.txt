@@ -1,0 +1,44 @@
+==================================================
+QUEUE / 2. LEVEL ORDER / BFS PROCESSING
+==================================================
+
+Where queues become essential. Process a frontier level by level; a queue gives the
+correct visiting order and natural shortest-path-in-unweighted-graphs behavior.
+
+Sub-patterns
+│
+├── Tree BFS              level-order traversal of a binary tree
+├── Graph BFS             visit by distance from a source (with a visited set)
+├── Multi-Source BFS      seed the queue with ALL sources at once
+└── Shortest Path (unweighted)   first time you reach a node = shortest distance
+
+--------------------------------------------------
+Template — level order
+--------------------------------------------------
+from collections import deque
+q = deque([root])
+while q:
+    level_size = len(q)
+    for _ in range(level_size):
+        node = q.popleft()
+        # process node
+        for child in neighbors(node):
+            q.append(child)
+
+(These files define their own minimal TreeNode / adjacency-list / grid inputs.)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Tree BFS:
+☑ Binary Tree Level Order Traversal  -> 1.tree_bfs/1.level_order_traversal.py
+☑ Binary Tree Zigzag Level Order Traversal  -> 1.tree_bfs/2.zigzag_level_order.py
+☑ Binary Tree Right Side View  -> 1.tree_bfs/3.right_side_view.py
+
+Graph BFS:
+☑ Clone Graph  -> 2.graph_bfs/1.clone_graph.py
+
+Grid BFS:
+☑ Number of Islands (BFS variant; union-find version in ../1.Arrays/11.advanced/6.union_find/)  -> 3.grid_bfs/1.number_of_islands.py
+☑ Rotting Oranges  -> 3.grid_bfs/2.rotting_oranges.py
+☑ Walls and Gates  -> 3.grid_bfs/3.walls_and_gates.py

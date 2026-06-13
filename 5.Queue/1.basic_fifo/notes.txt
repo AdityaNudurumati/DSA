@@ -1,0 +1,34 @@
+==================================================
+QUEUE / 1. BASIC FIFO PROCESSING
+==================================================
+
+When to think of this?
+- process items in arrival order (first-in, first-out)
+- streaming windows by time, recent-calls, moving averages
+
+Sub-patterns
+│
+├── Queue Operations    enqueue / dequeue / peek
+├── Task Scheduling      process pending work in order
+└── Stream Processing     keep a window of recent events
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+from collections import deque
+q = deque()
+q.append(x)      # enqueue (rear)
+q.popleft()      # dequeue (front)
+while q:
+    current = q.popleft()
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Queue Operations:
+☑ Implement Queue using Array        -> 1.queue_operations/1.implement_queue_array.py
+☑ Implement Queue using Linked List  -> 1.queue_operations/2.implement_queue_linked_list.py
+
+Stream Processing:
+☑ Number of Recent Calls         -> 2.stream_processing/1.number_of_recent_calls.py
+☑ Moving Average from Data Stream -> 2.stream_processing/2.moving_average.py
