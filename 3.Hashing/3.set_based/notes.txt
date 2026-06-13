@@ -1,0 +1,38 @@
+==================================================
+HASHING / 3. SET-BASED HASHING
+==================================================
+
+When to think of this?
+- only care about presence/uniqueness, not counts
+- consecutive-run detection, dedup, set algebra
+
+Sub-patterns
+│
+├── Unique Elements      collect/keep only distinct values
+├── Consecutive Sequence  set + start-of-run check
+└── Deduplication         set to drop repeats / intersect
+
+--------------------------------------------------
+Template — longest consecutive run
+--------------------------------------------------
+s = set(nums)
+best = 0
+for x in s:
+    if x - 1 not in s:              # x starts a run
+        length = 1
+        while x + length in s: length += 1
+        best = max(best, length)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Unique Elements:
+☑ Valid Sudoku              -> 1.unique_elements/1.valid_sudoku.py
+→ Single Number             see ../../1.Arrays/11.advanced/2.bit_manipulation/1.single_number.py
+
+Consecutive Sequence:
+☑ Longest Consecutive Sequence  -> 2.consecutive_sequence/1.longest_consecutive_sequence.py
+
+Deduplication:
+☑ Contains Duplicate            -> 3.deduplication/1.contains_duplicate.py
+→ Intersection of Two Arrays    see ../../1.Arrays/6.hashing/2.set_based/3.intersection_of_two_arrays.py

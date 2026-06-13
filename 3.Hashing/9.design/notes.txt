@@ -1,0 +1,41 @@
+==================================================
+HASHING / 9. HASH DESIGN PROBLEMS
+==================================================
+
+When to think of this?
+- "design a data structure" with O(1) average ops
+- implement the hash table itself, or build O(1) insert/delete/random
+
+Sub-patterns
+│
+├── Design HashMap      buckets + collision handling (chaining)
+├── Design HashSet       same, membership only
+└── Custom Hashing        array + index-map combos (O(1) random), encoders
+
+--------------------------------------------------
+Template — Insert Delete GetRandom O(1)
+--------------------------------------------------
+# list for O(1) random; dict value->index for O(1) delete (swap with last)
+vals = []
+idx = {}
+def insert(v):
+    if v in idx: return False
+    idx[v] = len(vals); vals.append(v); return True
+def remove(v):
+    if v not in idx: return False
+    i, last = idx[v], vals[-1]
+    vals[i] = last; idx[last] = i
+    vals.pop(); del idx[v]; return True
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Design HashMap:
+☑ Design HashMap            -> 1.design_hashmap/1.design_hashmap.py
+
+Design HashSet:
+☑ Design HashSet            -> 2.design_hashset/1.design_hashset.py
+
+Custom Hashing:
+☑ Consistent Hashing (ring) -> 3.custom_hashing/1.consistent_hashing.py
+☐ Insert Delete GetRandom O(1)

@@ -1,0 +1,42 @@
+==================================================
+HASHING / 7. SLIDING WINDOW + HASHING
+==================================================
+
+When to think of this?
+- a moving window whose STATE is a hash map (counts / distinct set)
+- anagram/permutation detection, "at most/exactly K distinct"
+
+Sub-patterns
+│
+├── Frequency Window     window is a char/element count map (need vs have)
+├── Distinct Elements     map of counts; shrink when distinct > K
+└── Character Tracking     last-seen map drives the left pointer
+
+--------------------------------------------------
+Template — at most K distinct
+--------------------------------------------------
+from collections import defaultdict
+count = defaultdict(int)
+left = 0
+for right, x in enumerate(nums):
+    count[x] += 1
+    while len(count) > K:
+        count[nums[left]] -= 1
+        if count[nums[left]] == 0: del count[nums[left]]
+        left += 1
+    # window [left..right] now has <= K distinct
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Frequency Window:
+☑ Permutation in String           -> 1.frequency_window/1.permutation_in_string.py
+☑ Find All Anagrams in a String   -> 1.frequency_window/2.find_all_anagrams.py
+
+Distinct Elements:
+☐ Longest Substring with At Most K Distinct Characters
+☐ Subarrays with K Different Integers
+
+Character Tracking:
+☑ Longest Substring Without Repeating Characters  -> 3.character_tracking/1.longest_substring_without_repeat.py
+☑ Minimum Window Substring        -> 3.character_tracking/2.minimum_window_substring.py

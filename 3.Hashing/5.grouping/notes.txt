@@ -1,0 +1,35 @@
+==================================================
+HASHING / 5. GROUPING PATTERN
+==================================================
+
+When to think of this?
+- partition items into groups sharing a key/signature
+- bucket items by a derived property
+
+Sub-patterns
+│
+├── Group By Signature   key = canonical form (sorted letters, count tuple)
+├── Categorization        key = a derived category
+└── Bucket Formation       index items into buckets by a property
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+from collections import defaultdict
+groups = defaultdict(list)
+for item in items:
+    groups[signature(item)].append(item)
+return list(groups.values())
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Group By Signature:
+☑ Group Shifted Strings     -> 1.group_by_signature/1.group_shifted_strings.py
+☑ Group Anagrams            -> 1.group_by_signature/2.group_anagrams.py
+
+Categorization:
+☐ Group the People Given the Group Size They Belong To
+
+Bucket Formation:
+→ Top K Frequent (bucket)   see ../../1.Arrays/6.hashing/1.frequency_counting/3.top_k_frequent.py

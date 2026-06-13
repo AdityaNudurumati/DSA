@@ -1,0 +1,39 @@
+==================================================
+HASHING / 1. FREQUENCY COUNTING
+==================================================
+
+When to think of this?
+- "how many times does X occur", most/least common, top-k
+- compare collections by their counts (anagram-style)
+
+Sub-patterns
+│
+├── Character Frequency   Counter over letters
+├── Element Frequency      Counter over arbitrary values
+└── Top-K Frequency        bucket sort / heap by frequency
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+from collections import Counter
+freq = Counter(items)
+# top-k via buckets (frequencies are 1..n)
+buckets = [[] for _ in range(n + 1)]
+for v, c in freq.items(): buckets[c].append(v)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Character Frequency:
+☑ Valid Anagram                 -> 1.character_frequency/1.valid_anagram.py
+☑ Ransom Note                   -> 1.character_frequency/2.ransom_note.py
+☑ Sort Characters By Frequency  -> 1.character_frequency/3.sort_characters_by_frequency.py
+
+Element Frequency:
+☑ Count Pairs With Sum          -> 2.element_frequency/1.count_pairs_with_sum.py
+☑ Majority Element              -> 2.element_frequency/2.majority_element.py
+☐ Find All Numbers Disappeared in an Array
+
+Top-K Frequency:
+☑ Top K Frequent Elements       -> 3.top_k_frequency/1.top_k_frequent_elements.py
+☐ Top K Frequent Words

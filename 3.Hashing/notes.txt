@@ -1,0 +1,86 @@
+==================================================
+HASHING — ROADMAP
+==================================================
+
+HASHING
+│
+├── 1. Frequency Counting
+│   ├── Character Frequency
+│   ├── Element Frequency
+│   └── Top-K Frequency
+│
+├── 2. Lookup / Existence Check
+│   ├── Seen Before?
+│   ├── Complement Lookup
+│   └── Membership Testing
+│
+├── 3. Set-Based Hashing
+│   ├── Unique Elements
+│   ├── Consecutive Sequence
+│   └── Deduplication
+│
+├── 4. Index Mapping
+│   ├── Value → Index
+│   ├── Prefix → Index
+│   └── Last Seen Position
+│
+├── 5. Grouping Pattern
+│   ├── Group By Signature
+│   ├── Categorization
+│   └── Bucket Formation
+│
+├── 6. Prefix Hashing
+│   ├── Prefix Sum + HashMap
+│   ├── Prefix XOR + HashMap
+│   └── Prefix Modulo + HashMap
+│
+├── 7. Sliding Window + Hashing
+│   ├── Frequency Window
+│   ├── Distinct Elements
+│   └── Character Tracking
+│
+├── 8. Ordered Hashing
+│   ├── LRU Cache
+│   ├── First Unique
+│   └── Ordered Dictionary
+│
+├── 9. Hash Design Problems
+│   ├── Design HashMap
+│   ├── Design HashSet
+│   └── Custom Hashing
+│
+└── 10. Rolling Hash
+    ├── Rabin-Karp
+    ├── String Hashing
+    └── Duplicate Substring
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+and a ☐/☑ checklist). When built out, a pattern is split into sub-folders (one per
+sub-pattern), each with one runnable .py per problem — same as 1.Arrays / 2.Strings.
+
+--------------------------------------------------
+Overlap with other sections (cross-reference, don't duplicate)
+--------------------------------------------------
+Hashing is a TECHNIQUE that cuts across data structures, so several patterns here
+already have solved problems elsewhere. The build-out cross-references these:
+
+  Frequency / Set / Grouping  -> ../1.Arrays/6.hashing/  and  ../2.Strings/3.hashing/
+  Prefix Hashing              -> ../1.Arrays/3.prefix_based/  and  ../1.Arrays/6.hashing/3.prefix_hashing/
+  Sliding Window + Hashing    -> ../1.Arrays/2.sliding_window/  and  ../2.Strings/2.sliding_window/
+  Rolling Hash                -> ../2.Strings/11.rolling_hash/  and  ../2.Strings/4.pattern_matching/
+
+The high-value NEW material unique to this section:
+  4. Index Mapping   (value/prefix/last-seen -> index)
+  8. Ordered Hashing (LRU / LFU / insertion order)
+  9. Hash Design     (Design HashMap/HashSet, Insert-Delete-GetRandom O(1))
+
+--------------------------------------------------
+Core idea
+--------------------------------------------------
+A hash map/set trades O(n) space for O(1) average lookup/insert. Reach for it when
+you need: counts, "have I seen X", complements (target - x), grouping by a key,
+prefix bookkeeping, or O(1) membership. Python: dict, collections.Counter,
+collections.defaultdict, set, collections.OrderedDict.

@@ -1,0 +1,38 @@
+==================================================
+HASHING / 2. LOOKUP / EXISTENCE CHECK
+==================================================
+
+When to think of this?
+- "have I seen this before?" while scanning
+- find a complement (target - x) in O(1)
+- O(1) membership tests
+
+Sub-patterns
+│
+├── Seen Before?        a set/dict of visited values
+├── Complement Lookup    store value->index, look up target - x
+└── Membership Testing    set for fast "in" checks
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+seen = {}
+for i, x in enumerate(nums):
+    if target - x in seen:          # complement lookup
+        return [seen[target - x], i]
+    seen[x] = i
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Seen Before?:
+→ Contains Duplicate         see ../3.set_based/3.deduplication/
+☐ Contains Duplicate II      (index within k)
+
+Complement Lookup:
+☑ Two Sum                    -> 2.complement_lookup/1.two_sum.py
+☐ 4Sum II (count complements across two arrays)
+
+Membership Testing:
+☑ Happy Number               -> 3.membership_testing/1.happy_number.py
+☑ Intersection of Two Arrays -> 3.membership_testing/2.intersection_of_two_arrays.py

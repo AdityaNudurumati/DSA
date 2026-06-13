@@ -1,0 +1,40 @@
+==================================================
+HASHING / 4. INDEX MAPPING
+==================================================
+
+When to think of this?
+- you need WHERE something is, not just whether it exists
+- map a value / prefix / character to the index it was last seen
+
+Sub-patterns
+│
+├── Value -> Index        remember each value's position
+├── Prefix -> Index        first index a running prefix value occurred
+└── Last Seen Position     most recent index of a char/value (window jumps)
+
+--------------------------------------------------
+Template — first index of a prefix value
+--------------------------------------------------
+first = {0: -1}            # prefix value -> earliest index
+running = 0
+for i, x in enumerate(nums):
+    running += x
+    if running in first:
+        best = max(best, i - first[running])
+    else:
+        first[running] = i
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Value -> Index:
+→ Two Sum                       see ../2.lookup/2.complement_lookup/
+☑ Isomorphic Strings            -> 1.value_to_index/1.isomorphic_strings.py
+☑ Word Pattern                  -> 1.value_to_index/2.word_pattern.py
+
+Prefix -> Index:
+→ Contiguous Array (0s/1s)      see ../../1.Arrays/3.prefix_based/1.prefix_sum/3.contiguous_array.py
+
+Last Seen Position:
+☑ Minimum Window Subsequence    -> 3.last_seen_position/1.minimum_window_subsequence.py
+→ Longest Substring No Repeat   see ../../2.Strings/2.sliding_window/2.variable_window/

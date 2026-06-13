@@ -1,0 +1,37 @@
+==================================================
+HASHING / 10. ROLLING HASH
+==================================================
+
+When to think of this?
+- compare MANY substrings/windows fast (O(1) equality after O(n) prep)
+- substring search, duplicate-substring, hashing fixed-length windows
+
+Sub-patterns
+│
+├── Rabin-Karp           roll a window hash for substring search
+├── String Hashing        prefix-hash so any substring hash is O(1)
+└── Duplicate Substring    binary search on length + hashing
+
+--------------------------------------------------
+Template — polynomial rolling hash
+--------------------------------------------------
+BASE, MOD = 131, (1 << 61) - 1
+h = 0
+for ch in window: h = (h * BASE + ord(ch)) % MOD
+# roll: drop leftmost, append new char
+h = ((h - ord(left) * pow(BASE, m-1, MOD)) * BASE + ord(new)) % MOD
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Rabin-Karp:
+☑ strStr via Rabin-Karp  -> 1.rabin_karp/1.strstr_rabin_karp.py
+☐ Repeated DNA Sequences
+
+String Hashing:
+☑ Distinct Echo Substrings  -> 2.string_hashing/1.distinct_echo_substrings.py
+
+Duplicate Substring:
+☑ Longest Duplicate Substring  -> 3.duplicate_substring/1.longest_duplicate_substring.py
+
+Note: this pattern is fully solved in 2.Strings; here it's the hashing-technique lens.
