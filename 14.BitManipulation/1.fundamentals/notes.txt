@@ -1,0 +1,28 @@
+==================================================
+BIT MANIPULATION / 1. BIT FUNDAMENTALS
+==================================================
+
+The building blocks every other pattern uses.
+
+Sub-patterns
+│
+├── Set Bit      n |= (1 << i)
+├── Unset Bit     n &= ~(1 << i)
+├── Toggle Bit     n ^= (1 << i)
+├── Check Bit       (n >> i) & 1
+└── Count Bits       popcount
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+def set_bit(n, i):    return n | (1 << i)
+def clear_bit(n, i):  return n & ~(1 << i)
+def toggle_bit(n, i): return n ^ (1 << i)
+def check_bit(n, i):  return (n >> i) & 1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Bit Operations toolkit (set/clear/toggle/check demo) -> 1.bit_operations.py
+☑ Number of 1 Bits (Hamming Weight)  (also ../5.counting/) -> 2.number_of_1_bits.py
+☑ Reverse Bits -> 3.reverse_bits.py

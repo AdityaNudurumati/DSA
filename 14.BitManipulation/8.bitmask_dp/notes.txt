@@ -1,0 +1,32 @@
+==================================================
+BIT MANIPULATION / 8. BITMASK DP
+==================================================
+
+When to think of this?
+- n <= ~20 and the DP state is a SUBSET of items: dp[mask]
+- "visit all", "assign all", "partition into groups"
+
+Sub-patterns
+│
+├── Traveling Salesman      dp[mask][last]
+├── Assignment Problems      assign n tasks to n agents
+├── State Compression DP      pack a row/profile into bits
+└── Subset DP                  iterate masks / submasks
+
+--------------------------------------------------
+Template — "Can I Win" style memo over a used-mask
+--------------------------------------------------
+@lru_cache(None)
+def win(mask, remaining):
+    for i in range(n):
+        if not (mask >> i) & 1:
+            if value(i) >= remaining or not win(mask | 1<<i, remaining - value(i)):
+                return True
+    return False
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Can I Win (LC464) -> 1.can_i_win.py
+☑ Matchsticks to Square (LC473) -> 2.matchsticks_to_square.py
+→ Traveling Salesman, Partition to K Equal Sum  see ../../12.DynamicProgramming/10.bitmask/

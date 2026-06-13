@@ -1,0 +1,27 @@
+==================================================
+BIT MANIPULATION / 9. BITWISE TRIE
+==================================================
+
+Insert numbers' bits MSB->LSB into a binary trie; greedily walk toward the OPPOSITE
+bit to maximize XOR (or the SAME bit to minimize).
+
+Sub-patterns
+│
+├── Maximum XOR Pair       prefer opposite bit at each level
+├── XOR Queries             max XOR with a value constraint (offline)
+├── Minimum XOR Pair         prefer same bit (or sort + adjacent)
+└── Offline XOR Queries       sort queries, insert eligible numbers as you go
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+# see Trie section for the full implementation
+# max_xor(num): walk root; want = 1 - bit; take `want` child if present (set that bit)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+All implemented in the Trie section; cross-referenced here:
+→ Maximum XOR of Two Numbers      see ../../1.Arrays/11.advanced/7.trie/1.maximum_xor_of_two_numbers.py
+→ Maximum XOR With Element        see ../../11.Trie/5.bitwise/1.maximum_xor_with_element.py
+→ Minimum XOR Pair                see ../../11.Trie/5.bitwise/2.minimum_xor_pair.py

@@ -1,0 +1,29 @@
+==================================================
+BIT MANIPULATION / 7. RANGE / PREFIX XOR
+==================================================
+
+When to think of this?
+- many XOR-of-range queries, or counting subarrays by XOR
+- prefix[i] = prefix[i-1] ^ a[i]; xor(l..r) = prefix[r] ^ prefix[l-1]
+
+Sub-patterns
+│
+├── Prefix XOR            build the running-XOR array
+├── XOR Range Query        answer xor(l..r) in O(1)
+├── Missing Numbers         XOR-based recovery
+└── XOR Subarray Problems    count subarrays with a target XOR (+ hashmap)
+
+--------------------------------------------------
+Template — XOR queries of a subarray (LC1310)
+--------------------------------------------------
+pre = [0]*(n+1)
+for i, x in enumerate(arr): pre[i+1] = pre[i] ^ x
+# answer query [l, r]: pre[r+1] ^ pre[l]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ XOR Queries of a Subarray (LC1310) -> 1.xor_queries_subarray.py
+☑ Count Triplets That Can Form Two Arrays of Equal XOR (LC1442) -> 2.count_triplets_equal_xor.py
+→ Subarray XOR Equals K  see ../../1.Arrays/3.prefix_based/2.prefix_xor/
+→ XOR of a Range (closed form)  see ../../1.Arrays/11.advanced/2.bit_manipulation/3.xor_of_range.py

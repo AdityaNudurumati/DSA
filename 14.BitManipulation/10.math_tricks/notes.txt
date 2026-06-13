@@ -1,0 +1,28 @@
+==================================================
+BIT MANIPULATION / 10. MATHEMATICAL BIT TRICKS
+==================================================
+
+Recognize powers of two and isolate bits with classic identities.
+
+Sub-patterns
+│
+├── Power of Two       n > 0 and n & (n-1) == 0
+├── Power of Four        power of two AND the set bit at an even position
+├── Trailing Zeros        count via (n & -n) / bit_length
+├── Lowest Set Bit         n & (-n)
+└── Highest Set Bit         1 << (n.bit_length() - 1)
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+def is_power_of_two(n):  return n > 0 and (n & (n - 1)) == 0
+def lowest_set_bit(n):   return n & (-n)
+def highest_set_bit(n):  return 1 << (n.bit_length() - 1) if n else 0
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Power of Two -> 1.power_of_two.py
+☑ Power of Four -> 2.power_of_four.py
+☑ Number Complement -> 3.number_complement.py
+☐ Lowest / Highest set bit utilities

@@ -1,0 +1,26 @@
+==================================================
+BIT MANIPULATION / 6. SHIFT OPERATIONS
+==================================================
+
+When to think of this?
+- multiply/divide by powers of two; build numbers bit by bit; binary conversion
+- arithmetic without using * / % (interview constraint)
+
+Sub-patterns
+│
+├── Left Shift           n << k  multiplies by 2^k
+├── Right Shift           n >> k  divides by 2^k (floor for non-negatives)
+├── Multiply/Divide by 2   shift instead of arithmetic
+└── Binary Conversion       to/from base-2 strings
+
+--------------------------------------------------
+Template — divide without / (LC29)
+--------------------------------------------------
+# subtract the largest (divisor << k) that fits, accumulate 1<<k; mind overflow & signs
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Divide Two Integers (no * / %) -> 1.divide_two_integers.py
+☑ Sum of Two Integers (add with XOR + carry shifts) -> 2.sum_of_two_integers.py
+☐ Convert to/from binary string

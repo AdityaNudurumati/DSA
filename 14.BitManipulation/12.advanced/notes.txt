@@ -1,0 +1,30 @@
+==================================================
+BIT MANIPULATION / 12. ADVANCED
+==================================================
+
+Mostly competitive-programming territory.
+
+Sub-patterns
+│
+├── Gray Code            successive values differ by exactly one bit: i ^ (i >> 1)
+├── SOS DP                Sum Over Subsets: F[mask] = sum of f[submask], O(n*2^n)
+├── Fast Zeta Transform    the same subset-sum transform (and its inverse, Mobius)
+└── Bitset Optimization     pack booleans into machine words for big speedups
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# Gray code sequence of length 2^n
+[i ^ (i >> 1) for i in range(1 << n)]
+
+# SOS DP
+for bit in range(n):
+    for mask in range(1 << n):
+        if mask & (1 << bit): F[mask] += F[mask ^ (1 << bit)]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Gray Code (LC89) -> 1.gray_code.py
+☑ Circular Gray Code / n-bit sequence -> 1.gray_code.py  (i ^ (i>>1) is cyclic)
+→ Sum Over Subsets (SOS DP)  see ../../12.DynamicProgramming/15.optimization/2.sum_over_subsets.py

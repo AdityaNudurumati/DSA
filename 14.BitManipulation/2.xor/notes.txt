@@ -1,0 +1,32 @@
+==================================================
+BIT MANIPULATION / 2. XOR PATTERN
+==================================================
+
+The most important interview category. a^a=0 and a^0=a, so XOR-ing everything cancels
+pairs and isolates the odd-one-out.
+
+Sub-patterns
+│
+├── Single Number       XOR all -> the unique value
+├── Missing Number        XOR indices and values
+├── Two Unique Numbers     XOR all, split by a differing bit
+└── Prefix XOR             running XOR for subarray queries
+
+--------------------------------------------------
+Template — two unique numbers (Single Number III)
+--------------------------------------------------
+xor = 0
+for x in nums: xor ^= x           # = a ^ b
+diff = xor & (-xor)               # a bit where a and b differ
+a = b = 0
+for x in nums:
+    if x & diff: a ^= x
+    else: b ^= x
+return [a, b]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Single Number II (every other appears 3x) -> 1.single_number_ii.py
+☑ Single Number III (two unique numbers) -> 2.single_number_iii.py
+→ Single Number, Missing Number  see ../../1.Arrays/11.advanced/2.bit_manipulation/

@@ -1,0 +1,30 @@
+==================================================
+BIT MANIPULATION / 3. BIT MASKING
+==================================================
+
+When to think of this?
+- represent a small set / set of flags compactly as the bits of an integer
+- N <= ~20 so 2^N states are tractable
+
+Sub-patterns
+│
+├── State Representation   each bit = one element's presence
+├── Subset Encoding         a mask is a subset
+├── Flags                    feature/permission bits
+└── Permission Masks          combine/test capability sets
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+mask = 0
+mask |= (1 << person)            # add
+mask &= ~(1 << person)           # remove
+present = (mask >> person) & 1   # test
+full = (1 << n) - 1              # all set
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Permission System (add/remove/has/combine/list-set-bits) -> 1.permission_system.py
+☐ Count the number of set states / valid masks
+Note: full subset DP lives in ../8.bitmask_dp/

@@ -1,0 +1,36 @@
+==================================================
+BIT MANIPULATION / 4. SUBSET ENUMERATION
+==================================================
+
+When to think of this?
+- generate ALL subsets, or iterate all SUBMASKS of a mask
+- n <= ~20
+
+Sub-patterns
+│
+├── Generate Subsets   for mask in range(1<<n): build the subset from set bits
+├── Iterate Masks        loop 0..2^n - 1
+├── Submask Enumeration   iterate proper submasks of a fixed mask
+└── State Compression      pack a configuration into bits
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# all subsets
+for mask in range(1 << n):
+    subset = [nums[i] for i in range(n) if (mask >> i) & 1]
+
+# all submasks of `mask` (O(3^n) total over all masks)
+sub = mask
+while sub:
+    use(sub)
+    sub = (sub - 1) & mask
+# (don't forget the empty submask 0 if needed)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Subsets via bitmask enumeration -> 1.subsets_bitmask.py
+☑ Submask enumeration demo (sum over submasks of a mask) -> 2.submask_enumeration.py
+→ Subsets (backtracking)  see ../../8.Recursion/2.backtracking/1.subsets/1.subsets.py
+→ Partition to K Equal Sum Subsets  see ../../12.DynamicProgramming/10.bitmask/

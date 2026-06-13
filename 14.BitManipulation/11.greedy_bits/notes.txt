@@ -1,0 +1,28 @@
+==================================================
+BIT MANIPULATION / 11. GREEDY + BITS
+==================================================
+
+When to think of this?
+- build the answer BIT BY BIT from the most significant bit, greedily deciding each
+- "maximize AND/XOR", "minimize XOR with constraints"
+
+Sub-patterns
+│
+├── Maximum AND        greedily keep numbers that can still share a high bit
+├── Maximum XOR          (bitwise trie, or bit-by-bit with a hashset)
+├── Minimize XOR          match popcount; set the lowest bits of the larger number
+└── Binary Optimization    decide each bit by a greedy rule
+
+--------------------------------------------------
+Template — Minimize XOR (LC2429)
+--------------------------------------------------
+# result must have popcount(num2) set bits, minimizing result ^ num1:
+# 1) copy bits of num1 from high to low until you run out of allowed set bits
+# 2) place any remaining set bits at the lowest zero positions
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Minimize XOR (LC2429) -> 1.minimize_xor.py
+☐ Maximum XOR after operations / Maximum AND sum (greedy variants)
+→ Maximum XOR of Two Numbers (trie)  see ../../1.Arrays/11.advanced/7.trie/

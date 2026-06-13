@@ -1,0 +1,60 @@
+==================================================
+BIT MANIPULATION — ROADMAP
+==================================================
+
+BIT MANIPULATION
+│
+├── 1. Bit Fundamentals      (set / unset / toggle / check / count)
+├── 2. XOR Pattern           (single number, missing number, two unique, prefix XOR)
+├── 3. Bit Masking           (state representation, subset encoding, flags)
+├── 4. Subset Enumeration    (generate subsets, iterate masks, submask enumeration)
+├── 5. Bit Counting          (Brian Kernighan, popcount, Hamming weight/distance)
+├── 6. Shift Operations      (left/right shift, *2 /2, binary conversion)
+├── 7. Range / Prefix XOR    (prefix XOR, range queries, XOR subarrays)
+├── 8. Bitmask DP            (TSP, assignment, state compression, subset DP)
+├── 9. Bitwise Trie          (max/min XOR pair, XOR queries)
+├── 10. Mathematical Tricks  (power of two/four, trailing zeros, lowest/highest set bit)
+├── 11. Greedy + Bits        (maximum AND/XOR, minimize XOR, binary optimization)
+└── 12. Advanced             (Gray code, SOS DP, fast zeta, bitset)
+
+--------------------------------------------------
+The bit toolkit
+--------------------------------------------------
+set bit i:    n |=  (1 << i)
+clear bit i:  n &= ~(1 << i)
+toggle bit i: n ^=  (1 << i)
+check bit i:  (n >> i) & 1
+lowest set:   n & (-n)
+clear lowest: n & (n - 1)        # Brian Kernighan
+is power of 2: n > 0 and n & (n-1) == 0
+popcount:     bin(n).count("1")  (or Kernighan loop)
+XOR facts:    a^a=0, a^0=a, commutative & associative
+
+--------------------------------------------------
+FAANG focus
+--------------------------------------------------
+Bit Fundamentals, XOR, Bit Masking, Subset Enumeration, Prefix XOR, Bit Counting.
+Bitmask DP & Bitwise Trie matter in harder rounds.
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+☐/☑ checklist). When built out, a pattern is split into sub-folders.
+
+--------------------------------------------------
+Overlap with other sections (cross-reference, don't duplicate)
+--------------------------------------------------
+Single Number, Missing Number, XOR of a Range
+   -> ../1.Arrays/11.advanced/2.bit_manipulation/
+Subsets (generate)            -> ../8.Recursion/2.backtracking/1.subsets/
+Subarray XOR = K              -> ../1.Arrays/3.prefix_based/2.prefix_xor/  and  ../3.Hashing/6.prefix_hashing/
+Bitmask DP (TSP, Partition to K Equal Sum)  -> ../12.DynamicProgramming/10.bitmask/
+Bitwise Trie (Max XOR pair, Max XOR With Element, Min XOR)
+   -> ../1.Arrays/11.advanced/7.trie/  and  ../11.Trie/5.bitwise/
+SOS DP                        -> ../12.DynamicProgramming/15.optimization/2.sum_over_subsets.py
+
+High-value NEW: bit-op fundamentals + Reverse Bits, Number of 1 Bits, Counting Bits,
+Hamming Distance, Single Number II/III, XOR Queries of a Subarray, Power of Two/Four,
+Divide Two Integers, lowest/highest set bit, Gray Code, Minimize XOR, Can I Win,
+Matchsticks to Square, submask enumeration.

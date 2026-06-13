@@ -1,0 +1,30 @@
+==================================================
+BIT MANIPULATION / 5. BIT COUNTING
+==================================================
+
+Count set bits efficiently, and use it for Hamming weight/distance.
+
+Sub-patterns
+│
+├── Brian Kernighan    n &= (n-1) clears the lowest set bit -> loop runs popcount times
+├── Population Count     total set bits in a number
+├── Hamming Weight        set bits of one number
+└── Hamming Distance       set bits of (a ^ b); also total pairwise distance
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+def popcount(n):
+    c = 0
+    while n: n &= n - 1; c += 1
+    return c
+
+# Counting Bits 0..n via DP: dp[i] = dp[i >> 1] + (i & 1)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☐ Number of 1 Bits (Hamming Weight)
+☑ Counting Bits (0..n) -> 1.counting_bits.py
+☑ Hamming Distance -> 2.hamming_distance.py
+☑ Total Hamming Distance (per-bit counting) -> 3.total_hamming_distance.py
