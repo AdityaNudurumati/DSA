@@ -1,0 +1,28 @@
+==================================================
+TRIE / 6. COUNTING TRIE
+==================================================
+
+Store extra counters at each node (passes-through count and end-of-word count) to
+answer frequency / distinctness queries.
+
+Sub-patterns
+│
+├── Prefix Count        count of words sharing a prefix (node.count)
+├── Word Frequency       end-count per word
+├── Distinct Strings      number of unique words inserted
+└── K-th String Problems   navigate by counts
+
+--------------------------------------------------
+Node
+--------------------------------------------------
+class TrieNode:
+    def __init__(self):
+        self.children = {}
+        self.count = 0      # words passing through here
+        self.end_count = 0  # words ending here
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Count Distinct Strings -> 1.count_distinct_strings.py
+☑ Prefix and WordCount Queries -> 2.word_count_queries.py

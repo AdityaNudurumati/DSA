@@ -1,0 +1,24 @@
+==================================================
+TRIE / 8. COMPRESSED TRIE
+==================================================
+
+Mostly system-design / advanced. Collapse single-child chains so each edge holds a
+string (not a single char) — fewer nodes, faster lookups, less memory.
+
+Sub-patterns
+│
+├── Radix Tree         merge single-child chains into edge labels
+├── Patricia Trie       radix tree specialized for binary keys
+└── Space Optimization   array-of-26 vs dict; interning
+
+--------------------------------------------------
+Idea
+--------------------------------------------------
+Standard trie "t-e-a-m" = 4 nodes. Compressed: one edge labeled "team" until a branch
+point. Insert splits an edge when a new word diverges mid-label.
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Implement a Radix Tree (insert / search with edge-label splitting) -> 1.radix_tree.py
+☐ Compressed Trie memory comparison demo

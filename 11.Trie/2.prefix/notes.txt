@@ -1,0 +1,31 @@
+==================================================
+TRIE / 2. PREFIX-BASED PROBLEMS
+==================================================
+
+What most interviewers mean by "trie". Store a count at each node to answer prefix
+queries quickly.
+
+Sub-patterns
+│
+├── Prefix Search        does any word have this prefix?
+├── Prefix Count          how many words have this prefix? (count per node)
+├── Longest Common Prefix  walk while exactly one child and not end
+└── Prefix Replacement      replace words by their shortest root
+
+--------------------------------------------------
+Template — prefix count
+--------------------------------------------------
+# on insert, increment node.count along the path
+def count_with_prefix(root, prefix):
+    node = root
+    for ch in prefix:
+        if ch not in node.children: return 0
+        node = node.children[ch]
+    return node.count
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Count Words With Given Prefix -> 1.count_words_with_prefix.py
+→ Longest Common Prefix  see ../../2.Strings/7.trie/1.prefix_search/2.longest_common_prefix.py
+→ Replace Words          see ../../2.Strings/7.trie/1.prefix_search/3.replace_words.py

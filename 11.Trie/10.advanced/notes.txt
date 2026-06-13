@@ -1,0 +1,25 @@
+==================================================
+TRIE / 10. ADVANCED STRING STRUCTURES
+==================================================
+
+Rare for interviews, important for competitive programming.
+
+Sub-patterns
+│
+├── Suffix Array       sorted array of all suffixes; substring queries via binary search
+├── Suffix Automaton    smallest automaton recognizing all substrings
+└── Aho-Corasick         trie of patterns + failure links -> match MANY patterns in one text pass
+
+--------------------------------------------------
+Aho-Corasick idea
+--------------------------------------------------
+1. Build a trie of all patterns.
+2. BFS to build failure links (longest proper suffix that is a trie prefix) + output links.
+3. Scan the text once, following goto/failure edges; emit matches at output links. O(n + total pattern len + matches).
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Multiple Pattern Matching (Aho-Corasick) -> 1.aho_corasick.py
+☑ Stream of Characters (LC1032, Aho-Corasick / reversed trie) -> 2.stream_of_characters.py
+☐ Longest Repeated Substring (suffix array)

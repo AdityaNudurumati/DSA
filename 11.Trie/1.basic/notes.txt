@@ -1,0 +1,30 @@
+==================================================
+TRIE / 1. BASIC OPERATIONS
+==================================================
+
+Foundation of all trie questions. A tree where each edge is a character; a flag marks
+where a word ends.
+
+Sub-patterns
+│
+├── Insert       walk/create child nodes, mark end
+├── Search        walk; true only if the path exists AND ends
+├── StartsWith     walk; true if the prefix path exists
+└── Delete         unmark end; prune now-empty branches
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+class TrieNode:
+    def __init__(self): self.children = {}; self.end = False
+
+def insert(root, word):
+    node = root
+    for ch in word: node = node.children.setdefault(ch, TrieNode())
+    node.end = True
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Implement Trie with Delete (insert/search/startsWith/delete) -> 1.implement_trie_with_delete.py
+→ Implement Trie (Prefix Tree)  see ../../2.Strings/7.trie/1.prefix_search/1.implement_trie.py

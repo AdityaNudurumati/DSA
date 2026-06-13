@@ -1,0 +1,30 @@
+==================================================
+TRIE / 3. DICTIONARY / WORD LOOKUP
+==================================================
+
+When to think of this?
+- membership with wildcards, spell-check, type-ahead suggestions
+
+Sub-patterns
+│
+├── Word Dictionary    add words; search exact
+├── Wildcard Search      '.' matches any char -> DFS over children
+├── Spell Checker         nearest word / edit-distance-1
+└── Auto Complete          top suggestions for a typed prefix
+
+--------------------------------------------------
+Template — wildcard search
+--------------------------------------------------
+def search(node, word, i):
+    if i == len(word): return node.end
+    ch = word[i]
+    if ch == '.':
+        return any(search(c, word, i+1) for c in node.children.values())
+    return ch in node.children and search(node.children[ch], word, i+1)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Magic Dictionary (search with exactly one change) -> 1.magic_dictionary.py
+→ Add and Search Word (wildcard)  see ../../2.Strings/7.trie/2.word_dictionary/1.add_and_search_word.py
+→ Search Suggestions System        see ../../2.Strings/7.trie/3.auto_complete/1.search_suggestions_system.py

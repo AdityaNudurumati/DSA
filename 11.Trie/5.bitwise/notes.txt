@@ -1,0 +1,37 @@
+==================================================
+TRIE / 5. BITWISE TRIE
+==================================================
+
+The most common advanced trie pattern. Insert each number's bits MSB→LSB; to maximize
+XOR, greedily walk toward the OPPOSITE bit at each level.
+
+Sub-patterns
+│
+├── Maximum XOR Pair      prefer opposite bit
+├── Minimum XOR Pair       prefer same bit (or sort + adjacent)
+├── XOR Queries            max XOR with a constraint (value <= m)
+└── Offline XOR Problems    sort queries, insert as you go
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+HIGH = 31
+def insert(num):
+    node = root
+    for i in range(HIGH, -1, -1):
+        b = (num >> i) & 1
+        node = node.children.setdefault(b, TrieNode())
+def max_xor(num):
+    node = root; x = 0
+    for i in range(HIGH, -1, -1):
+        b = (num >> i) & 1; want = 1 - b
+        if want in node.children: x |= (1 << i); node = node.children[want]
+        else: node = node.children[b]
+    return x
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Maximum XOR With an Element From Array (LC1707, offline + value constraint) -> 1.maximum_xor_with_element.py
+☑ Minimum XOR Pair -> 2.minimum_xor_pair.py
+→ Maximum XOR of Two Numbers  see ../../1.Arrays/11.advanced/7.trie/1.maximum_xor_of_two_numbers.py

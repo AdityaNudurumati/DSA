@@ -1,0 +1,28 @@
+==================================================
+TRIE / 4. TRIE + DFS / BACKTRACKING
+==================================================
+
+One of the most important interview patterns. A trie of the target words lets a single
+grid DFS test all words at once and prune dead branches immediately.
+
+Sub-patterns
+│
+├── Word Search        find words from a dictionary in a grid
+├── Grid Search          generic board traversal guided by a trie
+├── Multi Word Search     many words, one board
+└── Boggle Problems        adjacency-move word finding
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+# build trie of words; DFS each cell:
+#   if board[r][c] not in node.children: prune
+#   advance node; if node.end: record word
+#   mark visited, recurse 4 dirs, restore
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Concatenated Words -> 1.concatenated_words.py
+→ Word Search II  see ../../2.Strings/7.trie/2.word_dictionary/2.word_search_ii.py
+                  (also ../../1.Arrays/11.advanced/7.trie/2.word_search_ii.py)

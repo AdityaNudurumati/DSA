@@ -1,0 +1,27 @@
+==================================================
+TRIE / 9. SUFFIX TRIE
+==================================================
+
+A trie of ALL suffixes of a string. Answers substring queries (a substring is a prefix
+of some suffix). Rare in interviews due to O(n^2) memory; suffix arrays/automata scale
+better.
+
+Sub-patterns
+│
+├── Substring Search      query = does this substring exist? (prefix of a suffix)
+├── Repeated Substrings     deepest node with >= 2 distinct continuations
+└── Pattern Queries          many substring membership checks
+
+--------------------------------------------------
+Idea
+--------------------------------------------------
+Insert s[i:] for every i. A substring exists iff it is a path from the root.
+Longest repeated substring = deepest internal node reached by >= 2 suffixes.
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Substring Search via Suffix Trie -> 1.suffix_trie_substring_search.py
+☑ Longest Repeated Substring (suffix trie) -> 2.longest_repeated_substring.py
+Note: a rolling-hash version of Longest Duplicate Substring lives in
+      ../../2.Strings/11.rolling_hash/1.double_hashing/1.longest_duplicate_substring.py

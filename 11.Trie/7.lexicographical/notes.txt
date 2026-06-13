@@ -1,0 +1,29 @@
+==================================================
+TRIE / 7. LEXICOGRAPHICAL TRIE
+==================================================
+
+A trie visited in sorted child order yields words/numbers in dictionary order; node
+subtree counts let you jump to the k-th item without listing all.
+
+Sub-patterns
+│
+├── Dictionary Order        DFS children in sorted key order
+├── K-th Lexicographical     use subtree sizes to navigate (denary-trie for numbers)
+└── Sorted Traversal          enumerate all words in order
+
+--------------------------------------------------
+Template — kth lexicographical number (denary trie idea)
+--------------------------------------------------
+# count numbers in [1, n] under a prefix; descend to the prefix that contains the kth
+def count(prefix, n):
+    cur, nxt, total = prefix, prefix + 1, 0
+    while cur <= n:
+        total += min(n + 1, nxt) - cur
+        cur *= 10; nxt *= 10
+    return total
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ K-th Lexicographical Number (LC440) -> 2.kth_lexicographical_number.py
+☑ Lexicographical Numbers (LC386) -> 1.lexicographical_numbers.py
