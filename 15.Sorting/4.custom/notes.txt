@@ -1,0 +1,30 @@
+==================================================
+SORTING / 4. CUSTOM SORTING
+==================================================
+
+When to think of this?
+- order by a derived key, multiple keys, or a pairwise comparator
+
+Sub-patterns
+│
+├── Multi Key Sorting     sort by (key1, -key2, key3) tuples
+├── Comparator Based       cmp_to_key when order isn't a simple key
+├── Lexicographic Sorting   string / sequence order
+└── Frequency Sorting        by count, then by value
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+arr.sort(key=lambda x: (x.grade, -x.age))     # multi-key
+from functools import cmp_to_key
+arr.sort(key=cmp_to_key(lambda a, b: ...))     # pairwise comparator
+items.sort(key=lambda v: (-freq[v], v))        # frequency desc, value asc
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Sort by Multiple Keys (e.g. records by (dept, -salary, name)) -> 3.sort_by_multiple_keys.py
+☑ Relative Sort Array (LC1122) -> 1.relative_sort_array.py
+☑ Custom Sort String (LC791) -> 2.custom_sort_string.py
+→ Largest Number (a+b vs b+a comparator)  see ../../1.Arrays/11.advanced/4.sorting_tricks/
+→ Sort Characters By Frequency             see ../../2.Strings/3.hashing/1.character_frequency/

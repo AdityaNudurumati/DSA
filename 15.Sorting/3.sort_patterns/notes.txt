@@ -1,0 +1,29 @@
+==================================================
+SORTING / 3. SORTING-BASED PATTERNS
+==================================================
+
+Many problems become easy AFTER sorting. Recognize the follow-up technique.
+
+Sub-patterns
+│
+├── Sort + Scan            sort, then a single linear pass (merge intervals, dedup)
+├── Sort + Two Pointers     pair/triplet sums on sorted data
+├── Sort + Greedy            earliest-end / smallest-first choices
+├── Sort + Binary Search      sorted array enables log-time lookups
+├── Sort + Heap                sort then heap for top-k / scheduling
+└── Coordinate Compression     map sparse values to ranks 0..m-1
+
+--------------------------------------------------
+Template — coordinate compression
+--------------------------------------------------
+ranks = {v: i for i, v in enumerate(sorted(set(values)))}
+compressed = [ranks[v] for v in values]   # values now in 0..m-1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Coordinate Compression -> 1.coordinate_compression.py
+☐ Merge Intervals (sort + scan)   (also ../../1.Arrays/7.intervals/)
+→ 3Sum (sort + two pointers)  see ../../1.Arrays/1.two_pointer_problems/1.opposite_ends/
+→ Sort + Greedy               see ../../13.Greedy/
+→ Sort + Binary Search        see ../../1.Arrays/5.binary_search/

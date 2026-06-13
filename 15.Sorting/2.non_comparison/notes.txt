@@ -1,0 +1,31 @@
+==================================================
+SORTING / 2. NON-COMPARISON SORTING
+==================================================
+
+Beat the n log n bound by NOT comparing — exploit bounded keys.
+
+Sub-patterns
+│
+├── Counting Sort   tally each value, rebuild   O(n + k), stable
+├── Radix Sort       counting-sort by each digit, LSD->MSD   O(d(n + b))
+└── Bucket Sort       distribute into buckets, sort each   O(n) avg for uniform data
+
+--------------------------------------------------
+Template — counting sort
+--------------------------------------------------
+def counting_sort(a):
+    if not a: return a
+    lo, hi = min(a), max(a)
+    cnt = [0] * (hi - lo + 1)
+    for x in a: cnt[x - lo] += 1
+    out = []
+    for v, c in enumerate(cnt): out += [v + lo] * c
+    return out
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Counting Sort -> 1.counting_sort.py
+☑ Radix Sort (non-negative integers, LSD) -> 2.radix_sort.py
+☑ Bucket Sort (floats in [0,1) or uniform ints) -> 3.bucket_sort.py
+☑ Maximum Gap (bucket sort application, LC164) -> 4.maximum_gap.py

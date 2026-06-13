@@ -1,0 +1,35 @@
+==================================================
+SORTING / 1. COMPARISON BASED SORTING
+==================================================
+
+Order elements by pairwise comparison. Lower bound Omega(n log n) for the fast ones.
+
+Sub-patterns
+│
+├── Bubble Sort      repeatedly swap adjacent out-of-order pairs   O(n^2)
+├── Selection Sort    pick the min each pass                        O(n^2)
+├── Insertion Sort     insert each element into the sorted prefix   O(n^2), great if near-sorted
+├── Merge Sort          divide, sort halves, merge   O(n log n), stable
+├── Quick Sort           partition around a pivot     O(n log n) avg
+└── Heap Sort             build a heap, pop max repeatedly  O(n log n), in-place
+
+--------------------------------------------------
+Template — heap sort (in-place, max-heap)
+--------------------------------------------------
+def heapify(a, n, i):
+    largest = i; l, r = 2*i+1, 2*i+2
+    if l < n and a[l] > a[largest]: largest = l
+    if r < n and a[r] > a[largest]: largest = r
+    if largest != i: a[i], a[largest] = a[largest], a[i]; heapify(a, n, largest)
+# build heap, then swap a[0] with a[i], shrink, re-heapify
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Bubble Sort -> 1.bubble_sort.py
+☑ Selection Sort -> 2.selection_sort.py
+☑ Insertion Sort -> 3.insertion_sort.py
+☑ Merge Sort (array) -> 4.merge_sort.py
+☑ Quick Sort -> 5.quick_sort.py
+☑ Heap Sort -> 6.heap_sort.py
+→ Quick Sort / Quick Select (partition variant)  see ../../1.Arrays/1.two_pointer_problems/3.partition_dutch_flag/

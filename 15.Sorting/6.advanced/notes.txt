@@ -1,0 +1,27 @@
+==================================================
+SORTING / 6. ADVANCED SORTING APPLICATIONS
+==================================================
+
+Sorting as a building block for harder problems.
+
+Sub-patterns
+│
+├── Inversion Count       pairs out of order; merge-sort counting
+├── External Sorting        sort data too big for memory (k-way merge of sorted runs)
+├── Topological Ordering     a "sort" of a DAG by dependencies
+└── Parallel Sorting          divide-and-conquer across workers (conceptual)
+
+--------------------------------------------------
+External sort (idea) + k-way merge
+--------------------------------------------------
+# 1) split input into chunks that fit in memory; sort each; write as runs
+# 2) k-way merge the sorted runs with a min-heap (see Heap / K-Way Merge)
+import heapq; heapq.merge(*runs)   # std-lib lazy k-way merge
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ External Sort simulation (sort runs, then k-way merge with heapq.merge) -> 1.external_sort_kway_merge.py
+→ Count Inversions, Reverse Pairs  see ../../1.Arrays/11.advanced/3.divide_conquer/
+→ Topological Ordering (Kahn / DFS)  see ../../10.Graphs/4.topological_sort/
+→ Merge K Sorted (k-way merge)       see ../../9.Heap/2.k_way_merge/

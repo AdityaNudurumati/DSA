@@ -1,0 +1,50 @@
+==================================================
+SORTING — ROADMAP
+==================================================
+
+SORTING
+│
+├── 1. Comparison Based     (bubble, selection, insertion, merge, quick, heap)
+├── 2. Non-Comparison       (counting, radix, bucket)
+├── 3. Sorting-Based Patterns (sort + scan / two-pointers / greedy / binary search / heap; coord compression)
+├── 4. Custom Sorting       (multi-key, comparator, lexicographic, frequency)
+├── 5. Stability Concepts   (stable vs unstable, secondary-key preservation)
+└── 6. Advanced Applications (inversion count, external sort, topological order, parallel)
+
+--------------------------------------------------
+Complexity cheat sheet
+--------------------------------------------------
+Bubble/Selection/Insertion : O(n^2)            (insertion is great for nearly-sorted)
+Merge Sort                 : O(n log n), stable, O(n) space
+Quick Sort                 : O(n log n) avg / O(n^2) worst, in-place, unstable
+Heap Sort                  : O(n log n), in-place, unstable
+Counting Sort              : O(n + k), stable    (k = value range)
+Radix Sort                 : O(d (n + b))        (d digits, base b)
+Bucket Sort                : O(n) average for uniform data
+
+Comparison sorts have an Omega(n log n) lower bound; counting/radix/bucket beat it by
+NOT comparing (they assume bounded keys).
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+☐/☑ checklist). When built out, a pattern is split into sub-folders.
+
+--------------------------------------------------
+Overlap with other sections (cross-reference, don't duplicate)
+--------------------------------------------------
+Merge Sort (array & list)  -> ../8.Recursion/3.divide_conquer/  and  ../6.LinkedList/8.sorting/
+Quick Sort / Quick Select  -> ../1.Arrays/1.two_pointer_problems/3.partition_dutch_flag/
+Sort + Two Pointers (3Sum, etc.)  -> ../1.Arrays/1.two_pointer_problems/
+Sort + Greedy                     -> ../13.Greedy/
+Sort + Binary Search / on answer  -> ../1.Arrays/5.binary_search/
+Inversion Count, Reverse Pairs    -> ../1.Arrays/11.advanced/3.divide_conquer/
+Topological Ordering              -> ../10.Graphs/4.topological_sort/
+Largest Number (comparator)       -> ../1.Arrays/11.advanced/4.sorting_tricks/
+Sort Characters By Frequency      -> ../2.Strings/3.hashing/1.character_frequency/
+Sort Colors (Dutch flag)          -> ../1.Arrays/1.two_pointer_problems/3.partition_dutch_flag/
+
+High-value NEW: the algorithms themselves (bubble/selection/insertion/heap sort,
+counting/radix/bucket sort), coordinate compression, multi-key comparators, and
+stable-vs-unstable demonstrations.

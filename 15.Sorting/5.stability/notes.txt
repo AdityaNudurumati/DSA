@@ -1,0 +1,27 @@
+==================================================
+SORTING / 5. STABILITY CONCEPTS
+==================================================
+
+A STABLE sort keeps equal elements in their original relative order. It matters when
+you sort by multiple keys in passes, or sort records by one field but want ties to
+preserve input order.
+
+Sub-patterns
+│
+├── Stable Sort               merge sort, counting sort, Python's sorted()/.sort()
+├── Unstable Sort              quicksort, heapsort (order of equal keys not guaranteed)
+└── Secondary Key Preservation  stable sort by minor key first, then major key
+
+--------------------------------------------------
+Key facts
+--------------------------------------------------
+- Python's Timsort is STABLE.
+- Multi-pass: to sort by (major, minor), stable-sort by minor THEN by major.
+- A comparison sort can be made stable by tagging each element with its index.
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Stable vs Unstable demo (sort records by a key; show equal-key order) -> 1.stable_vs_unstable.py
+☑ Two-pass stable sort by (major, minor) keys -> 2.two_pass_stable_sort.py
+☐ Make an unstable sort stable via index tagging
