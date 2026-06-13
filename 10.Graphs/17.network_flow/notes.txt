@@ -1,0 +1,30 @@
+==================================================
+GRAPHS / 17. NETWORK FLOW
+==================================================
+
+When to think of this?
+- maximum throughput source→sink, or problems reducible to it (matching, min cut)
+- augmenting paths in a residual graph
+
+Sub-patterns
+│
+├── Ford-Fulkerson     repeatedly find an augmenting path (DFS), push flow
+├── Edmonds-Karp        Ford-Fulkerson with BFS augmenting paths -> O(VE^2)
+├── Max Flow             value of the maximum source->sink flow (= min cut)
+└── Bipartite Matching    model as flow with unit capacities
+
+--------------------------------------------------
+Template — Edmonds-Karp (BFS augmenting paths)
+--------------------------------------------------
+# residual capacity matrix cap[u][v]
+# while BFS finds an augmenting path s->t with bottleneck b:
+#     subtract b along the path, add b to reverse edges, max_flow += b
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Maximum Flow (Edmonds-Karp on a small network) -> 1.max_flow_edmonds_karp.py
+☑ Maximum Bipartite Matching -> 2.bipartite_matching.py
+☐ Minimum Cut (max-flow min-cut)
+
+Note: advanced / competitive-programming topic; less common in standard interviews.

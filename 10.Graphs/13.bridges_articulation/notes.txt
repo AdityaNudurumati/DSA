@@ -1,0 +1,28 @@
+==================================================
+GRAPHS / 13. BRIDGES & ARTICULATION POINTS
+==================================================
+
+When to think of this?
+- find edges/vertices whose removal disconnects the graph (single points of failure)
+- DFS with discovery times and low-link values
+
+Sub-patterns
+│
+├── Bridges            edge (u,v) is a bridge if low[v] > disc[u]
+├── Cut Vertices         articulation points (root special-case + low[child] >= disc[u])
+└── Critical Connections   the bridges of a network
+
+--------------------------------------------------
+Template — bridges (Tarjan)
+--------------------------------------------------
+# disc[u]=low[u]=time++; for v in adj[u] (v != parent):
+#   if v unvisited:
+#       dfs(v, u); low[u]=min(low[u],low[v])
+#       if low[v] > disc[u]: bridges.append((u,v))
+#   else: low[u]=min(low[u],disc[v])
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Critical Connections in a Network (bridges) -> 1.critical_connections.py
+☑ Articulation Points (cut vertices) -> 2.articulation_points.py

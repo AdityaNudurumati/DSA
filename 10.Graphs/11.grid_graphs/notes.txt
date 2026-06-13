@@ -1,0 +1,32 @@
+==================================================
+GRAPHS / 11. GRID GRAPH PROBLEMS
+==================================================
+
+A huge interview category. Treat each cell as a node with 4 (or 8) neighbors; DFS/BFS
+flood fill or shortest path.
+
+Sub-patterns
+│
+├── Islands             count / size connected regions of land
+├── Shortest Path Grid   BFS over open cells
+├── Region Capture        DFS from borders (Surrounded Regions)
+└── Matrix BFS             multi-step spread / reachability
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+dirs = [(-1,0),(1,0),(0,-1),(0,1)]
+def dfs(r, c):
+    if not (0 <= r < m and 0 <= c < n) or grid[r][c] != '1': return
+    grid[r][c] = '0'                      # mark visited
+    for dr, dc in dirs: dfs(r+dr, c+dc)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Number of Islands (DFS)        -> 1.number_of_islands.py
+☑ Max Area of Island             -> 2.max_area_of_island.py
+☑ Surrounded Regions             -> 3.surrounded_regions.py
+☑ Pacific Atlantic Water Flow    -> 4.pacific_atlantic.py
+☑ Shortest Path in Binary Matrix -> 5.shortest_path_binary_matrix.py
+→ Rotting Oranges  see ../../5.Queue/2.bfs/3.grid_bfs/2.rotting_oranges.py

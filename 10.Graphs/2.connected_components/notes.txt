@@ -1,0 +1,30 @@
+==================================================
+GRAPHS / 2. CONNECTED COMPONENTS
+==================================================
+
+When to think of this?
+- "how many groups / provinces / islands / components?"
+- run DFS/BFS from each unvisited node, counting starts (or use DSU)
+
+Sub-patterns
+│
+├── Number of Components   count traversal launches
+├── Provinces               same idea on an adjacency matrix
+└── Flood Fill               recolor a connected region
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+count = 0
+for node in range(n):
+    if node not in visited:
+        count += 1
+        dfs(node)          # mark the whole component
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Number of Provinces -> 1.number_of_provinces.py
+☑ Number of Connected Components in an Undirected Graph -> 2.number_of_connected_components.py
+☑ Flood Fill -> 3.flood_fill.py
+→ Number of Islands  see ../11.grid_graphs/ and ../../5.Queue/2.bfs/3.grid_bfs/

@@ -1,0 +1,32 @@
+==================================================
+GRAPHS / 15. STATE SPACE SEARCH
+==================================================
+
+When to think of this?
+- each CONFIGURATION is a node; a legal move is an edge
+- BFS for fewest moves; bitmask to encode visited-sets
+
+Sub-patterns
+│
+├── BFS on States      encode the state, BFS over reachable states
+├── Bitmask BFS         state includes a visited bitmask (TSP-ish)
+├── Puzzle Problems      sliding puzzle, lock combinations
+└── Game Graphs           reachable game positions
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+from collections import deque
+q = deque([(start_state, 0)]); seen = {start_state}
+while q:
+    state, steps = q.popleft()
+    if state == goal: return steps
+    for nxt in moves(state):
+        if nxt not in seen: seen.add(nxt); q.append((nxt, steps+1))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Sliding Puzzle -> 1.sliding_puzzle.py
+☑ Shortest Path Visiting All Nodes (bitmask BFS) -> 2.shortest_path_visiting_all_nodes.py
+→ Open the Lock / Minimum Genetic Mutation  see ../../5.Queue/9.advanced_bfs/2.state_bfs/

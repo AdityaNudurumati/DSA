@@ -1,0 +1,32 @@
+==================================================
+GRAPHS / 10. 0-1 BFS
+==================================================
+
+When to think of this?
+- edge weights are only 0 or 1
+- a deque replaces Dijkstra's heap: O(V+E) instead of O(E log V)
+
+Sub-patterns
+│
+├── Binary Weighted Graphs   weight-0 edges "free", weight-1 cost a step
+└── Minimum Cost Problems      grid moves where some moves are free
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+from collections import deque
+dq = deque([start]); dist = {start: 0}
+while dq:
+    u = dq.popleft()
+    for v, w in adj[u]:                # w in {0, 1}
+        nd = dist[u] + w
+        if nd < dist.get(v, inf):
+            dist[v] = nd
+            dq.appendleft(v) if w == 0 else dq.append(v)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Minimum Obstacle Removal to Reach Corner -> 1.minimum_obstacle_removal.py
+☐ Minimum Cost to Make a Grid Path Valid (see Queue advanced_bfs for the LC1368 version)
+→ Min Cost Valid Path (0-1 BFS)  see ../../5.Queue/9.advanced_bfs/4.zero_one_bfs/1.min_cost_valid_path.py

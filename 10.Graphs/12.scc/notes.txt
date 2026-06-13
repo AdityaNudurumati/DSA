@@ -1,0 +1,26 @@
+==================================================
+GRAPHS / 12. STRONGLY CONNECTED COMPONENTS
+==================================================
+
+A maximal set where every node reaches every other (directed graphs).
+
+Sub-patterns
+│
+├── Kosaraju          2 passes: order by finish time, then DFS on the transpose
+├── Tarjan             one DFS with discovery times + low-link + a stack
+└── Condensation Graph   contract each SCC to a node -> a DAG
+
+--------------------------------------------------
+Template — Tarjan low-link
+--------------------------------------------------
+# disc[u]=low[u]=time++; push u; for v in adj[u]:
+#   if v unvisited: dfs(v); low[u]=min(low[u],low[v])
+#   elif v on stack: low[u]=min(low[u],disc[v])
+# if low[u]==disc[u]: pop stack until u -> one SCC
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Strongly Connected Components (Kosaraju) -> 1.kosaraju.py
+☑ Strongly Connected Components (Tarjan) -> 2.tarjan.py
+☐ Number of SCCs / Condensation

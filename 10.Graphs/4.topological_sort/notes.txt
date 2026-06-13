@@ -1,0 +1,38 @@
+==================================================
+GRAPHS / 4. TOPOLOGICAL SORT
+==================================================
+
+When to think of this?
+- dependencies / prerequisites / ordering / build systems
+- only valid on a DAG; a cycle means no ordering exists
+
+Sub-patterns
+│
+├── Kahn's Algorithm   BFS on indegrees; pop zero-indegree nodes
+├── DFS Topo            postorder, then reverse
+├── Course Schedule      feasibility + an order
+└── Dependency Resolution  alien dictionary, build order
+
+--------------------------------------------------
+Template — Kahn's
+--------------------------------------------------
+from collections import deque
+indeg = [0]*n
+for u in range(n):
+    for v in adj[u]: indeg[v] += 1
+q = deque(u for u in range(n) if indeg[u] == 0)
+order = []
+while q:
+    u = q.popleft(); order.append(u)
+    for v in adj[u]:
+        indeg[v] -= 1
+        if indeg[v] == 0: q.append(v)
+# len(order) < n  => cycle
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Course Schedule -> 1.course_schedule.py
+☑ Course Schedule II -> 2.course_schedule_ii.py
+☑ Alien Dictionary -> 3.alien_dictionary.py
+☑ Minimum Height Trees (topological peeling) -> 4.minimum_height_trees.py

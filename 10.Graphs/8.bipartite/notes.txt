@@ -1,0 +1,35 @@
+==================================================
+GRAPHS / 8. BIPARTITE GRAPH
+==================================================
+
+When to think of this?
+- can nodes be split into two groups with no edge inside a group?
+- 2-coloring; an odd-length cycle makes it impossible
+
+Sub-patterns
+│
+├── BFS Coloring        color level by level, alternate
+├── DFS Coloring         color neighbor opposite; conflict = not bipartite
+└── Odd Cycle Detection   equivalent failure condition
+
+--------------------------------------------------
+Template — BFS 2-coloring
+--------------------------------------------------
+color = {}
+for s in range(n):
+    if s in color: continue
+    color[s] = 0; q = deque([s])
+    while q:
+        u = q.popleft()
+        for v in adj[u]:
+            if v not in color:
+                color[v] = color[u] ^ 1; q.append(v)
+            elif color[v] == color[u]:
+                return False
+return True
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Is Graph Bipartite? -> 1.is_graph_bipartite.py
+☑ Possible Bipartition -> 2.possible_bipartition.py

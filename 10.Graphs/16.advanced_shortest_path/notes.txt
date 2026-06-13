@@ -1,0 +1,33 @@
+==================================================
+GRAPHS / 16. ADVANCED SHORTEST PATH
+==================================================
+
+When to think of this?
+- huge/implicit graphs where plain Dijkstra is too slow
+- heuristics, meeting in the middle, reweighting, k alternatives
+
+Sub-patterns
+│
+├── A*                  Dijkstra + admissible heuristic h(n) toward the goal
+├── Bidirectional BFS    search from both ends; meet in the middle
+├── Johnson's Algorithm   all-pairs on sparse graphs (reweight + Dijkstra)
+└── K Shortest Paths      heap of paths, pop k times (Eppstein / modified Dijkstra)
+
+--------------------------------------------------
+Template — A*
+--------------------------------------------------
+import heapq
+pq = [(h(start), 0, start)]          # (f = g + h, g, node)
+while pq:
+    f, g, u = heapq.heappop(pq)
+    if u == goal: return g
+    for v, w in adj[u]:
+        heapq.heappush(pq, (g + w + h(v), g + w, v))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☐ Sliding Puzzle (A* with Manhattan heuristic)
+☐ K Shortest Paths
+☑ Number of Ways to Arrive at Destination (LC1976) -> 1.number_of_ways_to_arrive.py
+→ Bidirectional BFS: Word Ladder  see ../../5.Queue/9.advanced_bfs/3.bidirectional/1.word_ladder.py

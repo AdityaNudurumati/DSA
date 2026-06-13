@@ -1,0 +1,31 @@
+==================================================
+GRAPHS / 6. MINIMUM SPANNING TREE
+==================================================
+
+Connect all nodes with minimum total edge weight.
+
+Sub-patterns
+│
+├── Kruskal        sort edges, add if it joins two components (DSU)
+├── Prim            grow a tree by the cheapest crossing edge (heap)
+└── Reverse Delete   remove heaviest edges that keep it connected
+
+--------------------------------------------------
+Template — Kruskal (with DSU)
+--------------------------------------------------
+edges.sort(key=lambda e: e[2])
+parent = list(range(n))
+def find(x):
+    while parent[x] != x: parent[x] = parent[parent[x]]; x = parent[x]
+    return x
+total = 0
+for u, v, w in edges:
+    ru, rv = find(u), find(v)
+    if ru != rv: parent[ru] = rv; total += w
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Min Cost to Connect All Points (Kruskal here; Prim version in Heap) -> 1.kruskal_connect_points.py
+☐ Connecting Cities With Minimum Cost
+→ Prim's (heap)  see ../../9.Heap/8.graph_heap/2.mst/1.min_cost_connect_points.py

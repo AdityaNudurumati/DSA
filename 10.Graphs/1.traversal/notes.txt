@@ -1,0 +1,35 @@
+==================================================
+GRAPHS / 1. TRAVERSAL
+==================================================
+
+The foundation of everything. Visit every reachable node once, using a visited set.
+
+Sub-patterns
+│
+├── DFS (recursive)   recurse into unvisited neighbors
+├── DFS (iterative)    explicit stack
+├── BFS                queue, visit by distance
+└── (representation)   adjacency list is the default
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+def dfs(u):
+    visited.add(u)
+    for v in adj[u]:
+        if v not in visited: dfs(v)
+
+from collections import deque
+q = deque([start]); seen = {start}
+while q:
+    u = q.popleft()
+    for v in adj[u]:
+        if v not in seen: seen.add(v); q.append(v)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Find if Path Exists in Graph -> 1.find_if_path_exists.py
+☑ Depth First Search (adjacency-list demo) -> 2.dfs_traversal.py
+☑ Breadth First Search (adjacency-list demo) -> 3.bfs_traversal.py
+→ Clone Graph  see ../../5.Queue/2.bfs/2.graph_bfs/1.clone_graph.py

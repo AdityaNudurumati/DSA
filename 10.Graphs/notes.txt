@@ -1,0 +1,65 @@
+==================================================
+GRAPHS — ROADMAP
+==================================================
+
+GRAPHS
+│
+├── 1. Traversal                (DFS / BFS, iterative & recursive)
+├── 2. Connected Components     (count groups, provinces, components)
+├── 3. Cycle Detection          (undirected parent-track, directed 3-color)
+├── 4. Topological Sort         (Kahn's, DFS topo, course schedule, alien dict)
+├── 5. Shortest Path            (BFS, Dijkstra, Bellman-Ford, Floyd-Warshall, DAG)
+├── 6. Minimum Spanning Tree    (Kruskal, Prim, reverse-delete)
+├── 7. Union Find (DSU)         (connectivity, cycle, dynamic components)
+├── 8. Bipartite Graph          (BFS/DFS 2-coloring, odd-cycle)
+├── 9. Multi-Source BFS         (grid spread, distance problems)
+├── 10. 0-1 BFS                 (0/1 weighted, deque)
+├── 11. Grid Graph Problems     (islands, regions, water flow, matrix BFS)
+├── 12. Strongly Connected Comp (Kosaraju, Tarjan, condensation)
+├── 13. Bridges & Articulation  (cut edges/vertices, critical connections)
+├── 14. Graph DP                (DP on DAG, longest path, state graph DP)
+├── 15. State Space Search      (BFS on states, bitmask, puzzles)
+├── 16. Advanced Shortest Path  (A*, bidirectional, Johnson's, K shortest)
+└── 17. Network Flow            (Ford-Fulkerson, Edmonds-Karp, max flow, matching)
+
+--------------------------------------------------
+Graph representation (used everywhere; no separate folder)
+--------------------------------------------------
+Adjacency list:  adj = defaultdict(list); adj[u].append(v)     # most common
+Adjacency matrix: m[u][v] = weight (dense / all-pairs)
+Edge list:        edges = [(u, v, w), ...]                      # Kruskal / Bellman-Ford
+Weighted:         adj[u].append((v, w))
+
+--------------------------------------------------
+Suggested interview order
+--------------------------------------------------
+DFS → BFS → Connected Components → Cycle Detection → Topological Sort → Grid →
+Multi-Source BFS → DSU → Dijkstra → Bipartite → MST → Bellman-Ford → Floyd-Warshall →
+0-1 BFS → SCC → Bridges → Graph DP → State Space → Network Flow
+
+Master through Graph DP for the vast majority of interview questions; SCC/Bridges/Flow
+are advanced rounds & competitive.
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+☐/☑ checklist). When built out, a pattern is split into sub-folders, each with one
+runnable .py per problem. Every file defines its own adjacency list / grid input.
+
+--------------------------------------------------
+Overlap with other sections (cross-reference, don't duplicate)
+--------------------------------------------------
+BFS basics (Clone Graph, Number of Islands, Rotting Oranges, Walls and Gates)
+   -> ../5.Queue/2.bfs/
+State / bidirectional / 0-1 BFS (Word Ladder, Open the Lock, Min Cost Valid Path)
+   -> ../5.Queue/9.advanced_bfs/
+Dijkstra / Prim / Cheapest Flights (graph + heap)
+   -> ../9.Heap/8.graph_heap/
+Union-Find (Number of Islands, Accounts Merge)
+   -> ../1.Arrays/11.advanced/6.union_find/
+
+High-value NEW: DFS + cycle detection, topological sort (Course Schedule, Alien
+Dictionary), Bellman-Ford, Floyd-Warshall, Kruskal, Bipartite, Surrounded Regions /
+Pacific-Atlantic, SCC (Kosaraju/Tarjan), Bridges/Articulation (Critical Connections),
+Graph DP (Longest Path DAG, Largest Color Value), Network Flow.

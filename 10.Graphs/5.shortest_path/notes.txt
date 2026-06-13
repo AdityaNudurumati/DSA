@@ -1,0 +1,42 @@
+==================================================
+GRAPHS / 5. SHORTEST PATH
+==================================================
+
+Pick the algorithm by graph type.
+
+Sub-patterns
+│
+├── BFS Shortest Path   UNWEIGHTED: first reach = shortest
+├── Dijkstra             non-negative weights; heap of (dist, node)
+├── Bellman-Ford          negative edges allowed; relax E edges V-1 times
+├── Floyd-Warshall         ALL-PAIRS; O(V^3) DP over intermediate nodes
+└── DAG Shortest Path       topo order then relax (handles negatives, O(V+E))
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# Bellman-Ford
+dist = [inf]*n; dist[s] = 0
+for _ in range(n-1):
+    for u, v, w in edges:
+        if dist[u] + w < dist[v]: dist[v] = dist[u] + w
+# one more pass detects a negative cycle
+
+# Floyd-Warshall
+for k in range(n):
+  for i in range(n):
+    for j in range(n):
+      d[i][j] = min(d[i][j], d[i][k] + d[k][j])
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Bellman-Ford:
+☑ Bellman-Ford single-source (negative edges + negative-cycle detection) -> 1.bellman_ford.py
+☐ Cheapest Flights Within K Stops (Bellman-Ford / relax k+1 times)
+Floyd-Warshall:
+☑ Find the City With the Smallest Number of Neighbors at a Threshold Distance -> 2.floyd_warshall.py
+DAG:
+☑ Shortest Path in a DAG (topo + relax) -> 3.dag_shortest_path.py
+→ BFS shortest path: Word Ladder / Open the Lock  see ../../5.Queue/9.advanced_bfs/
+→ Dijkstra: Network Delay / Path Min Effort         see ../../9.Heap/8.graph_heap/1.dijkstra/

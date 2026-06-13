@@ -1,0 +1,30 @@
+==================================================
+GRAPHS / 14. GRAPH DP
+==================================================
+
+When to think of this?
+- DP where the dependency structure is a DAG (or becomes one after SCC condensation)
+- memoize over nodes/states in topological order
+
+Sub-patterns
+│
+├── DP on DAG           process in topo order, combine predecessors
+├── Longest Path DAG     relax along topo order (longest instead of shortest)
+└── State Graph DP        node = (position, extra state); memoize
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+# memoized DFS on a DAG
+from functools import lru_cache
+@lru_cache(None)
+def best(u):
+    return 1 + max((best(v) for v in adj[u]), default=0)
+answer = max(best(u) for u in range(n))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Longest Increasing Path in a Matrix -> 1.longest_increasing_path_matrix.py
+☐ Longest Path in a DAG
+☑ Largest Color Value in a Directed Graph -> 2.largest_color_value.py
