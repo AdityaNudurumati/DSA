@@ -1,0 +1,54 @@
+==================================================
+RECURSION / 2. BACKTRACKING
+==================================================
+
+The most important recursion category. Explore a decision tree: choose → explore →
+un-choose, pruning invalid branches early.
+
+Sub-patterns
+│
+├── Subsets         each element: take or skip
+├── Permutations     pick an unused element at each step
+├── Combinations      choose k (or sum to target) from a start index
+├── Grid Backtracking  search a board with visited marking + restore
+├── Partitioning       split a string into valid pieces
+└── Constraint Satisfaction   place items respecting rules (N-Queens, Sudoku)
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+def backtrack(start, path):
+    result.append(path[:])               # (subsets) or check goal
+    for i in range(start, len(nums)):
+        if i > start and nums[i] == nums[i-1]: continue   # skip dups (sorted)
+        path.append(nums[i])
+        backtrack(i + 1, path)
+        path.pop()
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Subsets:
+☑ Subsets -> 1.subsets/1.subsets.py
+☑ Subsets II (with duplicates) -> 1.subsets/2.subsets_ii.py
+
+Permutations:
+☑ Permutations -> 2.permutations/1.permutations.py
+☑ Permutations II (with duplicates) -> 2.permutations/2.permutations_ii.py
+
+Combinations:
+☑ Combinations -> 3.combinations/1.combinations.py
+☑ Combination Sum -> 3.combinations/2.combination_sum.py
+☑ Combination Sum II -> 3.combinations/3.combination_sum_ii.py
+
+Grid:
+☑ Word Search -> 4.grid/1.word_search.py
+☑ Rat in a Maze -> 4.grid/2.rat_in_a_maze.py
+
+Partitioning:
+☑ Palindrome Partitioning -> 5.partitioning/1.palindrome_partitioning.py
+☑ Restore IP Addresses -> 5.partitioning/2.restore_ip_addresses.py
+
+Constraint Satisfaction:
+☑ N-Queens -> 6.constraint/1.n_queens.py
+☑ Sudoku Solver -> 6.constraint/2.sudoku_solver.py

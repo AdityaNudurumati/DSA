@@ -1,0 +1,33 @@
+==================================================
+RECURSION / 6. MATHEMATICAL RECURSION
+==================================================
+
+When to think of this?
+- halve the problem using algebraic identities (exponentiation by squaring)
+- linear recurrences solved fast via matrix power
+
+Sub-patterns
+│
+├── Fast Power            x^n = (x^(n/2))^2  -> O(log n)
+├── Matrix Exponentiation  [[1,1],[1,0]]^n gives Fibonacci -> O(log n)
+└── Recurrence Relations    express f(n) via smaller terms, then speed up
+
+--------------------------------------------------
+Template — fast power
+--------------------------------------------------
+def power(x, n):
+    if n < 0: x, n = 1 / x, -n
+    result = 1
+    while n:
+        if n & 1: result *= x
+        x *= x
+        n >>= 1
+    return result
+# (recursive form: power(x, n) = power(x*x, n//2) * (x if n odd else 1))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Pow(x, n) -> 1.fast_power.py
+☑ Fast Fibonacci (matrix exponentiation) -> 2.fast_fibonacci_matrix.py
+☑ Sqrt(x) (recursive / binary search) -> 3.sqrt_x.py

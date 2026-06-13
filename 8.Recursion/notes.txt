@@ -1,0 +1,60 @@
+==================================================
+RECURSION — ROADMAP
+==================================================
+
+RECURSION
+│
+├── 1. Basic Recursion        (linear, tail, multiple, recursive thinking)
+├── 2. Backtracking           (subsets, permutations, combinations, grid, partition, CSP)
+├── 3. Divide & Conquer       (merge sort, quick select, binary divide, counting)
+├── 4. Recursive DP (Memo)    (top-down, state caching, optimization)
+├── 5. Tree Recursion         (top-down, bottom-up, return-info)
+└── 6. Mathematical Recursion (fast power, matrix exponentiation, recurrences)
+
+This is the foundation for Backtracking, Trees, Divide & Conquer, and DP.
+
+--------------------------------------------------
+Suggested interview order
+--------------------------------------------------
+Basic → Backtracking (subsets → permutations → combinations → grid → CSP) →
+Divide & Conquer (merge sort → quick select → counting) → Memoization →
+Tree Recursion → Fast Power
+
+Must-solve: Factorial, Fibonacci, Reverse String (basic); Subsets I/II, Permutations
+I/II, Combinations, Combination Sum, Word Search, Palindrome Partitioning, N-Queens
+(backtracking); Merge Sort, Kth Largest, Majority Element, Count Inversions (D&C);
+Climbing Stairs, House Robber, Coin Change (memo); Diameter, Balanced (tree); Pow(x,n).
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+☐/☑ checklist). When built out, a pattern is split into sub-folders, each with one
+runnable .py per problem.
+
+--------------------------------------------------
+Overlap with other sections (cross-reference, don't duplicate)
+--------------------------------------------------
+Divide & Conquer:
+  Count Inversions, Reverse Pairs, Majority Element  -> ../1.Arrays/11.advanced/3.divide_conquer/
+  Quick Select, Quick Sort partition                  -> ../1.Arrays/1.two_pointer_problems/3.partition_dutch_flag/
+  Sort List (merge sort on a list)                    -> ../6.LinkedList/8.sorting/
+Tree Recursion:
+  Path Sum, Binary Tree Paths, Diameter, Balanced     -> ../7.Trees/ (patterns 3 / 4)
+Kth Largest (heap)                                    -> ../1.Arrays/11.advanced/1.heap/
+
+High-value NEW material unique to this section: Basic Recursion, all of Backtracking,
+Memoization (climbing stairs / coin change / house robber), Fast Power, Matrix Exponentiation.
+
+--------------------------------------------------
+The backtracking template (the heart of this section)
+--------------------------------------------------
+def backtrack(path, choices):
+    if goal(path):
+        result.append(path[:])      # record a COPY
+        return
+    for c in choices:
+        if invalid(c): continue     # prune
+        path.append(c)              # choose
+        backtrack(path, next_choices(c))   # explore
+        path.pop()                  # un-choose

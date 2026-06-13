@@ -1,0 +1,32 @@
+==================================================
+RECURSION / 1. BASIC RECURSION
+==================================================
+
+The foundation. Trust the recursion: solve the base case, assume the recursive call
+is correct, combine.
+
+Sub-patterns
+│
+├── Linear Recursion    one call per step: f(n) -> f(n-1)
+├── Tail Recursion       the recursive call is the last action
+├── Multiple Recursion    several calls per step: f(n) -> f(n-1)+f(n-2)
+└── Recursive Thinking     base case + smaller subproblem + combine
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+def f(n):
+    if n == base: return base_value   # base case
+    return combine(n, f(smaller(n)))  # recurse + combine
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Linear:
+☑ Factorial -> 1.linear/1.factorial.py
+☑ Sum of First N Numbers -> 1.linear/2.sum_of_n.py
+☑ Reverse a String (recursively) -> 1.linear/3.reverse_string.py
+
+Multiple:
+☑ Fibonacci (naive) -> 2.multiple/1.fibonacci_naive.py
+☑ Climbing Stairs (naive recursion) -> 2.multiple/2.climbing_stairs_naive.py  (memoized version in ../4.memoization/)

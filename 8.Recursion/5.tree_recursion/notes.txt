@@ -1,0 +1,33 @@
+==================================================
+RECURSION / 5. TREE RECURSION
+==================================================
+
+Recursion shines on trees. Decide whether information flows DOWN (parent → child) or
+UP (child → parent). (Full problem set lives in the Trees section; this folder holds a
+couple of canonical demos.)
+
+Sub-patterns
+│
+├── Top Down DFS            pass state down: dfs(node, acc)
+├── Bottom Up DFS            children return values; combine at parent
+└── Return Information         return a tuple/struct that the parent uses
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+def dfs(node):
+    if not node: return base
+    left = dfs(node.left); right = dfs(node.right)
+    return combine(left, right, node)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Top Down:
+→ Path Sum, Binary Tree Paths   see ../../7.Trees/3.path/ and ../../7.Trees/2.recursive/
+
+Bottom Up:
+→ Diameter of Binary Tree       see ../../7.Trees/4.height_depth/3.diameter.py
+→ Balanced Binary Tree          see ../../7.Trees/4.height_depth/4.balanced_binary_tree.py
+
+(Tree recursion is fully covered in ../../7.Trees/; cross-referenced here to avoid duplication.)

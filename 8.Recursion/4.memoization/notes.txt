@@ -1,0 +1,31 @@
+==================================================
+RECURSION / 4. RECURSIVE DP (MEMOIZATION)
+==================================================
+
+Where recursion meets DP: a recursion with overlapping subproblems becomes efficient
+by caching results per state (top-down DP).
+
+Sub-patterns
+│
+├── Top Down DP       recurse, but cache by state
+├── State Caching      choose a minimal, hashable state key
+└── Optimization        min/max/count over choices at each state
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+from functools import lru_cache
+@lru_cache(maxsize=None)
+def dfs(state):
+    if base(state): return base_value
+    return best(dfs(next_state) for choice in choices)
+# or an explicit memo = {} dict
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Climbing Stairs (memoized) -> 1.climbing_stairs.py
+☑ House Robber -> 2.house_robber.py
+☑ Coin Change -> 3.coin_change.py
+☑ Fibonacci (memoized) -> 4.fibonacci_memo.py
+☑ Unique Paths -> 5.unique_paths.py

@@ -1,0 +1,41 @@
+==================================================
+RECURSION / 3. DIVIDE & CONQUER
+==================================================
+
+Split the problem, solve each part recursively, combine. The combine step is where
+the real work (and any counting) happens.
+
+Sub-patterns
+│
+├── Merge Sort Pattern   divide → sort halves → merge
+├── Quick Select Pattern  partition → recurse into the side with the answer
+├── Binary Divide          split in two, combine results
+└── Counting Problems       count cross-pairs during the merge
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+def solve(a):
+    if len(a) <= 1: return base(a)
+    mid = len(a) // 2
+    left = solve(a[:mid]); right = solve(a[mid:])
+    return combine(left, right)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Merge Sort:
+☑ Merge Sort (array)   -> 1.merge_sort.py
+→ Sort List (linked)   see ../../6.LinkedList/8.sorting/1.sort_list.py
+
+Quick Select:
+→ Kth Largest Element  see ../../1.Arrays/1.two_pointer_problems/3.partition_dutch_flag/3.quick_select.py
+
+Binary Divide:
+→ Majority Element     see ../../1.Arrays/11.advanced/3.divide_conquer/3.majority_element.py
+→ Maximum Subarray (Kadane / D&C)  see ../../1.Arrays/4.subarray_techniques/1.kadane/
+
+Counting:
+→ Count Inversions, Reverse Pairs  see ../../1.Arrays/11.advanced/3.divide_conquer/
+
+(Only Merge Sort is built fresh here; the rest are cross-referenced to avoid duplication.)
