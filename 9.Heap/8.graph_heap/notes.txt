@@ -1,0 +1,39 @@
+==================================================
+HEAP / 8. GRAPH + HEAP
+==================================================
+
+Where heaps become critical: greedily expand the closest/cheapest frontier node.
+(These files define their own adjacency-list / edge-list inputs.)
+
+Sub-patterns
+│
+├── Dijkstra              shortest path, non-negative weights; heap of (dist, node)
+├── Prim's MST            grow a tree by the cheapest crossing edge
+├── Network Delay Time     Dijkstra from a source; answer = max finalized dist
+└── Shortest Path Variants  min-effort path, cheapest-with-constraints
+
+--------------------------------------------------
+Template — Dijkstra
+--------------------------------------------------
+import heapq
+dist = {s: 0}
+pq = [(0, s)]
+while pq:
+    d, u = heapq.heappop(pq)
+    if d > dist.get(u, inf): continue
+    for v, w in adj[u]:
+        nd = d + w
+        if nd < dist.get(v, inf):
+            dist[v] = nd
+            heapq.heappush(pq, (nd, v))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Dijkstra:
+☑ Network Delay Time -> 1.dijkstra/1.network_delay_time.py
+☑ Path With Minimum Effort -> 1.dijkstra/2.path_with_minimum_effort.py
+☑ Cheapest Flights Within K Stops (heap variant) -> 1.dijkstra/3.cheapest_flights_within_k_stops.py
+
+Prim's MST:
+☑ Min Cost to Connect All Points -> 2.mst/1.min_cost_connect_points.py

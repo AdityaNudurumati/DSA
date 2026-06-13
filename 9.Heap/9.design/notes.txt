@@ -1,0 +1,27 @@
+==================================================
+HEAP / 9. DESIGN PROBLEMS
+==================================================
+
+When to think of this?
+- "design a system" where priority/ordering matters
+- combine a heap with hashmaps / counters / timestamps
+
+Sub-patterns
+│
+├── Priority Queue Design   build a PQ (or extend it with extra ops)
+├── Twitter Feed            merge each followee's recent posts by timestamp (heap)
+├── Task Manager            schedule/execute by priority
+└── Scheduler Systems         time-ordered event processing
+
+--------------------------------------------------
+Template — merge recent feeds with a heap
+--------------------------------------------------
+import heapq
+# push the latest tweet of each followee as (-time, ...); pop 10, refill from that user
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Design Twitter -> 1.design_twitter.py
+☑ Design a Priority Queue (binary-heap from scratch) -> 2.design_priority_queue.py
+☐ Task Manager / Scheduler

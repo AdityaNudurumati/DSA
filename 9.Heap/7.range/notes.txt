@@ -1,0 +1,36 @@
+==================================================
+HEAP / 7. RANGE PROBLEMS
+==================================================
+
+When to think of this?
+- find the smallest range that touches every group, or window-based range queries
+- a heap of current candidates + tracking the current max
+
+Sub-patterns
+│
+├── Smallest Range              heap of one element per list; track max; advance min
+├── Merge Intervals Variants     heap-assisted overlap merging
+└── Window Based Range Queries    min/max over a moving window
+
+--------------------------------------------------
+Template — smallest range covering k lists
+--------------------------------------------------
+import heapq
+heap = [(lst[0], i, 0) for i, lst in enumerate(lists)]
+heapq.heapify(heap)
+cur_max = max(lst[0] for lst in lists)
+best = (-inf, inf)
+while heap:
+    val, i, j = heapq.heappop(heap)
+    if cur_max - val < best[1] - best[0]:
+        best = (val, cur_max)
+    if j + 1 == len(lists[i]): break        # a list is exhausted -> stop
+    nxt = lists[i][j+1]; cur_max = max(cur_max, nxt)
+    heapq.heappush(heap, (nxt, i, j+1))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☐ Smallest Range Covering Elements from K Lists
+→ Sliding Window Median  see ../10.advanced/  (and ../4.dual_heap/)
+☐ Sliding Window Maximum (deque)  see ../../1.Arrays/2.sliding_window/3.monotonic_window/

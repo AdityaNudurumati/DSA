@@ -1,0 +1,33 @@
+==================================================
+HEAP / 6. INTERVAL + HEAP
+==================================================
+
+When to think of this?
+- many intervals; track concurrency / earliest-freeing resource with a min-heap
+- "how many rooms / platforms / machines"
+
+Sub-patterns
+│
+├── Meeting Rooms        min-heap of end times; peak size = rooms needed
+├── Resource Scheduling   reuse the earliest-freeing resource
+├── CPU Scheduling         pick the next ready job
+└── Calendar Problems       overlap counting
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+import heapq
+intervals.sort(key=lambda x: x[0])
+ends = []                       # min-heap of end times
+for s, e in intervals:
+    if ends and ends[0] <= s:
+        heapq.heappop(ends)     # a room freed up
+    heapq.heappush(ends, e)
+return len(ends)                # rooms needed
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Minimum Number of Platforms -> 1.minimum_platforms.py
+→ Meeting Rooms II  see ../../1.Arrays/7.intervals/3.line_sweep/1.meeting_rooms_ii.py
+☐ Car Pooling (heap / sweep variant)

@@ -1,0 +1,33 @@
+==================================================
+HEAP / 4. DUAL HEAP PATTERN
+==================================================
+
+A max-heap for the lower half and a min-heap for the upper half, kept balanced so
+their roots straddle the median. The backbone of median-of-stream problems.
+
+Sub-patterns
+│
+├── Min Heap + Max Heap   the two-heap structure itself
+├── Median Problems        roots give the median in O(1)
+└── Balanced Partitioning   keep |size(lo) - size(hi)| <= 1
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+import heapq
+small = []   # max-heap (negated) lower half
+large = []   # min-heap upper half
+def add(num):
+    heapq.heappush(small, -num)
+    heapq.heappush(large, -heapq.heappop(small))
+    if len(large) > len(small):
+        heapq.heappush(small, -heapq.heappop(large))
+def median():
+    return -small[0] if len(small) > len(large) else (-small[0] + large[0]) / 2
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Sliding Window Median  (dual heap + lazy deletion; also ../10.advanced/) -> 1.sliding_window_median.py
+→ Find Median from Data Stream  see ../../1.Arrays/11.advanced/1.heap/2.find_median_from_data_stream.py
+☐ IPO (maximize capital — two heaps)

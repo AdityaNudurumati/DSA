@@ -1,0 +1,31 @@
+==================================================
+HEAP / 1. TOP-K PATTERN
+==================================================
+
+The most common heap category. Keywords: "top k", "k largest/smallest/closest".
+
+Sub-patterns
+│
+├── K Largest             size-k MIN-heap; root is the kth largest
+├── K Smallest             size-k MAX-heap (negate)
+├── K Closest              heap by distance
+└── Frequency Based Top-K   count, then heap/bucket by frequency
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+import heapq
+heap = []
+for x in nums:
+    heapq.heappush(heap, x)
+    if len(heap) > k:
+        heapq.heappop(heap)     # keep the k largest
+# heap[0] is the kth largest
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ K Closest Points to Origin -> 1.k_closest_points.py
+☐ Kth Largest Element in a Stream (also ../3.streaming/)
+→ Kth Largest Element in Array  see ../../1.Arrays/11.advanced/1.heap/1.kth_largest_element.py
+→ Top K Frequent Elements       see ../../1.Arrays/6.hashing/1.frequency_counting/3.top_k_frequent.py

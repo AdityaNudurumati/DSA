@@ -1,0 +1,33 @@
+==================================================
+HEAP / 5. GREEDY + HEAP
+==================================================
+
+When to think of this?
+- repeatedly pull the best (largest/smallest/most-frequent) item and act
+- the heap supplies the greedy choice in O(log n)
+
+Sub-patterns
+│
+├── Task Scheduling      cooldown / most-frequent-first
+├── Resource Allocation   assign the cheapest/closest resource
+├── Rearrangement         no two adjacent equal (most frequent first)
+└── Huffman Coding         repeatedly merge the two smallest weights
+
+--------------------------------------------------
+Template — connect ropes / Huffman flavor
+--------------------------------------------------
+import heapq
+heapq.heapify(weights)
+cost = 0
+while len(weights) > 1:
+    a = heapq.heappop(weights); b = heapq.heappop(weights)
+    cost += a + b
+    heapq.heappush(weights, a + b)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Minimum Cost to Connect Ropes -> 1.connect_ropes.py
+☑ Huffman Encoding (build codes) -> 2.huffman_encoding.py
+→ Task Scheduler     see ../../1.Arrays/10.greedy/3.local_exchange/2.task_scheduler.py
+→ Reorganize String  see ../../2.Strings/9.greedy/1.rearrangement/1.reorganize_string.py

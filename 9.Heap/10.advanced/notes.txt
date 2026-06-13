@@ -1,0 +1,32 @@
+==================================================
+HEAP / 10. ADVANCED HEAP TECHNIQUES
+==================================================
+
+When to think of this?
+- you need to "remove" an arbitrary element from a heap (lazy deletion)
+- decrease-key for Dijkstra (indexed heap), or custom ordering
+
+Sub-patterns
+│
+├── Lazy Deletion        defer removals; skip stale entries when they reach the top
+├── Indexed Heap          map element -> position for O(log n) decrease-key
+├── Heapify Optimization   build a heap in O(n) with heapify
+└── Custom Comparators      push tuples / wrapper objects to control ordering
+
+--------------------------------------------------
+Template — lazy deletion
+--------------------------------------------------
+import heapq
+heap = []; deleted = {}     # value -> pending-deletion count
+def remove(x): deleted[x] = deleted.get(x, 0) + 1
+def prune():
+    while heap and deleted.get(heap[0], 0):
+        deleted[heap[0]] -= 1; heapq.heappop(heap)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Deletable Heap (min-heap + lazy deletion) -> 1.deletable_heap.py
+☐ Sliding Window Median (two heaps + lazy deletion)
+☐ Find Median from Data Stream with removals
+Note: indexed-heap decrease-key underlies the Dijkstra in ../8.graph_heap/.

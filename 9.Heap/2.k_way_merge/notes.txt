@@ -1,0 +1,33 @@
+==================================================
+HEAP / 2. K-WAY MERGE PATTERN
+==================================================
+
+When to think of this?
+- multiple sorted sequences to combine, or "kth smallest across k sorted things"
+- a min-heap of the current fronts yields the global next-smallest
+
+Sub-patterns
+│
+├── Merge K Sorted Arrays / Lists   heap of (value, list, index)
+├── Smallest Range                   heap of fronts; track max; shrink
+└── Kth Smallest in Sorted Matrix     heap over rows/cols
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+import heapq
+heap = [(rows[i][0], i, 0) for i in range(k) if rows[i]]
+heapq.heapify(heap)
+while heap:
+    val, i, j = heapq.heappop(heap)
+    # use val
+    if j + 1 < len(rows[i]):
+        heapq.heappush(heap, (rows[i][j+1], i, j+1))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Kth Smallest Element in a Sorted Matrix -> 1.kth_smallest_in_matrix.py
+☑ Smallest Range Covering Elements from K Lists  (also ../7.range/) -> 2.smallest_range.py
+→ Merge K Sorted Arrays  see ../../1.Arrays/11.advanced/1.heap/3.merge_k_sorted_arrays.py
+→ Merge K Sorted Lists   see ../../6.LinkedList/4.merge/2.merge_k_sorted_lists.py

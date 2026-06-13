@@ -1,0 +1,61 @@
+==================================================
+HEAP / PRIORITY QUEUE — ROADMAP
+==================================================
+
+HEAP / PRIORITY QUEUE
+│
+├── 1. Top-K Pattern         (k largest/smallest/closest, frequency top-k)
+├── 2. K-Way Merge           (merge k sorted arrays/lists, smallest range, kth in matrix)
+├── 3. Streaming             (running/kth-largest stream, sliding window median)
+├── 4. Dual Heap             (min+max heap → median, balanced partition)
+├── 5. Greedy + Heap         (task scheduling, rearrangement, Huffman, connect ropes)
+├── 6. Interval + Heap       (meeting rooms, platforms, CPU/calendar scheduling)
+├── 7. Range Problems        (smallest range, window-based ranges)
+├── 8. Graph + Heap          (Dijkstra, Prim's MST, network delay, min-effort path)
+├── 9. Design Problems       (priority queue, Twitter feed, task manager)
+└── 10. Advanced Techniques  (lazy deletion, indexed heap, custom comparators)
+
+--------------------------------------------------
+Suggested interview order
+--------------------------------------------------
+Top-K → K-Way Merge → Streaming → Dual Heap → Greedy+Heap → Interval+Heap →
+Graph+Heap (Dijkstra/Prim) → Design → Range → Advanced
+
+The five highest-ROI: Top-K, K-Way Merge, Dual Heap, Greedy+Heap, Graph+Heap (Dijkstra).
+
+Must-solve: Kth Largest in Stream (easy); Kth Largest in Array, Top K Frequent,
+K Closest Points, Merge K Sorted Lists, Task Scheduler, Meeting Rooms II, Reorganize
+String, Median from Data Stream (medium); Sliding Window Median, Smallest Range, Design
+Twitter (hard).
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+☐/☑ checklist). When built out, a pattern is split into sub-folders, each with one
+runnable .py per problem. Graph files define their own adjacency-list input.
+
+--------------------------------------------------
+Overlap with other sections (cross-reference, don't duplicate)
+--------------------------------------------------
+Kth Largest (heap & quick-select), Merge K Sorted Arrays, Find Median from Data Stream
+   -> ../1.Arrays/11.advanced/1.heap/
+Top K Frequent Elements        -> ../1.Arrays/6.hashing/1.frequency_counting/
+Merge K Sorted Lists           -> ../6.LinkedList/4.merge/2.merge_k_sorted_lists.py
+Meeting Rooms II               -> ../1.Arrays/7.intervals/3.line_sweep/1.meeting_rooms_ii.py
+Task Scheduler                 -> ../1.Arrays/10.greedy/3.local_exchange/2.task_scheduler.py
+Reorganize String              -> ../2.Strings/9.greedy/1.rearrangement/1.reorganize_string.py
+Single-Threaded CPU            -> ../5.Queue/8.priority_queue/1.single_threaded_cpu.py
+
+High-value NEW: K Closest Points, Kth Smallest in Matrix, Smallest Range, Sliding
+Window Median, Huffman, Connect Ropes, Min Platforms, the whole Graph+Heap family
+(Dijkstra / Prim / Network Delay / Min-Effort Path), Design Twitter, lazy deletion.
+
+--------------------------------------------------
+Core idea
+--------------------------------------------------
+import heapq          # Python heapq is a MIN-heap
+heapq.heappush(h, x); heapq.heappop(h)
+heapq.heappush(h, -x)               # max-heap via negation
+heapq.heappush(h, (priority, item)) # order by a key / custom comparator
+# size-k min-heap keeps the k largest; its root is the k-th largest.
