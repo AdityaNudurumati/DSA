@@ -1,0 +1,31 @@
+==================================================
+TREES / 8. TREE MODIFICATION
+==================================================
+
+When to think of this?
+- structurally transform the tree in place: invert, flatten, merge, prune
+
+Sub-patterns
+│
+├── Invert Tree    swap left/right everywhere
+├── Flatten Tree    to a right-skewed "linked list" in preorder
+├── Merge Trees      overlay two trees, summing overlaps
+└── Pruning           remove subtrees that don't contain a 1 / satisfy a rule
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+def invert(node):
+    if not node: return None
+    node.left, node.right = invert(node.right), invert(node.left)
+    return node
+
+# flatten: preorder, rewire each node's right to the next preorder node, left=None
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Invert Binary Tree -> 1.invert_tree.py
+☑ Flatten Binary Tree to Linked List -> 2.flatten_tree.py
+☑ Merge Two Binary Trees -> 3.merge_trees.py
+☑ Binary Tree Pruning -> 4.binary_tree_pruning.py

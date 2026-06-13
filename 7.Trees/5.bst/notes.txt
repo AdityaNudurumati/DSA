@@ -1,0 +1,34 @@
+==================================================
+TREES / 5. BINARY SEARCH TREE (BST)
+==================================================
+
+High-ROI category. The BST invariant (left < node < right) turns many problems into
+O(h) navigations, and an inorder traversal yields sorted order.
+
+Sub-patterns
+│
+├── Search      go left/right by comparison
+├── Insert       find the null spot, attach
+├── Delete        3 cases (leaf / one child / two children → inorder successor)
+├── Validation     low < node.val < high bounds passed down
+└── Kth Smallest    inorder; stop at k
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# validate with bounds
+def valid(node, lo=-inf, hi=inf):
+    if not node: return True
+    if not (lo < node.val < hi): return False
+    return valid(node.left, lo, node.val) and valid(node.right, node.val, hi)
+
+# kth smallest: inorder traversal, decrement k
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Search in a Binary Search Tree     -> 1.search_bst.py
+☑ Insert into a Binary Search Tree    -> 2.insert_bst.py
+☑ Delete Node in a BST                -> 3.delete_node_bst.py
+☑ Validate Binary Search Tree         -> 4.validate_bst.py
+☑ Kth Smallest Element in a BST       -> 5.kth_smallest_bst.py

@@ -1,0 +1,31 @@
+==================================================
+TREES / 4. HEIGHT / DEPTH / DIAMETER
+==================================================
+
+When to think of this?
+- measure the tree: height, depth, diameter, balance
+- canonical bottom-up recursion
+
+Sub-patterns
+│
+├── Height      longest root-to-leaf edge count (bottom up)
+├── Depth        min/max depth
+├── Diameter      longest path (edges) between any two nodes
+└── Balanced      |height(left) - height(right)| <= 1 everywhere
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+def height(node):
+    if not node: return 0
+    return 1 + max(height(node.left), height(node.right))
+
+# diameter: track best = max(best, left_h + right_h) while computing height
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Maximum Depth of Binary Tree -> 1.max_depth.py
+☑ Minimum Depth of Binary Tree -> 2.min_depth.py
+☑ Diameter of Binary Tree -> 3.diameter.py
+☑ Balanced Binary Tree -> 4.balanced_binary_tree.py

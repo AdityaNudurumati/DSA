@@ -1,0 +1,44 @@
+==================================================
+TREES / 13. ADVANCED TREE STRUCTURES
+==================================================
+
+When to think of this?
+- range queries with updates (segment tree, Fenwick/BIT)
+- prefix dictionaries (trie), arbitrary-arity trees (N-ary)
+
+Sub-patterns
+│
+├── Segment Tree    O(log n) range query + point/range update
+├── Fenwick Tree     (BIT) O(log n) prefix sums with point updates
+├── Trie              prefix tree (see cross-refs)
+└── N-ary Tree         traversal with a children list
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# Fenwick (1-indexed)
+def update(i, delta):
+    while i <= n: bit[i] += delta; i += i & (-i)
+def query(i):                # prefix sum [1..i]
+    s = 0
+    while i > 0: s += bit[i]; i -= i & (-i)
+    return s
+
+# Segment tree: array-backed, build/query/update over [l, r]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Segment Tree:
+☑ Range Sum Query - Mutable -> 1.segment_tree/1.range_sum_query_mutable.py
+☑ Range Minimum Query -> 1.segment_tree/2.range_minimum_query.py
+
+Fenwick Tree:
+☑ Range Sum Query - Mutable (BIT) -> 2.fenwick_tree/1.range_sum_bit.py
+☑ Count of Smaller Numbers After Self -> 2.fenwick_tree/2.count_smaller_after_self.py
+
+N-ary:
+☑ N-ary Tree Level Order / Maximum Depth -> 3.nary/1.nary_level_order.py
+
+Trie:
+→ Implement Trie / Word Search II   see ../../2.Strings/7.trie/ and ../../1.Arrays/11.advanced/7.trie/

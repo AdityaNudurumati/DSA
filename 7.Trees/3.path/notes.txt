@@ -1,0 +1,38 @@
+==================================================
+TREES / 3. PATH-BASED PROBLEMS
+==================================================
+
+When to think of this?
+- sums/counts along root→leaf paths, or any-node→any-node paths
+- the "max path sum" family (bottom-up with a global best)
+
+Sub-patterns
+│
+├── Root → Leaf        accumulate down, check at leaves
+├── Any Node → Any Node  bottom-up, combine left+right "through" a node
+├── Path Sum            target-sum existence / enumeration
+└── Maximum Path Sum     global max of left_gain + node + right_gain
+
+--------------------------------------------------
+Template — max path sum (bottom up + global best)
+--------------------------------------------------
+best = -inf
+def gain(node):
+    if not node: return 0
+    l = max(gain(node.left), 0)
+    r = max(gain(node.right), 0)
+    best = max(best, node.val + l + r)   # path THROUGH node
+    return node.val + max(l, r)          # gain to pass UP
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Root → Leaf:
+☑ Path Sum -> 1.path_sum.py
+☑ Path Sum II (enumerate) -> 2.path_sum_ii.py
+☐ Binary Tree Paths
+☑ Sum Root to Leaf Numbers -> 3.sum_root_to_leaf.py
+
+Any → Any:
+☑ Binary Tree Maximum Path Sum -> 4.max_path_sum.py
+☑ Path Sum III (count any downward paths) -> 5.path_sum_iii.py

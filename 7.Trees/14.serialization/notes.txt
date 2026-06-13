@@ -1,0 +1,38 @@
+==================================================
+TREES / 14. DESIGN & SERIALIZATION
+==================================================
+
+When to think of this?
+- convert a tree to a string and back (codec)
+- persistence / transmission of tree structure
+
+Sub-patterns
+│
+├── Serialize Tree     encode structure + values (preorder with null markers, or BFS)
+├── Deserialize Tree    rebuild from that encoding
+└── Codec Design         a class exposing serialize() / deserialize()
+
+--------------------------------------------------
+Template — preorder with null markers
+--------------------------------------------------
+def serialize(root):
+    out = []
+    def dfs(n):
+        if not n: out.append("#"); return
+        out.append(str(n.val)); dfs(n.left); dfs(n.right)
+    dfs(root); return ",".join(out)
+
+def deserialize(data):
+    vals = iter(data.split(","))
+    def build():
+        v = next(vals)
+        if v == "#": return None
+        n = TreeNode(int(v)); n.left = build(); n.right = build(); return n
+    return build()
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Serialize and Deserialize Binary Tree -> 1.serialize_deserialize_binary_tree.py
+☑ Serialize and Deserialize BST -> 2.serialize_deserialize_bst.py
+☐ Codec round-trip (build -> serialize -> deserialize -> compare)

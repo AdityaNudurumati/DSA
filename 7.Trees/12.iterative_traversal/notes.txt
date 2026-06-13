@@ -1,0 +1,31 @@
+==================================================
+TREES / 12. TRAVERSAL WITHOUT RECURSION
+==================================================
+
+When to think of this?
+- avoid recursion depth limits; show explicit stack control
+- Morris traversal achieves O(1) space via temporary threads
+
+Sub-patterns
+│
+├── Iterative DFS       explicit stack (pre/post)
+├── Iterative Inorder    push lefts, pop, go right
+└── Morris Traversal      O(1) space using right-threads to predecessors
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# iterative inorder
+stack, cur, out = [], root, []
+while cur or stack:
+    while cur: stack.append(cur); cur = cur.left
+    cur = stack.pop(); out.append(cur.val); cur = cur.right
+
+# Morris: thread the inorder predecessor's right to the current node, unthread on return
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Binary Tree Inorder Traversal (iterative) -> 1.iterative_inorder.py
+☑ Binary Tree Postorder Traversal (iterative) -> 2.iterative_postorder.py
+☑ Morris Inorder Traversal (O(1) space) -> 3.morris_inorder.py

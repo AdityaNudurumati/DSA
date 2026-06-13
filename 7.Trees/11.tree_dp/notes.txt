@@ -1,0 +1,31 @@
+==================================================
+TREES / 11. TREE DP
+==================================================
+
+When to think of this?
+- each node returns a SMALL TUPLE of states (include/exclude, covered/not)
+- the parent combines children's states; usually medium-hard
+
+Sub-patterns
+│
+├── House Robber III          (rob, not_rob) per node
+├── Maximum Independent Set    same include/exclude shape
+└── Include/Exclude DP          general "take this node or not"
+
+--------------------------------------------------
+Template — include / exclude
+--------------------------------------------------
+def dfs(node):
+    if not node: return (0, 0)            # (include, exclude)
+    l = dfs(node.left); r = dfs(node.right)
+    include = node.val + l[1] + r[1]      # can't take children
+    exclude = max(l) + max(r)             # children free to choose
+    return (include, exclude)
+# answer = max(dfs(root))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ House Robber III -> 1.house_robber_iii.py
+☑ Binary Tree Cameras -> 2.binary_tree_cameras.py
+☐ Maximum Independent Set on a Tree

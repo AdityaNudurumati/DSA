@@ -1,0 +1,33 @@
+==================================================
+TREES / 6. TREE CONSTRUCTION
+==================================================
+
+When to think of this?
+- rebuild a tree from traversal order(s)
+- build a balanced BST from sorted data
+
+Sub-patterns
+│
+├── Build from Traversals   preorder+inorder, or inorder+postorder
+├── Sorted Array → BST       pick middle as root, recurse on halves
+└── Serialization            (see pattern 14)
+
+--------------------------------------------------
+Template — preorder + inorder
+--------------------------------------------------
+idx = {v: i for i, v in enumerate(inorder)}
+self.pre = 0
+def build(lo, hi):
+    if lo > hi: return None
+    root = TreeNode(preorder[self.pre]); self.pre += 1
+    mid = idx[root.val]
+    root.left = build(lo, mid - 1)
+    root.right = build(mid + 1, hi)
+    return root
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Construct Binary Tree from Preorder and Inorder Traversal -> 1.construct_from_preorder_inorder.py
+☑ Construct Binary Tree from Inorder and Postorder Traversal -> 2.construct_from_inorder_postorder.py
+☑ Convert Sorted Array to Binary Search Tree -> 3.sorted_array_to_bst.py

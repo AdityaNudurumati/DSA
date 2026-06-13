@@ -1,0 +1,34 @@
+==================================================
+TREES / 7. LOWEST COMMON ANCESTOR
+==================================================
+
+Very common interview problem. The deepest node that has both targets in its subtree.
+
+Sub-patterns
+│
+├── Binary Tree     bottom-up: a node is the LCA if p and q split across it
+├── BST              use ordering: walk down until p and q are on different sides
+└── Multiple Nodes    generalize the binary-tree approach to a set
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# binary tree
+def lca(node, p, q):
+    if not node or node is p or node is q: return node
+    l = lca(node.left, p, q); r = lca(node.right, p, q)
+    if l and r: return node       # split point
+    return l or r
+
+# BST
+while node:
+    if p.val < node.val > q.val: node = node.left
+    elif p.val > node.val < q.val: node = node.right
+    else: return node
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Lowest Common Ancestor of a Binary Tree -> 1.lca_binary_tree.py
+☑ Lowest Common Ancestor of a Binary Search Tree -> 2.lca_bst.py
+☐ LCA of Multiple Nodes / Deepest Common Ancestor

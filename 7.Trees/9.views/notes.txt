@@ -1,0 +1,35 @@
+==================================================
+TREES / 9. TREE VIEWS
+==================================================
+
+When to think of this?
+- "what do you see from the left/right/top/bottom?"
+- boundary traversal; often a BFS with column/level bookkeeping
+
+Sub-patterns
+│
+├── Left View / Right View   first/last node seen at each level (BFS)
+├── Top View / Bottom View    first/last node seen per horizontal column
+└── Boundary Traversal        left boundary + leaves + reversed right boundary
+
+--------------------------------------------------
+Template — top/bottom view via column index
+--------------------------------------------------
+from collections import deque, defaultdict
+col = {}                             # column -> node val (first for top, last for bottom)
+q = deque([(root, 0)])
+while q:
+    node, c = q.popleft()
+    # top view: set only if c not in col ; bottom view: always overwrite
+    if node.left: q.append((node.left, c - 1))
+    if node.right: q.append((node.right, c + 1))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Binary Tree Right Side View -> ../../5.Queue/2.bfs/1.tree_bfs/3.right_side_view.py
+☑ Binary Tree Left Side View -> 1.left_side_view.py
+☑ Top View of Binary Tree -> 2.top_view.py
+☑ Bottom View of Binary Tree -> 3.bottom_view.py
+☑ Boundary Traversal of Binary Tree -> 4.boundary_traversal.py
+☐ Vertical Order Traversal of a Binary Tree

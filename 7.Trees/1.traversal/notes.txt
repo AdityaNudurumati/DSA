@@ -1,0 +1,44 @@
+==================================================
+TREES / 1. TRAVERSAL PATTERNS
+==================================================
+
+The foundation of every tree question.
+
+Sub-patterns
+│
+├── DFS
+│   ├── Preorder   (Root, Left, Right)
+│   ├── Inorder    (Left, Root, Right) — sorted order for a BST
+│   └── Postorder  (Left, Right, Root)
+└── BFS
+    ├── Level Order
+    ├── Zigzag Level Order
+    ├── Right Side View
+    └── Vertical Order
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+def preorder(node):
+    if not node: return
+    visit(node); preorder(node.left); preorder(node.right)
+
+from collections import deque
+q = deque([root])
+while q:
+    for _ in range(len(q)):
+        node = q.popleft(); visit(node)
+        if node.left: q.append(node.left)
+        if node.right: q.append(node.right)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+DFS:
+☑ Binary Tree Preorder Traversal   -> 1.dfs/1.preorder_traversal.py
+☑ Binary Tree Inorder Traversal    -> 1.dfs/2.inorder_traversal.py
+☑ Binary Tree Postorder Traversal  -> 1.dfs/3.postorder_traversal.py
+
+BFS:
+☑ Vertical Order Traversal   (also in ../9.views/)   -> 2.bfs/1.vertical_order_traversal.py
+→ Level Order / Zigzag / Right Side View   see ../../5.Queue/2.bfs/1.tree_bfs/

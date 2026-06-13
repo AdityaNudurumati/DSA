@@ -1,0 +1,30 @@
+==================================================
+TREES / 10. ANCESTOR / DESCENDANT PROBLEMS
+==================================================
+
+When to think of this?
+- relationships by distance/level: kth ancestor, nodes at distance K, parent links
+- often: build a parent map, then BFS outward
+
+Sub-patterns
+│
+├── Kth Ancestor     walk up k parents (binary lifting for many queries)
+├── Distance K        treat the tree as a graph via parent pointers, BFS
+└── Parent Mapping     dict child -> parent built by one DFS/BFS
+
+--------------------------------------------------
+Template — all nodes at distance K
+--------------------------------------------------
+parent = {}
+def dfs(node, par):
+    if not node: return
+    parent[node] = par
+    dfs(node.left, node); dfs(node.right, node)
+# then BFS from target over {left, right, parent}, stop at distance K
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ All Nodes Distance K in Binary Tree -> 1.all_nodes_distance_k.py
+☑ Kth Ancestor of a Tree Node -> 2.kth_ancestor.py
+☐ Populate Parent Pointers / Find Parent

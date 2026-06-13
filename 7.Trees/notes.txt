@@ -1,0 +1,66 @@
+==================================================
+TREES — ROADMAP
+==================================================
+
+TREES
+│
+├── 1. Traversal Patterns       (DFS: pre/in/post · BFS: level/zigzag/right/vertical)
+├── 2. Recursive Patterns       (top-down vs bottom-up)
+├── 3. Path-Based Problems      (root→leaf, any→any, path sum, max path sum)
+├── 4. Height / Depth / Diameter (height, depth, diameter, balanced)
+├── 5. Binary Search Tree       (search, insert, delete, validate, kth smallest)
+├── 6. Tree Construction        (from traversals, sorted array→BST, serialization)
+├── 7. Lowest Common Ancestor   (binary tree, BST, multiple nodes)
+├── 8. Tree Modification        (invert, flatten, merge, prune)
+├── 9. Tree Views               (left/right/top/bottom view, boundary)
+├── 10. Ancestor / Descendant   (kth ancestor, distance K, parent mapping)
+├── 11. Tree DP                 (house robber III, cameras, include/exclude)
+├── 12. Traversal w/o Recursion (iterative DFS/inorder, Morris)
+├── 13. Advanced Tree Structures (segment tree, Fenwick, trie, N-ary)
+└── 14. Design & Serialization  (serialize / deserialize / codec)
+
+--------------------------------------------------
+Suggested interview order
+--------------------------------------------------
+DFS → BFS → Height/Depth → Recursive Top-Down → Bottom-Up → Path → Diameter →
+BST → LCA → Construction → Modification → Views → Iterative → Serialization →
+Tree DP → Segment/Fenwick
+
+Must-solve: Max Depth, Invert, Search BST, Same Tree (easy); Level Order, Validate BST,
+Kth Smallest, Path Sum II, Construct from Traversals, LCA, Right Side View, Flatten
+(medium); Max Path Sum, Serialize/Deserialize, Vertical Order, House Robber III,
+Binary Tree Cameras (hard).
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+☐/☑ checklist). When built out, a pattern is split into sub-folders, each with one
+runnable .py per problem. Every file defines its own minimal TreeNode plus a
+build(level_order_list) helper, so each stays self-contained and runnable.
+
+--------------------------------------------------
+Overlap with other sections (cross-reference, don't duplicate)
+--------------------------------------------------
+BFS tree traversals (Level Order, Zigzag, Right Side View)
+   -> ../5.Queue/2.bfs/1.tree_bfs/   (also re-touched here under pattern 1/9 as needed)
+Trie / Word Search II (pattern 13)
+   -> ../2.Strings/7.trie/   and   ../1.Arrays/11.advanced/7.trie/
+
+--------------------------------------------------
+Core boilerplate
+--------------------------------------------------
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val, self.left, self.right = val, left, right
+
+def build(values):           # level-order list (None = missing) -> root
+    if not values: return None
+    it = iter(values); root = TreeNode(next(it)); q = [root]
+    from collections import deque; q = deque([root])
+    for v in values[1:]:
+        ...                  # standard level-order builder
+
+Two recursion shapes solve most problems:
+  Top-down: dfs(node, info_from_parent)
+  Bottom-up: left = dfs(node.left); right = dfs(node.right); combine

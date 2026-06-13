@@ -1,0 +1,38 @@
+==================================================
+TREES / 2. RECURSIVE PATTERNS
+==================================================
+
+The single most important tree concept: decide whether information flows DOWN
+(parent → child) or UP (child → parent).
+
+Sub-patterns
+│
+├── Top Down    pass accumulated state into the recursion: dfs(node, state)
+└── Bottom Up    children return values; combine them at the parent
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+# top down
+def dfs(node, acc):
+    if not node: return
+    acc2 = update(acc, node)
+    dfs(node.left, acc2); dfs(node.right, acc2)
+
+# bottom up
+def dfs(node):
+    if not node: return base
+    left = dfs(node.left); right = dfs(node.right)
+    return combine(left, right, node)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Top Down:
+☐ Path Sum (root-to-leaf target) — see also ../3.path/
+☑ Binary Tree Paths -> 1.top_down/1.binary_tree_paths.py
+
+Bottom Up:
+☑ Same Tree -> 2.bottom_up/1.same_tree.py
+☑ Symmetric Tree -> 2.bottom_up/2.symmetric_tree.py
+(Diameter / Balanced / Max Path Sum are bottom-up — see ../3.path/ and ../4.height_depth/)
