@@ -1,0 +1,28 @@
+==================================================
+RANGE QUERIES / 7. ADVANCED SEGMENT TREES
+==================================================
+
+Rare in interviews; powerful in competitive programming.
+
+Sub-patterns
+│
+├── Merge Sort Tree         each node stores its sorted subarray -> "count > k in [l,r]"
+├── Persistent Segment Tree  keep every version -> "kth smallest in [l,r]"
+├── Dynamic Segment Tree     create nodes on demand for huge coordinate ranges
+└── Segment Tree Beats        range-min-with-assignment-style amortized ops
+
+--------------------------------------------------
+Ideas
+--------------------------------------------------
+- Merge Sort Tree: node[l..r] = sorted(a[l..r]); query counts via binary search per node,
+  O(log^2 n) per query.
+- Persistent: each update creates O(log n) new nodes sharing the rest; version[r] - version[l-1]
+  answers prefix-difference queries (kth smallest in a range).
+- Dynamic: allocate children lazily; index by value range instead of array index.
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Count of Smaller/Greater Than K in a Range (Merge Sort Tree) -> 1.merge_sort_tree.py
+☑ Kth Smallest Number in a Range (Persistent Segment Tree) -> 2.persistent_segment_tree.py
+☐ Dynamic Segment Tree over a huge coordinate range

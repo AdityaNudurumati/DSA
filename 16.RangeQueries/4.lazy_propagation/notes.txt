@@ -1,0 +1,34 @@
+==================================================
+RANGE QUERIES / 4. LAZY PROPAGATION
+==================================================
+
+Range UPDATE + range QUERY in O(log n). Defer updates: store a pending value at a
+node, apply it to the node's aggregate, and push it down only when you recurse.
+
+Sub-patterns
+│
+├── Range Addition     add v to all of [l, r]
+├── Range Assignment    set all of [l, r] to v
+└── Deferred Updates     push lazy tags down lazily
+
+--------------------------------------------------
+Template — range add, range sum
+--------------------------------------------------
+# at a node covering [lo, hi] with pending `lazy`:
+def push_down(node, lo, hi):
+    if lazy[node]:
+        mid = (lo+hi)//2
+        apply(2*node, lo, mid, lazy[node])
+        apply(2*node+1, mid+1, hi, lazy[node])
+        lazy[node] = 0
+def apply(node, lo, hi, v):
+    tree[node] += v * (hi - lo + 1)   # range-sum aggregate
+    lazy[node] += v
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Range Add + Range Sum (lazy segment tree) -> 1.lazy_range_add_range_sum.py
+☑ Range Assign + Range Sum / Min -> 2.lazy_range_assign.py
+☑ Corporate Flight Bookings (diff array OR lazy) -> 3.corporate_flight_bookings.py   (also ../1.prefix_based/)
+☐ My Calendar III (range add, max overlap)         (also ../8.interval_structures/)

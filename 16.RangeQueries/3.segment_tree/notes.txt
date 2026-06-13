@@ -1,0 +1,37 @@
+==================================================
+RANGE QUERIES / 3. SEGMENT TREE
+==================================================
+
+The most flexible range structure: any ASSOCIATIVE combine (sum, min, max, gcd, xor)
+with point updates and range queries in O(log n).
+
+Sub-patterns
+│
+├── Range Sum / Min / Max / XAR / GCD   pick the combine function
+├── Point Update                          update one leaf, pull up
+└── Range Update                          needs lazy propagation (pattern 4)
+
+--------------------------------------------------
+Template — array-backed (size 2*N)
+--------------------------------------------------
+seg = [identity] * (2 * N)
+# build: leaves at seg[N..], parents seg[i] = combine(seg[2i], seg[2i+1])
+def update(i, val):
+    i += N; seg[i] = val
+    i //= 2
+    while i: seg[i] = combine(seg[2*i], seg[2*i+1]); i //= 2
+def query(l, r):     # [l, r)
+    res = identity; l += N; r += N
+    while l < r:
+        if l & 1: res = combine(res, seg[l]); l += 1
+        if r & 1: r -= 1; res = combine(res, seg[r])
+        l //= 2; r //= 2
+    return res
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Segment Tree Range Sum + Point Update -> 1.segment_tree_sum.py
+☑ Range Max Query (segment tree)         -> 2.range_max_query.py
+☐ Count of Range Sum (LC327, segment tree / BIT)
+→ Range Sum Query - Mutable, Range Minimum Query  see ../../7.Trees/13.advanced_structures/1.segment_tree/

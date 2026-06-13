@@ -1,0 +1,36 @@
+==================================================
+RANGE QUERIES / 9. MULTIDIMENSIONAL STRUCTURES
+==================================================
+
+When to think of this?
+- 2D range queries WITH updates (static 2D uses a 2D prefix sum)
+
+Sub-patterns
+│
+├── 2D Fenwick Tree     point update + rectangle sum, O(log^2 n)
+├── 2D Segment Tree      segment tree of segment trees
+└── Range Trees           orthogonal range search / counting
+
+--------------------------------------------------
+Template — 2D BIT
+--------------------------------------------------
+def update(r, c, delta):
+    i = r
+    while i <= n:
+        j = c
+        while j <= m: bit[i][j] += delta; j += j & (-j)
+        i += i & (-i)
+def query(r, c):                 # sum of rectangle (1,1)..(r,c)
+    s = 0; i = r
+    while i > 0:
+        j = c
+        while j > 0: s += bit[i][j]; j -= j & (-j)
+        i -= i & (-i)
+    return s
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Range Sum Query 2D - Mutable (2D Fenwick)  -> 1.range_sum_2d_mutable.py
+☐ 2D Segment Tree (rectangle sum + point update)
+→ Range Sum Query 2D - Immutable (static)  see ../../1.Arrays/3.prefix_based/5.two_d_prefix_sum/

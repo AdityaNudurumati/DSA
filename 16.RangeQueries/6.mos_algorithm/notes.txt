@@ -1,0 +1,34 @@
+==================================================
+RANGE QUERIES / 6. MO'S ALGORITHM
+==================================================
+
+When to think of this?
+- queries are OFFLINE (known in advance) and adding/removing one element from the
+  current range is cheap (O(1) frequency update)
+- sort queries by (block of l, then r); move two pointers; O((N+Q)√N)
+
+Sub-patterns
+│
+├── Offline Queries     reorder queries to minimize pointer movement
+├── Frequency Queries     maintain a count[] as the window changes
+└── Range Statistics       distinct count, mode, etc.
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+block = int(n ** 0.5)
+queries.sort(key=lambda q: (q.l // block, q.r if (q.l//block)%2==0 else -q.r))
+cur_l = cur_r = 0
+for q in queries:
+    while cur_r <= q.r: add(cur_r); cur_r += 1
+    while cur_l > q.l:  cur_l -= 1; add(cur_l)
+    while cur_r > q.r+1: cur_r -= 1; remove(cur_r)
+    while cur_l < q.l:  remove(cur_l); cur_l += 1
+    answers[q.idx] = current_answer
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Number of Distinct Elements in each Range (Mo's) -> 1.distinct_in_range.py
+☐ Range Frequency / Mode queries (Mo's)
+Note: mostly competitive programming; rare in standard interviews.

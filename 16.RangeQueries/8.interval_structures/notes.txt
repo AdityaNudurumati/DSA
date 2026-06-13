@@ -1,0 +1,27 @@
+==================================================
+RANGE QUERIES / 8. INTERVAL STRUCTURES
+==================================================
+
+When to think of this?
+- intervals added DYNAMICALLY; query overlaps / max concurrency as you go
+
+Sub-patterns
+│
+├── Interval Tree          augmented BST storing max-endpoint for overlap queries
+├── Ordered Map Intervals    a sorted map (book) of [start,end); insert + check overlap
+└── Sweep Line               +1 at start, -1 at end; running concurrency
+
+--------------------------------------------------
+Template — My Calendar (ordered intervals)
+--------------------------------------------------
+# keep booked intervals sorted; on book(s,e): use bisect to find the neighbor
+# and reject if it overlaps; My Calendar II/III count overlaps via a delta map
+from sortedcontainers import SortedDict   # or a plain dict + sort for small inputs
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ My Calendar I (no double booking)             -> 1.my_calendar_i.py
+☑ My Calendar II (no triple booking)            -> 2.my_calendar_ii.py
+☑ My Calendar III (max k-booking, delta/sweep)  -> 3.my_calendar_iii.py
+→ Merge Intervals, Insert Interval, Meeting Rooms II  see ../../1.Arrays/7.intervals/

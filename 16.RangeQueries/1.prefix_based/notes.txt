@@ -1,0 +1,29 @@
+==================================================
+RANGE QUERIES / 1. PREFIX BASED
+==================================================
+
+The simplest range techniques. Great when the array is static (prefix sum) or you
+have many range updates and few queries (difference array).
+
+Sub-patterns
+│
+├── Prefix Sum        sum(l,r) = prefix[r+1] - prefix[l]    O(1) query, O(n) update
+├── Prefix XOR         xor(l,r) = prefix[r+1] ^ prefix[l]
+├── Difference Array    range +v in O(1), rebuild once at the end
+└── 2D Prefix Sum        submatrix sums in O(1) via inclusion-exclusion
+
+--------------------------------------------------
+Templates
+--------------------------------------------------
+prefix[i+1] = prefix[i] + a[i]                  # sum
+diff[l] += v; diff[r+1] -= v                    # difference array (then prefix-sum it)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Fully solved in Arrays; cross-referenced here:
+→ Range Sum Query - Immutable, Subarray Sum = K, Contiguous Array
+   see ../../1.Arrays/3.prefix_based/1.prefix_sum/
+→ Subarray XOR = K        see ../../1.Arrays/3.prefix_based/2.prefix_xor/
+→ Range Addition (diff)   see ../../1.Arrays/3.prefix_based/4.difference_array/
+→ Range Sum Query 2D       see ../../1.Arrays/3.prefix_based/5.two_d_prefix_sum/

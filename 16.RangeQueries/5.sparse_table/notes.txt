@@ -1,0 +1,32 @@
+==================================================
+RANGE QUERIES / 5. SPARSE TABLE
+==================================================
+
+When to think of this?
+- STATIC array (no updates), many queries, IDEMPOTENT operation (min/max/gcd)
+- precompute answers for every power-of-two length -> O(1) query
+
+Sub-patterns
+│
+├── RMQ                  range min/max in O(1)
+├── Static Queries        no updates allowed
+└── Idempotent Operations  overlap is fine (min, max, gcd, and, or)
+
+--------------------------------------------------
+Template — sparse table for min
+--------------------------------------------------
+LOG = n.bit_length()
+sp = [[0]*n for _ in range(LOG)]
+sp[0] = a[:]
+for k in range(1, LOG):
+    for i in range(n - (1<<k) + 1):
+        sp[k][i] = min(sp[k-1][i], sp[k-1][i + (1<<(k-1))])
+def query(l, r):                     # inclusive, idempotent
+    k = (r - l + 1).bit_length() - 1
+    return min(sp[k][l], sp[k][r - (1<<k) + 1])
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Range Minimum Query (sparse table, O(1) per query) -> 1.sparse_table_rmq.py
+☑ Range GCD Query (sparse table) -> 2.range_gcd_query.py

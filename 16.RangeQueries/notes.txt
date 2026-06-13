@@ -1,0 +1,59 @@
+==================================================
+RANGE QUERY DATA STRUCTURES — ROADMAP
+==================================================
+
+RANGE QUERY DATA STRUCTURES
+│
+├── 1. Prefix Based         (prefix sum/xor, difference array, 2D prefix)
+├── 2. Fenwick Tree (BIT)   (prefix/range sum, point/range update, coord compression)
+├── 3. Segment Tree         (range sum/min/max, point/range update)
+├── 4. Lazy Propagation     (range add/assign, deferred updates)
+├── 5. Sparse Table         (O(1) idempotent RMQ on a static array)
+├── 6. Mo's Algorithm       (offline queries, range statistics, O((N+Q)√N))
+├── 7. Advanced Segment Trees (merge-sort tree, persistent, dynamic, beats)
+├── 8. Interval Structures  (interval tree, ordered-map intervals, sweep line)
+└── 9. Multidimensional     (2D Fenwick, 2D segment tree, range trees)
+
+--------------------------------------------------
+Choose the structure
+--------------------------------------------------
+Static array, sum queries, no updates        -> Prefix Sum (O(1) query)
+Many range UPDATES, query once at the end     -> Difference Array
+Point update + prefix/range sum               -> Fenwick Tree   (simple, O(log n))
+Range query (sum/min/max/...) + point update  -> Segment Tree
+Range UPDATE + range query                    -> Segment Tree + Lazy Propagation
+Static array, idempotent (min/max/gcd), O(1)   -> Sparse Table
+Offline queries, add/remove element cheaply    -> Mo's Algorithm
+
+--------------------------------------------------
+Complexity quick reference
+--------------------------------------------------
+Prefix Sum     build O(n)        query O(1)     update O(n)
+Difference Arr update O(1)/range  finalize O(n)
+Fenwick        update O(log n)   query O(log n) space O(n)
+Segment Tree   build O(n)        query/upd O(log n) space O(4n)
++ Lazy         range upd+query O(log n)
+Sparse Table   build O(n log n)  query O(1)     (no updates)
+Mo's           O((N+Q)√N) offline
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+☐/☑ checklist). When built out, a pattern is split into sub-folders.
+
+--------------------------------------------------
+Overlap with other sections (cross-reference, don't duplicate)
+--------------------------------------------------
+Prefix Sum, Prefix XOR, Difference Array, 2D Prefix Sum, Subarray Sum = K
+   -> ../1.Arrays/3.prefix_based/   (and ../1.Arrays/6.hashing/ for hash variants)
+Fenwick: Range Sum Query Mutable, Count of Smaller Numbers After Self
+   -> ../7.Trees/13.advanced_structures/2.fenwick_tree/
+Segment Tree: Range Sum Query Mutable, Range Minimum Query
+   -> ../7.Trees/13.advanced_structures/1.segment_tree/
+Merge Intervals / Insert Interval / Line Sweep  -> ../1.Arrays/7.intervals/
+
+High-value NEW: Lazy Propagation (range-add + range-sum, Corporate Flight Bookings,
+My Calendar III), Range-Update-Range-Query Fenwick, Sparse Table O(1) RMQ, Mo's
+Algorithm, Merge Sort Tree, Persistent & Dynamic Segment Tree, My Calendar I/II,
+2D Fenwick, 2D Segment Tree.

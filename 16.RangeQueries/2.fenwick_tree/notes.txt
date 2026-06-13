@@ -1,0 +1,32 @@
+==================================================
+RANGE QUERIES / 2. FENWICK TREE (BIT)
+==================================================
+
+Binary Indexed Tree: point update + prefix query in O(log n), tiny code. The lowbit
+i & (-i) walks responsibility ranges.
+
+Sub-patterns
+│
+├── Prefix Sum Query    query(i) = sum of [1..i]
+├── Point Update         update(i, delta)
+├── Range Sum Query       query(r) - query(l-1)
+├── Range Update          two BITs, or a difference-on-BIT trick
+└── Coordinate Compression  map sparse values to ranks first
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+def update(i, delta):              # 1-indexed
+    while i <= n: bit[i] += delta; i += i & (-i)
+def query(i):
+    s = 0
+    while i > 0: s += bit[i]; i -= i & (-i)
+    return s
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Fenwick Tree (BIT core: build/point update/prefix+range sum) -> 1.fenwick_tree.py
+☑ Range Update Range Query (two-BIT trick) -> 2.range_update_range_query.py
+→ Range Sum Query - Mutable (BIT)         see ../../7.Trees/13.advanced_structures/2.fenwick_tree/
+→ Count of Smaller Numbers After Self      see ../../7.Trees/13.advanced_structures/2.fenwick_tree/
