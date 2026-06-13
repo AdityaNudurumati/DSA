@@ -1,0 +1,30 @@
+==================================================
+DP / 15. DP OPTIMIZATION
+==================================================
+
+Techniques to cut DP time/space once a correct recurrence exists. (Includes the
+advanced-DP topics: state machine, profile, broken profile, SOS DP.)
+
+Sub-patterns
+│
+├── Space Optimization          drop dimensions -> rolling arrays / O(1)
+├── Prefix Optimization           precompute prefix sums/maxes for O(1) transitions
+├── Monotonic Queue Optimization   sliding-window min/max (see pattern 14)
+├── Knuth Optimization             interval DP with the quadrangle inequality -> O(n^2)
+├── Convex Hull Trick               linear transitions -> O(n log n) / O(n)
+└── (Advanced) State Machine / Profile / Broken Profile / SOS DP
+
+--------------------------------------------------
+Examples of the idea
+--------------------------------------------------
+- 2D knapsack/LCS -> keep two rows (or one + temp).
+- Range-sum transitions -> prefix sums so dp[i] uses O(1) lookups.
+- SOS DP: sum over subsets, F[mask] = sum of f[submask], in O(n * 2^n).
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Space-optimize LCS / Knapsack to 1D (demo before/after) -> 1.space_optimization_demo.py
+☑ Sum Over Subsets (SOS DP) demo -> 2.sum_over_subsets.py
+☐ Convex Hull Trick (a linear-DP speedup demo)
+Note: monotonic-queue optimization problems live in ../14.monotonic_queue/.

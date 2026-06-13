@@ -1,0 +1,68 @@
+==================================================
+DYNAMIC PROGRAMMING — ROADMAP
+==================================================
+
+DYNAMIC PROGRAMMING
+│
+├── 0. Fundamentals          (recursion → memo → tabulation → space-opt → state design)
+├── 1. Linear DP (1D)        (Fibonacci, climbing stairs, house robber, decode ways)
+├── 2. Sequence DP           (LCS, LIS, edit distance, distinct subsequences)
+├── 3. Grid DP               (unique paths, min path sum, obstacles, falling path)
+├── 4. Knapsack DP           (0/1, unbounded, subset sum, partition, coin change)
+├── 5. Decision DP           (take/skip, buy/sell, include/exclude, game choices)
+├── 6. Partition DP          (matrix chain, burst balloons, palindrome partition, optimal BST)
+├── 7. Interval DP           (range [i,j] costs, remove boxes)
+├── 8. Stock DP              (1 / infinite / cooldown / fee / k transactions)
+├── 9. Tree DP               (include/exclude, rerooting, matching, independent set)
+├── 10. Bitmask DP           (subset states, TSP, assignment, state compression)
+├── 11. Digit DP             (count numbers in range with a property)
+├── 12. Graph DP             (DAG DP, longest path, path counting)
+├── 13. Probability DP       (coin toss, expected value, random walk)
+├── 14. DP + Monotonic Queue (jump game VI, constrained subsequence, sliding-window DP)
+└── 15. DP Optimization      (space, prefix, monotonic-queue, Knuth, convex-hull trick)
+
+--------------------------------------------------
+The DP recipe (apply to every problem)
+--------------------------------------------------
+1. STATE     — what minimal info identifies a subproblem?  dp[i] / dp[i][j] / dp[mask]
+2. TRANSITION — how does a state combine smaller states?
+3. BASE CASE  — smallest subproblems
+4. MEMOIZE    — top-down cache
+5. TABULATE   — bottom-up fill (iteration order matters)
+6. OPTIMIZE   — drop dimensions you no longer need (rolling arrays)
+
+from functools import lru_cache
+@lru_cache(None)
+def dp(state):
+    if base: return base_value
+    return best(dp(next_state) for choice in choices)
+
+--------------------------------------------------
+FAANG focus
+--------------------------------------------------
+Master: Linear, Grid, Knapsack, Sequence (LCS/LIS), Stock, Partition, Tree.
+Bitmask & Digit DP are advanced but high-value for strong performance.
+
+--------------------------------------------------
+How this section is organized
+--------------------------------------------------
+Each numbered folder is one pattern with a notes.txt (sub-pattern tree, template,
+☐/☑ checklist). When built out, a pattern is split into sub-folders, each with one
+runnable .py per problem.
+
+--------------------------------------------------
+Overlap with other sections (cross-reference, don't duplicate)
+--------------------------------------------------
+Fibonacci, Climbing Stairs, House Robber, Coin Change, Unique Paths
+   -> ../8.Recursion/4.memoization/
+LCS, Edit Distance, Distinct Subsequences, Wildcard, Regex, Palindrome Partitioning II
+   -> ../2.Strings/10.dynamic_programming/
+House Robber III, Binary Tree Cameras (tree DP)  -> ../7.Trees/11.tree_dp/
+Longest Increasing Path, Largest Color Value (graph DP)  -> ../10.Graphs/14.graph_dp/
+Jump Game VI, Constrained Subsequence Sum (monotonic-queue DP)
+   -> ../5.Queue/4.monotonic_deque/  and  ../2.Strings/2.sliding_window/
+
+High-value NEW: LIS family, Decode Ways, Min Path Sum / Dungeon Game / Falling Path,
+the full Knapsack family (0/1, unbounded, subset-sum, partition), Stock DP I–VI,
+Partition/Interval DP (MCM, Burst Balloons, Remove Boxes), Bitmask DP (TSP), Digit DP,
+Probability DP, and the DP-optimization techniques.

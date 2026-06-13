@@ -1,0 +1,36 @@
+==================================================
+DP / 2. SEQUENCE DP
+==================================================
+
+One of the biggest interview categories. dp over indices of one or two sequences.
+
+Sub-patterns
+│
+├── LCS Family          dp[i][j] over two strings' prefixes
+├── LIS Family           dp[i] = longest increasing run ending at i (or patience sort)
+├── Edit Distance         insert/delete/replace
+├── Distinct Subsequences  count ways s contains t
+└── String DP              interleaving, palindromic subsequence
+
+--------------------------------------------------
+Template — LIS (O(n log n) patience)
+--------------------------------------------------
+import bisect
+tails = []
+for x in nums:
+    i = bisect.bisect_left(tails, x)
+    if i == len(tails): tails.append(x)
+    else: tails[i] = x
+return len(tails)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+LIS Family:
+☑ Longest Increasing Subsequence -> 1.longest_increasing_subsequence.py
+☑ Number of Longest Increasing Subsequences -> 2.number_of_lis.py
+☑ Russian Doll Envelopes (LIS in 2D) -> 3.russian_doll_envelopes.py
+
+LCS / Edit / Distinct (built in Strings):
+→ LCS, Edit Distance, Distinct Subsequences, Wildcard, Regex
+   see ../../2.Strings/10.dynamic_programming/

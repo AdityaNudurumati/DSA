@@ -1,0 +1,31 @@
+==================================================
+DP / 1. LINEAR DP (1D)
+==================================================
+
+When to think of this?
+- the answer at i depends on a few earlier positions: dp[i] = f(dp[i-1], dp[i-2], ...)
+
+Sub-patterns
+│
+├── Fibonacci Pattern    dp[i] = dp[i-1] + dp[i-2]
+├── Climbing Stairs       ways to reach i
+├── House Robber           dp[i] = max(dp[i-1], dp[i-2] + a[i])
+├── Decode Ways            count valid decodings (1- and 2-digit choices)
+└── Maximum Sum Problems    Kadane-style running optima
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+dp = [0]*(n+1)
+dp[0], dp[1] = base0, base1
+for i in range(2, n+1):
+    dp[i] = combine(dp[i-1], dp[i-2], a[i])
+# usually reducible to O(1) space with two rolling variables
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Decode Ways -> 1.decode_ways.py
+☑ Min Cost Climbing Stairs -> 2.min_cost_climbing_stairs.py
+☐ Maximum Subarray (Kadane DP view; array version in ../../1.Arrays/4.subarray_techniques/)
+→ Climbing Stairs / House Robber / Fibonacci  see ../../8.Recursion/4.memoization/

@@ -1,0 +1,31 @@
+==================================================
+DP / 14. DP + MONOTONIC QUEUE
+==================================================
+
+When to think of this?
+- a DP transition takes a min/max over a sliding window of previous states
+- a monotonic deque turns the inner O(k) scan into O(1) amortized
+
+Sub-patterns
+│
+├── Jump Game VI             dp[i] = nums[i] + max(dp[i-k..i-1])
+├── Constrained Subsequence   same shape, gaps <= k
+└── Sliding Window DP          any dp[i] = best(dp[i-window..i-1]) + cost
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+from collections import deque
+dq = deque()                       # indices, dp values decreasing
+for i in range(n):
+    while dq and dq[0] < i-k: dq.popleft()
+    dp[i] = nums[i] + max(0, dp[dq[0]] if dq else 0)
+    while dq and dp[dq[-1]] <= dp[i]: dq.pop()
+    dq.append(i)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☐ Maximum Sum of Subsequence With No Adjacent (windowed variant)
+→ Jump Game VI                  see ../../5.Queue/4.monotonic_deque/1.decreasing/1.jump_game_vi.py
+→ Constrained Subsequence Sum    see ../../2.Strings/2.sliding_window/3.monotonic_window/  (and Arrays)

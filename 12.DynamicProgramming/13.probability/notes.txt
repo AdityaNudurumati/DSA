@@ -1,0 +1,28 @@
+==================================================
+DP / 13. PROBABILITY DP
+==================================================
+
+When to think of this?
+- "probability that ..." or "expected value of ..." over random steps
+- dp[state] = probability/expectation; transitions weighted by probabilities
+
+Sub-patterns
+│
+├── Coin Toss        probability of k heads / target outcome
+├── Expected Value    E[state] = sum(p_i * E[next_i]) (+ step cost)
+└── Random Walk        position/time probability distribution
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+@lru_cache(None)
+def prob(state, steps):
+    if steps == 0: return 1.0 if good(state) else 0.0
+    return sum(p * prob(nxt, steps-1) for nxt, p in transitions(state))
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Knight Probability in Chessboard (LC688) -> 1.knight_probability.py
+☐ Toss Strange Coins (LC1230)
+☑ Soup Servings (LC808) -> 2.soup_servings.py

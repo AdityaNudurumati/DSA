@@ -1,0 +1,33 @@
+==================================================
+DP / 4. KNAPSACK DP
+==================================================
+
+The most important DP family. Choose items under a capacity/target constraint.
+
+Sub-patterns
+│
+├── 0/1 Knapsack       each item once; iterate capacity DESCENDING for 1D
+├── Unbounded Knapsack  unlimited copies; iterate capacity ASCENDING
+├── Subset Sum           can we hit an exact target?
+├── Partition Problems    split into equal-sum parts
+└── Coin Change           min coins / number of ways
+
+--------------------------------------------------
+Templates (1D space-optimized)
+--------------------------------------------------
+# 0/1: for each item, for cap in range(C, w-1, -1): dp[cap]=max(dp[cap], dp[cap-w]+v)
+# unbounded: for each item, for cap in range(w, C+1):  dp[cap]=max(dp[cap], dp[cap-w]+v)
+# subset sum: dp[s] |= dp[s-num]  (boolean)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+0/1 & Subset:
+☑ Partition Equal Subset Sum -> 1.partition_equal_subset_sum.py
+☑ Target Sum -> 2.target_sum.py
+☑ 0/1 Knapsack (classic max value) -> 3.knapsack_01.py
+
+Unbounded:
+☐ Coin Change (min coins)   [cross-referenced to Recursion pattern]
+☑ Coin Change II (number of ways) -> 4.coin_change_ii.py
+☑ Combination Sum IV (ordered) -> 5.combination_sum_iv.py

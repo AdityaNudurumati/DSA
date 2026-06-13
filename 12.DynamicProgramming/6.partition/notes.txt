@@ -1,0 +1,33 @@
+==================================================
+DP / 6. PARTITION DP
+==================================================
+
+When to think of this?
+- "try every split point k" within a range; combine left and right results
+- dp[i][j] over a segment, looping a partition index k in (i, j)
+
+Sub-patterns
+│
+├── Matrix Chain Multiplication   minimize multiply cost
+├── Burst Balloons                 (also Interval DP)
+├── Palindrome Partitioning         min cuts
+└── Optimal BST                      minimize search cost
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+@lru_cache(None)
+def dp(i, j):
+    if i > j: return 0
+    best = inf
+    for k in range(i, j+1):
+        best = min(best, dp(i, k-1) + cost(i, k, j) + dp(k+1, j))
+    return best
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Matrix Chain Multiplication -> 1.matrix_chain_multiplication.py
+☐ Palindrome Partitioning II (min cuts)  see ../../strings (cross-ref)
+☑ Partition Array for Maximum Sum -> 2.partition_array_max_sum.py
+→ Burst Balloons  see ../7.interval/

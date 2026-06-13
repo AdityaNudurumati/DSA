@@ -1,0 +1,33 @@
+==================================================
+DP / 11. DIGIT DP
+==================================================
+
+When to think of this?
+- "count numbers in [0, N] (or [L, R]) satisfying a digit property"
+- DP over digit position with a "tight" (still bounded by N) flag
+
+Sub-patterns
+│
+├── Count Numbers          count values with a property
+├── Range Constraints        answer(R) - answer(L-1)
+└── Number Property Queries   digit-sum, no-repeated-digit, contains-k, etc.
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+digits = list(map(int, str(N)))
+@lru_cache(None)
+def dp(pos, tight, started, state):
+    if pos == len(digits): return 1 if valid(state, started) else 0
+    hi = digits[pos] if tight else 9
+    total = 0
+    for d in range(0, hi+1):
+        total += dp(pos+1, tight and d==hi, started or d>0, next_state(state, d))
+    return total
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Count Digit One (LC233) -> 1.count_digit_one.py
+☑ Numbers With Repeated Digits / Count Special Integers (LC2376) -> 2.count_special_integers.py
+☐ Count Numbers with Unique Digits

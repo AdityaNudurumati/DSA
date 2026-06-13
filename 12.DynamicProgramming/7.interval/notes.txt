@@ -1,0 +1,31 @@
+==================================================
+DP / 7. INTERVAL DP
+==================================================
+
+When to think of this?
+- dp over a subarray/substring range [i, j]; the last action splits or peels the range
+- often the "what's resolved LAST" trick (Burst Balloons)
+
+Sub-patterns
+│
+├── Merge Intervals Cost   combine adjacent ranges with a join cost
+├── Burst Balloons          choose which balloon to burst LAST in (i, j)
+├── Remove Boxes             3D state (i, j, k) for trailing equal boxes
+└── Range Problems            generic dp[i][j] over lengths
+
+--------------------------------------------------
+Template — iterate by increasing length
+--------------------------------------------------
+for length in range(1, n+1):
+    for i in range(0, n-length+1):
+        j = i + length - 1
+        for k in range(i, j+1):
+            dp[i][j] = best(dp[i][j], dp[i][k-1] + gain(i,k,j) + dp[k+1][j])
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Burst Balloons -> 1.burst_balloons.py
+☑ Remove Boxes -> 2.remove_boxes.py
+☑ Minimum Cost to Cut a Stick -> 3.minimum_cost_to_cut_stick.py
+☐ Stone Game variants (range DP)

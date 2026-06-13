@@ -1,0 +1,31 @@
+==================================================
+DP / 8. STOCK DP
+==================================================
+
+Extremely common. State = (day, holding?, transactions-left, cooldown?). All six LC
+stock problems are one framework with different constraints.
+
+Sub-patterns
+│
+├── One Transaction       buy once, sell once (LC121)
+├── Infinite Transactions  sum every upward step (LC122)
+├── Cooldown               1-day rest after selling (LC309)
+├── Fees                   subtract a fee per transaction (LC714)
+└── K Transactions          cap at k buys (LC123 k=2, LC188 general)
+
+--------------------------------------------------
+Template — k transactions
+--------------------------------------------------
+# dp[t][hold]: best cash with <=t transactions, holding or not
+# buy[t]  = max(buy[t],  cash[t-1] - price)
+# cash[t] = max(cash[t], buy[t] + price)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Best Time to Buy and Sell Stock (one transaction) -> 1.best_time_i.py
+☑ Best Time II (infinite) -> 2.best_time_ii.py
+☑ Best Time III (two transactions) -> 3.best_time_iii.py
+☑ Best Time IV (k transactions) -> 4.best_time_iv.py
+☑ Best Time with Cooldown -> 5.best_time_cooldown.py
+☑ Best Time with Transaction Fee -> 6.best_time_fee.py

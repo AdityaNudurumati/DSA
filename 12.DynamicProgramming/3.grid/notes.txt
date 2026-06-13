@@ -1,0 +1,35 @@
+==================================================
+DP / 3. GRID DP
+==================================================
+
+When to think of this?
+- moves are constrained (right/down, or to adjacent cells)
+- dp[r][c] = best/count over ways to reach (r, c)
+
+Sub-patterns
+│
+├── Unique Paths         count paths; dp[r][c] = dp[r-1][c] + dp[r][c-1]
+├── Min Path Sum          minimize accumulated cost
+├── Obstacle Grids         zero out blocked cells
+└── Falling Path Problems   choose among adjacent cells in the previous row
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+dp = [[0]*n for _ in range(m)]
+for r in range(m):
+    for c in range(n):
+        if (r, c) == (0, 0): dp[r][c] = grid[r][c]; continue
+        best = inf
+        if r: best = min(best, dp[r-1][c])
+        if c: best = min(best, dp[r][c-1])
+        dp[r][c] = best + grid[r][c]
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Unique Paths II (obstacles) -> 1.unique_paths_ii.py
+☑ Minimum Path Sum -> 2.minimum_path_sum.py
+☑ Dungeon Game (work backwards) -> 3.dungeon_game.py
+☑ Minimum Falling Path Sum -> 4.minimum_falling_path_sum.py
+☑ Triangle -> 5.triangle.py

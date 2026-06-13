@@ -1,0 +1,30 @@
+==================================================
+DP / 9. TREE DP
+==================================================
+
+DP where a node's answer depends on its children's answers. (Core problems live in the
+Trees section; this folder adds rerooting and a couple of demos.)
+
+Sub-patterns
+│
+├── Include / Exclude   (rob, skip) per node
+├── Rerooting            compute an answer for EVERY node as root in O(n)
+├── Tree Matching         maximum matching on a tree
+└── Independent Set        max-weight set with no two adjacent
+
+--------------------------------------------------
+Template — bottom up tuple
+--------------------------------------------------
+def dfs(node):
+    if not node: return (0, 0)
+    l = dfs(node.left); r = dfs(node.right)
+    inc = node.val + l[1] + r[1]
+    exc = max(l) + max(r)
+    return (inc, exc)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Sum of Distances in Tree (rerooting) -> 1.sum_of_distances_in_tree.py
+☑ Maximum Independent Set on a Tree -> 2.max_independent_set_tree.py
+→ House Robber III, Binary Tree Cameras  see ../../7.Trees/11.tree_dp/

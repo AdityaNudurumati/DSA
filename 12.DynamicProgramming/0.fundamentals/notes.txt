@@ -1,0 +1,29 @@
+==================================================
+DP / 0. FUNDAMENTALS
+==================================================
+
+The progression every DP follows. Learn to climb it: brute recursion → memo →
+tabulation → space-optimized.
+
+Sub-patterns
+│
+├── Recursion           express the answer via smaller subproblems
+├── Memoization          cache by state (top-down)
+├── Tabulation            iterate states bottom-up
+├── Space Optimization     keep only the rows/cells you still need
+└── State Design            choose the minimal state that captures a subproblem
+
+--------------------------------------------------
+The four forms of Fibonacci (same problem, four stages)
+--------------------------------------------------
+# 1) recursion: fib(n) = fib(n-1) + fib(n-2)         O(2^n)
+# 2) memoization: cache fib(n)                        O(n) time, O(n) space
+# 3) tabulation: dp[i] = dp[i-1] + dp[i-2]            O(n) / O(n)
+# 4) space-opt: keep two variables a, b              O(n) / O(1)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Fibonacci — all four forms in one file (recursion / memo / tabulation / O(1)) -> 1.fibonacci_all_forms.py
+☐ State-design demo (same problem solved top-down and bottom-up)
+→ memoized Fibonacci / Climbing Stairs  see ../../8.Recursion/4.memoization/

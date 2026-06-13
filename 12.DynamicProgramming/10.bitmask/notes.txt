@@ -1,0 +1,33 @@
+==================================================
+DP / 10. BITMASK DP
+==================================================
+
+When to think of this?
+- n is small (<= ~20) and the state is a SUBSET of items
+- dp[mask] = best over the set of chosen/visited items encoded by mask
+
+Sub-patterns
+│
+├── Subset States        dp[mask]
+├── Traveling Salesman     dp[mask][last] = min cost visiting `mask` ending at `last`
+├── Assignment Problems     assign n tasks to n workers
+└── State Compression        pack a row/profile into bits
+
+--------------------------------------------------
+Template — TSP
+--------------------------------------------------
+dp = [[inf]*n for _ in range(1<<n)]
+dp[1][0] = 0
+for mask in range(1<<n):
+    for last in range(n):
+        if not (mask>>last)&1 or dp[mask][last]==inf: continue
+        for nxt in range(n):
+            if (mask>>nxt)&1: continue
+            dp[mask|1<<nxt][nxt] = min(dp[mask|1<<nxt][nxt], dp[mask][last]+cost[last][nxt])
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Traveling Salesman (shortest Hamiltonian path/cycle) -> 1.traveling_salesman.py
+☑ Partition to K Equal Sum Subsets -> 2.partition_to_k_equal_sum_subsets.py
+☐ Minimum Cost to Connect Two Groups / Assignment

@@ -1,0 +1,32 @@
+==================================================
+DP / 5. DECISION DP
+==================================================
+
+When to think of this?
+- at each step choose among a few options; carry a small state describing the choice
+
+Sub-patterns
+│
+├── Take / Skip        include the current item or not
+├── Buy / Sell          holding vs not-holding (see Stock DP)
+├── Include / Exclude    adjacency constraints (house robber)
+└── Game Choices         minimax over moves
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+@lru_cache(None)
+def dp(i, state):
+    if i == n: return base
+    take = value(i) + dp(i+1, new_state)
+    skip = dp(i+1, state)
+    return max(take, skip)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Delete and Earn (house-robber reduction) -> 1.delete_and_earn.py
+☑ Stone Game (minimax DP) -> 2.stone_game.py
+☑ Predict the Winner -> 3.predict_the_winner.py
+→ House Robber  see ../../8.Recursion/4.memoization/2.house_robber.py
+→ Stock problems  see ../8.stock/

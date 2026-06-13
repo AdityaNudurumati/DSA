@@ -1,0 +1,28 @@
+==================================================
+DP / 12. GRAPH DP
+==================================================
+
+When to think of this?
+- DP where dependencies form a DAG (or become one after SCC condensation)
+- memoize over nodes in topological order
+
+Sub-patterns
+│
+├── DAG DP          process in topo order, combine predecessors
+├── Longest Path     relax along topo order (longest, not shortest)
+├── State Graph       node = (position, extra state)
+└── Path Counting     count distinct paths to each node
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+@lru_cache(None)
+def best(u):
+    return 1 + max((best(v) for v in adj[u]), default=0)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☐ Count Paths in a DAG (source -> target path counting)
+☑ Number of Increasing Paths in a Grid (LC2328) -> 1.number_of_increasing_paths_in_grid.py
+→ Longest Increasing Path in a Matrix, Largest Color Value  see ../../10.Graphs/14.graph_dp/
