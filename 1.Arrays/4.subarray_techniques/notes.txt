@@ -1,0 +1,33 @@
+==================================================
+4. SUBARRAY TECHNIQUES
+==================================================
+
+When to think of this?
+- "maximum / minimum subarray ..." with running state
+- DP-on-array where each step depends on the previous
+
+Sub-patterns
+│
+├── Kadane's Algorithm       max subarray sum
+├── Maximum Product Subarray  track max AND min (negatives flip)
+├── Subarray Sum = K          prefix sum + hashmap (see prefix_based)
+├── Subarray XOR = K          prefix xor + hashmap
+└── Circular Subarray         total - min_subarray, or Kadane wrap
+
+--------------------------------------------------
+Template — Kadane
+--------------------------------------------------
+best = cur = nums[0]
+for x in nums[1:]:
+    cur = max(x, cur + x)
+    best = max(best, cur)
+return best
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☐ Maximum Subarray (Kadane)
+☐ Maximum Product Subarray
+☐ Maximum Sum Circular Subarray
+☐ Subarray Sum Equals K
+☐ Longest Subarray with Sum K

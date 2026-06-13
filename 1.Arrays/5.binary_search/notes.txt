@@ -1,0 +1,52 @@
+==================================================
+5. BINARY SEARCH
+==================================================
+
+When to think of this?
+- Sorted array → search in O(log n)
+- "minimize the maximum" / "maximum the minimum" → search on answer
+- Rotated sorted array
+
+Sub-patterns
+│
+├── Search on Index    classic find target / boundary
+├── Search on Answer    binary search the result value, feasibility check
+└── Rotated Array       find pivot, decide which half is sorted
+
+--------------------------------------------------
+Template — Classic (lower bound style)
+--------------------------------------------------
+lo, hi = 0, len(nums) - 1
+while lo <= hi:
+    mid = (lo + hi) // 2
+    if nums[mid] == target:
+        return mid
+    elif nums[mid] < target:
+        lo = mid + 1
+    else:
+        hi = mid - 1
+return -1
+
+--------------------------------------------------
+Template — Search on Answer
+--------------------------------------------------
+lo, hi = min_possible, max_possible
+while lo < hi:
+    mid = (lo + hi) // 2
+    if feasible(mid):
+        hi = mid
+    else:
+        lo = mid + 1
+return lo
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☐ Binary Search
+☐ Search Insert Position
+☐ First and Last Position of Element
+☐ Search in Rotated Sorted Array
+☐ Find Minimum in Rotated Sorted Array
+☐ Koko Eating Bananas (search on answer)
+☐ Capacity to Ship Packages within D Days
+☐ Median of Two Sorted Arrays

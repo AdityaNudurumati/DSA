@@ -1,0 +1,46 @@
+==================================================
+3. PREFIX BASED
+==================================================
+
+When to think of this?
+- Many range queries (sum / xor) over a static array
+- "subarray sum equals K" / "count subarrays with property"
+- Range updates (difference array)
+
+Sub-patterns
+│
+├── Prefix Sum        prefix[i] = nums[0..i-1] sum
+├── Prefix XOR        same idea with ^ instead of +
+├── Prefix Product    products; watch zeros
+├── Difference Array  O(1) range updates, rebuild at end
+└── 2D Prefix Sum     submatrix sums in O(1)
+
+--------------------------------------------------
+Template — Prefix Sum
+--------------------------------------------------
+prefix = [0] * (n + 1)
+for i in range(n):
+    prefix[i + 1] = prefix[i] + nums[i]
+# sum(l..r) = prefix[r + 1] - prefix[l]
+
+--------------------------------------------------
+Template — Subarray Sum = K (hash of prefix)
+--------------------------------------------------
+seen = {0: 1}
+running = 0
+count = 0
+for x in nums:
+    running += x
+    count += seen.get(running - k, 0)
+    seen[running] = seen.get(running, 0) + 1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☐ Range Sum Query - Immutable
+☐ Subarray Sum Equals K
+☐ Contiguous Array (0s and 1s)
+☐ Subarray XOR Equals K
+☐ Product of Array Except Self
+☐ Range Addition (Difference Array)
+☐ Range Sum Query 2D - Immutable

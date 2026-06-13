@@ -1,0 +1,34 @@
+==================================================
+10. GREEDY ON ARRAYS
+==================================================
+
+When to think of this?
+- A locally-optimal choice at each step leads to the global optimum
+- "minimum jumps / can you reach / max profit"
+- Must be able to ARGUE why the greedy choice is safe
+
+Sub-patterns
+│
+├── Reachability / Jumps    track farthest reachable
+├── Resource / Tank          running balance, reset on deficit
+└── Local exchange argument   sort + pick
+
+--------------------------------------------------
+Template — Jump Game (can reach end?)
+--------------------------------------------------
+farthest = 0
+for i, jump in enumerate(nums):
+    if i > farthest:
+        return False
+    farthest = max(farthest, i + jump)
+return True
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☐ Jump Game
+☐ Jump Game II
+☐ Gas Station
+☐ Candy
+☐ Task Scheduler
+☐ Best Time to Buy and Sell Stock II

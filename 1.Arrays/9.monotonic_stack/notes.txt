@@ -1,0 +1,40 @@
+==================================================
+9. MONOTONIC STACK
+==================================================
+
+When to think of this?
+- "next / previous greater or smaller element"
+- Histogram / span / temperatures problems
+- Each element pushed and popped at most once → O(n)
+
+Sub-patterns
+│
+├── Next Greater Element
+├── Previous Greater Element
+├── Next Smaller Element
+└── Histogram Problems    (largest rectangle, etc.)
+
+--------------------------------------------------
+Template — Next Greater Element
+--------------------------------------------------
+res = [-1] * len(nums)
+stack = []                 # holds indices, decreasing values
+for i, x in enumerate(nums):
+    while stack and nums[stack[-1]] < x:
+        res[stack.pop()] = x
+    stack.append(i)
+return res
+
+Rule of thumb:
+- next greater  → pop while stack top <  current
+- next smaller  → pop while stack top >  current
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☐ Next Greater Element I / II
+☐ Daily Temperatures
+☐ Largest Rectangle in Histogram
+☐ Trapping Rain Water (stack variant)
+☐ Sum of Subarray Minimums
+☐ Remove K Digits

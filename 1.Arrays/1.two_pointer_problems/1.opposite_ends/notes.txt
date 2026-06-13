@@ -1,0 +1,35 @@
+==================================================
+TWO POINTERS — 1. OPPOSITE ENDS  (Left → ← Right)
+==================================================
+
+Two pointers start at opposite ends and move toward each other.
+
+When to think of this?
+- Sorted array
+- Pair / triplet sum problems
+- Palindrome checking
+- Maximizing / minimizing something between two ends
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+left = 0
+right = len(nums) - 1
+
+while left < right:
+    if condition:        # e.g. sum too small
+        left += 1
+    else:
+        right -= 1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Two Sum II                 -> 1.two_sum_II.py
+☑ Valid Palindrome           -> 2.valid_palindrome.py
+☑ Container With Most Water  -> 3.container_with_most_water.py
+☑ Squares of a Sorted Array  -> 4.sorted_array_squares.py
+☑ 3Sum                       -> 5.three_sum.py
+☐ 4Sum
+☐ Trapping Rain Water
+☐ Boats to Save People

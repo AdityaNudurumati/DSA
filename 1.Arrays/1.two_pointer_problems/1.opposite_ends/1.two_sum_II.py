@@ -36,3 +36,25 @@ def twoSum(numbers, target):
 
         else:
             right -= 1
+
+
+if __name__ == "__main__":
+    numbers = [2, 7, 11, 15]
+    target = 9
+    print(twoSum(numbers, target))  # Expected: [1, 2]
+
+
+'''
+Best Pattern
+✅ Two Pointers
+Because array is already sorted.
+| Metric | Value |
+| ------ | ----- |
+| Time   | O(n)  |
+| Space  | O(1)  |
+Can we do better?
+❌ No
+
+Need to inspect elements at least once.
+Optimal = O(n)
+'''

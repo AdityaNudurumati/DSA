@@ -1,0 +1,30 @@
+==================================================
+TWO POINTERS — 2. SAME DIRECTION  (Slow / Fast)
+==================================================
+
+Both pointers move left → right. Slow marks the write position,
+fast scans ahead.
+
+When to think of this?
+- In-place array modification
+- Remove / move / compress elements
+- Keep relative order while filtering
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+slow = 0
+for fast in range(len(nums)):
+    if condition:                 # keep this element
+        nums[slow] = nums[fast]
+        slow += 1
+# slow = length of the kept prefix
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Remove Duplicates from Sorted Array -> 1.remove_duplicates.py
+☑ Move Zeroes                         -> 2.move_zeroes.py
+☐ Remove Element
+☐ Sort Array By Parity
+☐ Merge Sorted Array

@@ -1,0 +1,57 @@
+==================================================
+2. SLIDING WINDOW
+==================================================
+
+When to think of this?
+- Contiguous subarray / substring
+- "longest / shortest / max / min window that satisfies X"
+- Fixed size k, or variable size with a constraint
+
+Sub-patterns
+│
+├── Fixed Size
+│   └── window of exactly k elements; slide by 1
+│
+├── Variable Size (Expand-Shrink)
+│   └── grow right; shrink left while window invalid
+│
+└── Monotonic Window
+    └── deque keeps max/min of current window in O(1)
+
+--------------------------------------------------
+Template — Fixed Size
+--------------------------------------------------
+window_sum = 0
+for right in range(len(nums)):
+    window_sum += nums[right]
+    if right >= k - 1:
+        # record answer using window_sum
+        window_sum -= nums[right - k + 1]
+
+--------------------------------------------------
+Template — Variable Size
+--------------------------------------------------
+left = 0
+for right in range(len(nums)):
+    # add nums[right] to window
+    while invalid_window:
+        # remove nums[left]
+        left += 1
+    # record answer (window = left..right)
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+Fixed:
+☐ Maximum Sum Subarray of Size K
+☐ Average of Subarrays of Size K
+
+Variable:
+☐ Longest Substring Without Repeating Characters
+☐ Minimum Window Substring
+☐ Fruits Into Baskets
+☐ Longest Substring with At Most K Distinct
+
+Monotonic:
+☐ Sliding Window Maximum
+☐ Constrained Subsequence Sum

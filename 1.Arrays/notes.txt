@@ -1,0 +1,216 @@
+If you're following a structured DSA roadmap
+I would actually recommend:
+
+1. Two Pointers
+2. Sliding Window
+3. Prefix Sum
+4. Hashing
+5. Binary Search
+6. Partition / Dutch Flag
+7. Kadane's
+8. Matrix
+9. Intervals
+10. Monotonic Stack
+11. Greedy
+
+What is the Partition / Dutch Flag pattern?
+The goal is to rearrange elements in-place into groups based on some condition.
+Typical examples:
+| Problem                             | Pattern             |
+| ----------------------------------- | ------------------- |
+| Sort Colors                         | Dutch National Flag |
+| Move Negatives to Left              | Partition           |
+| Segregate Even/Odd                  | Partition           |
+| Partition Array Around Pivot        | Partition           |
+| Quick Sort Partition Step           | Partition           |
+| Quick Select (Kth Largest/Smallest) | Partition           |
+
+Recommended Problems:
+Easy
+- Sort Colors
+- Move Zeroes
+- Segregate Even and Odd
+- Move Negative Numbers to One Side
+
+Medium
+- Partition Array Around Pivot
+- Sort Array By Parity
+- Wiggle Sort
+- Kth Largest Element (Quick Select)
+
+Advanced
+- Quick Sort Implementation
+- Dutch National Flag Variations
+--------------------------------------------------------
+80–90% Coverage
+
+Your roadmap already covers:
+
+Two Pointers
+Sliding Window
+Prefix Sum/XOR
+Hashing
+Kadane
+Binary Search
+Partition
+Matrix
+Intervals
+Monotonic Stack
+Greedy
+
+These solve the vast majority of array interview questions.
+Remaining 10–20%
+1. Heap / Priority Queue + Arrays
+
+Used when you need the largest/smallest element repeatedly.
+
+Problems:
+
+Kth Largest Element
+Top K Frequent Elements
+Find Median from Data Stream
+Merge K Sorted Arrays
+
+Pattern:
+import heapq
+2. Monotonic Queue (Advanced Sliding Window)
+
+Many people learn Sliding Window but skip this.
+
+Problems:
+
+Sliding Window Maximum
+Constrained Subsequence Sum
+
+Pattern:
+from collections import deque
+3. Sorting-Based Tricks
+
+Sometimes sorting is the main idea.
+
+Problems:
+
+Merge Intervals
+Meeting Rooms
+Minimum Number of Arrows to Burst Balloons
+Largest Number
+
+Pattern:
+nums.sort(key=...)
+5. Math / Number Theory
+
+Occasionally appears.
+
+Problems:
+
+Rotate Array
+Product Except Self
+Count Primes
+Happy Number
+6. Simulation
+
+No specific algorithm; just careful implementation.
+
+Problems:
+
+Spiral Matrix
+Rotate Image
+Game of Life
+7. Divide and Conquer
+
+Less frequent but important.
+
+Problems:
+
+Count Inversions
+Reverse Pairs
+Majority Element
+
+Pattern:
+Merge Sort based thinking.
+
+8. Union Find (DSU) on Arrays
+
+Rare for pure arrays but common in advanced questions.
+
+Problems:
+
+Longest Consecutive Sequence (alternative)
+Number of Islands
+Accounts Merge
+9. Trie + Arrays/Strings
+
+Occasionally appears.
+
+Problems:
+
+Maximum XOR of Two Numbers
+Word Search II
+10. Advanced Greedy
+
+Problems:
+
+Jump Game II
+Candy
+Task Scheduler
+
+Requires proving why a greedy choice is correct.
+----------------------------------------------------------
+ARRAYS
+│
+├── 1. Two Pointers
+│   ├── Opposite Ends
+│   ├── Same Direction (Slow/Fast)
+│   └── Partition / Dutch Flag
+│
+├── 2. Sliding Window
+│   ├── Fixed Size
+│   ├── Variable Size (Expand-Shrink)
+│   └── Monotonic Window
+│
+├── 3. Prefix Based
+│   ├── Prefix Sum
+│   ├── Prefix XOR
+│   ├── Prefix Product
+│   ├── Difference Array
+│   └── 2D Prefix Sum
+│
+├── 4. Subarray Techniques
+│   ├── Kadane's Algorithm
+│   ├── Maximum Product Subarray
+│   ├── Subarray Sum = K
+│   ├── Subarray XOR = K
+│   └── Circular Subarray
+│
+├── 5. Binary Search
+│   ├── Search on Index
+│   ├── Search on Answer
+│   └── Binary Search on Rotated Array
+│
+├── 6. Hashing + Arrays
+│   ├── Frequency Counting
+│   ├── Prefix Hashing
+│   ├── Remainder Hashing
+│   └── Set-Based Problems
+│
+├── 7. Intervals
+│   ├── Merge Intervals
+│   ├── Insert Interval
+│   └── Line Sweep Basics
+│
+├── 8. Matrix (2D Arrays)
+│   ├── Traversal
+│   ├── Rotation
+│   ├── Simulation
+│   └── 2D Prefix Sum
+│
+├── 9. Monotonic Stack
+│   ├── Next Greater Element
+│   ├── Previous Greater Element
+│   ├── Next Smaller Element
+│   └── Histogram Problems
+│
+└── 10. Greedy on Arrays
+    ├── Jump Game
+    ├── Gas Station
+    └── Candy

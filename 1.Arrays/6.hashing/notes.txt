@@ -1,0 +1,41 @@
+==================================================
+6. HASHING + ARRAYS
+==================================================
+
+When to think of this?
+- Need O(1) lookup of "have I seen X?"
+- Counting frequencies / grouping
+- Pair/complement problems on UNSORTED data
+
+Sub-patterns
+│
+├── Frequency Counting   dict / Counter
+├── Prefix Hashing       prefix sum stored in a map (see prefix_based)
+├── Remainder Hashing    group by value % k
+└── Set-Based Problems    membership / dedup with set
+
+--------------------------------------------------
+Template — Frequency
+--------------------------------------------------
+from collections import Counter
+freq = Counter(nums)
+
+--------------------------------------------------
+Template — Two Sum (unsorted)
+--------------------------------------------------
+seen = {}
+for i, x in enumerate(nums):
+    if target - x in seen:
+        return [seen[target - x], i]
+    seen[x] = i
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☐ Two Sum (unsorted)
+☐ Contains Duplicate
+☐ Group Anagrams
+☐ Top K Frequent Elements
+☐ Longest Consecutive Sequence
+☐ Subarray Sums Divisible by K
+☐ Intersection of Two Arrays

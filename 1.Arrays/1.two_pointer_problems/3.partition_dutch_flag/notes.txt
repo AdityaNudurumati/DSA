@@ -1,0 +1,38 @@
+==================================================
+TWO POINTERS — 3. PARTITION / DUTCH FLAG
+==================================================
+
+Pointers rearrange elements in-place into groups based on a condition.
+
+When to think of this?
+- Partition around a pivot / value
+- Segregate into 2 or 3 groups (negatives/positives, even/odd, 0/1/2)
+- Quick Sort partition step, Quick Select
+
+--------------------------------------------------
+Template — 3-way (Dutch National Flag)
+--------------------------------------------------
+low = 0          # boundary of the "less" group
+mid = 0          # current element
+high = len(nums) - 1   # boundary of the "greater" group
+
+while mid <= high:
+    if nums[mid] < pivot:
+        nums[low], nums[mid] = nums[mid], nums[low]
+        low += 1
+        mid += 1
+    elif nums[mid] > pivot:
+        nums[mid], nums[high] = nums[high], nums[mid]
+        high -= 1            # don't advance mid: swapped-in value unknown
+    else:
+        mid += 1
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☐ Sort Colors
+☐ Quick Sort Partition
+☐ Quick Select (Kth Largest Element)
+☐ Partition Around Pivot
+☐ Segregate Even and Odd
+☐ Move Negatives to One Side

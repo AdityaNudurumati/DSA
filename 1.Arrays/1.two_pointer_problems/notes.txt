@@ -1,0 +1,141 @@
+| Problem              | Best Pattern          | Time  | Space |
+| -------------------- | --------------------- | ----- | ----- |
+| Two Sum II           | Two Pointers          | O(n)  | O(1)  |
+| Remove Duplicates    | Slow/Fast             | O(n)  | O(1)  |
+| Valid Palindrome     | Opposite Pointers     | O(n)  | O(1)  |
+| Move Zeroes          | Slow/Fast             | O(n)  | O(1)  |
+| Squares Sorted Array | Two Ends              | O(n)  | O(n)  |
+| Container Water      | Greedy + Two Pointers | O(n)  | O(1)  |
+| 3Sum                 | Sort + Two Pointers   | O(n²) | O(1)  |
+
+
+A useful interview habit is: first identify the pattern before writing code. For these problems, the trigger phrases are:
+
+Sorted array → Think Two Pointers.
+In-place modification → Think Slow/Fast Pointer.
+Compare both ends → Think Opposite Pointers.
+Need triplets/pairs in sorted data → Sort + Two Pointers.
+Partition/group elements → Dutch National Flag / Partition pattern.
+
+
+Two Pointers
+│
+├── Opposite Ends
+│   ├── Two Sum II
+│   ├── Valid Palindrome
+│   ├── Container With Most Water
+│   ├── Squares of a Sorted Array
+│   ├── 3Sum
+│   ├── 4Sum
+│   ├── Trapping Rain Water
+│   └── Boats to Save People
+│
+├── Same Direction (Slow/Fast)
+│   ├── Remove Duplicates
+│   ├── Move Zeroes
+│   ├── Remove Element
+│   ├── Sort Array By Parity
+│   └── Merge Sorted Array
+│
+├── Sliding Window
+│   ├── Fixed Window
+│   └── Variable Window
+│
+└── Partition / Dutch Flag
+    ├── Sort Colors
+    ├── Quick Sort Partition
+    ├── Quick Select
+    └── Partition Around Pivot
+
+1. Opposite Ends (Left → Right ←)
+
+Two pointers start at opposite ends and move toward each other.
+
+When to think of this?
+Sorted array
+Pair sum problems
+Palindrome checking
+Maximizing/minimizing something between two ends
+
+Problems:
+    Two Sum II
+    Container With Most Water
+    Valid Palindrome
+    Squares of a Sorted Array
+    3Sum (inner loop)
+    4Sum (inner loop)
+    Trapping Rain Water
+    Boats to Save People
+
+Template:
+left = 0
+right = len(nums) - 1
+
+while left < right:
+
+    if condition:
+        left += 1
+
+    else:
+        right -= 1
+
+2. Same Direction (Slow/Fast)
+
+Both pointers move from left to right.
+
+When to think of this?
+In-place array modification
+Remove duplicates
+Move elements
+Compress data
+
+Problems
+    Remove Duplicates from Sorted Array
+    Move Zeroes
+    Remove Element
+    Sort Array By Parity
+    Merge Sorted Array
+
+Template:
+slow = 0
+
+for fast in range(len(nums)):
+
+    if condition:
+        nums[slow] = nums[fast]
+        slow += 1
+
+3. Sliding Window (Special Same Direction)
+
+Technically a Two Pointer pattern.
+
+Both pointers move forward, maintaining a window.
+
+Problems
+    Maximum Sum Subarray of Size K
+    Longest Substring Without Repeating Characters
+    Minimum Window Substring
+    Fruits Into Baskets
+
+Template:
+left = 0
+
+for right in range(len(nums)):
+
+    while invalid_window:
+        left += 1
+
+4. Partition / Dutch Flag
+
+Pointers are used to rearrange elements into groups.
+
+Problems
+    Sort Colors
+    Quick Sort Partition
+    Quick Select
+    Partition Around Pivot
+
+Template:
+low = 0
+mid = 0
+high = len(nums) - 1
