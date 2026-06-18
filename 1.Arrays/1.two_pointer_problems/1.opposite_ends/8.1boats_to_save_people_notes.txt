@@ -1,0 +1,324 @@
+==================================================
+BOATS TO SAVE PEOPLE  —  Sorting + Greedy Two Pointers
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an array people where people[i] is the weight of the i-th
+person, and an integer limit (the max weight a boat can carry),
+return the MINIMUM number of boats needed.
+
+Each boat carries AT MOST 2 people, as long as their combined
+weight <= limit.
+
+Example:
+    people = [3, 2, 2, 1]
+    limit  = 3
+
+    Boats: (1,2), (2), (3)
+    answer = 3
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def numRescueBoats(people, limit):
+
+        people.sort()
+
+        left  = 0
+        right = len(people) - 1
+
+        boats = 0
+
+        while left <= right:
+
+            # Try to pair the lightest with the heaviest.
+            if people[left] + people[right] <= limit:
+                left += 1
+
+            # The heaviest always takes a boat (alone or paired).
+            right -= 1
+            boats += 1
+
+        return boats
+
+
+--------------------------------------------------
+3. INITIAL SETUP  (after sorting)
+--------------------------------------------------
+    people = [3, 2, 2, 1]  ->  sort  ->  [1, 2, 2, 3]
+
+    index:    0   1   2   3
+    array:  [ 1,  2,  2,  3 ]
+
+    left  = 0      (lightest person)
+    right = 3      (heaviest person)
+    boats = 0
+
+         L            R
+         v            v
+       [ 1,  2,  2,  3 ]
+
+    Sorting is what makes "lightest" and "heaviest" sit at the ends.
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH  (greedy + why sorting)
+--------------------------------------------------
+The heaviest remaining person MUST take a boat no matter what.
+The only choice is: do they ride alone, or can we slip in one more?
+
+Greedy rule: pair the heaviest with the LIGHTEST person left.
+    - If even the lightest does not fit, nobody fits with them,
+      so the heaviest rides alone.
+    - If the lightest fits, pairing them is never worse than
+      leaving the lightest for later (the lightest is the easiest
+      to pair with anyone, so "saving" them helps nothing).
+
+Why sorting?
+    To instantly know the lightest (left end) and heaviest
+    (right end) each step. Without order we cannot pick them.
+
+Brute force tries every pairing  ->  exponential / O(n^2)-ish
+and is far more work:
+    pair check (1,2) (1,2) (1,3) (2,2) (2,3) (2,3) ...
+
+Greedy two pointers solve it in one pass after the sort  ->  O(n).
+
+
+--------------------------------------------------
+5. DRY RUN  (people = [3,2,2,1], limit = 3)
+--------------------------------------------------
+After sorting: [1, 2, 2, 3]
+
+Step 1
+    left=0  right=3   boats=0
+    people[0] + people[3] = 1 + 3 = 4
+    4 > 3  ->  do NOT fit  ->  heaviest (3) rides alone
+    left stays, right -= 1, boats += 1   (right=2, boats=1)
+
+         L        R
+         v        v
+       [ 1,  2,  2,  3 ]      boat: (3)
+
+Step 2
+    left=0  right=2   boats=1
+    people[0] + people[2] = 1 + 2 = 3
+    3 <= 3  ->  FIT  ->  pair them  ->  left += 1
+    then right -= 1, boats += 1        (left=1, right=1, boats=2)
+
+         L  R
+         v  v
+       [ 1,  2,  2,  3 ]      boat: (1,2)
+
+Step 3
+    left=1  right=1   boats=2
+    people[1] + people[1] = 2 + 2 = 4   (same person)
+    4 > 3  ->  do NOT fit  ->  this person (2) rides alone
+    right -= 1, boats += 1              (right=0, boats=3)
+
+       L
+       R
+       v
+       [ 1,  2,  2,  3 ]      boat: (2)
+
+    left (1) > right (0)  ->  loop ends
+
+Output: 3   (boats: (3), (1,2), (2))
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+The HEAVIEST person must go on a boat this step regardless.
+So always move right inward  ->  right -= 1, boats += 1 every step.
+
+The only question is whether the LIGHTEST can share that boat:
+    people[left] + people[right] <= limit  ?
+        YES  ->  left += 1   (lightest boards too, one less person)
+        NO   ->  left stays  (heaviest goes alone)
+
+Greedily pairing the heaviest with the lightest who still fits
+is optimal: the lightest is easiest to pair, so using them now
+never costs us a future pairing.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (people = [3,5,3,4], limit = 5)
+--------------------------------------------------
+After sorting: [3, 3, 4, 5]
+
+    L           R     3 + 5 = 8 > 5  -> no fit -> 5 alone
+    v           v     right--, boats=1
+  [ 3,  3,  4,  5 ]   boat: (5)
+
+    L        R        3 + 4 = 7 > 5  -> no fit -> 4 alone
+    v        v        right--, boats=2
+  [ 3,  3,  4,  5 ]   boat: (4)
+
+    L     R           3 + 3 = 6 > 5  -> no fit -> 3 alone
+    v     v           right--, boats=3
+  [ 3,  3,  4,  5 ]   boat: (3)
+
+    L                 left==right: one person (3) left -> alone
+    R                 right--, boats=4
+    v
+  [ 3,  3,  4,  5 ]   boat: (3)
+
+    left > right -> loop ends
+
+    answer = 4   (nobody pairs; every person rides alone)
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+A line of people sorted by weight, lightest to heaviest:
+
+    Lightest -------------------- Heaviest
+       left                         right
+
+    The HEAVIEST always boards   ->  right -= 1 EVERY step.
+    Squeeze in the lightest IF they fit  ->  left += 1.
+
+    "Heaviest always leaves; lightest tags along only if there's room."
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach            | Time       | Space |
+    | ------------------- | ---------- | ----- |
+    | Brute force pairing | O(n^2)     | O(1)  |
+    | Sort + 2 pointers   | O(n log n) | O(1)  |
+
+    The sort costs O(n log n) and DOMINATES.
+    The two-pointer sweep itself is O(n).
+    Space is O(1) (ignoring the in-place sort).
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION numRescueBoats(people, limit)
+
+        SORT people ascending
+
+        left  <- 0
+        right <- length(people) - 1
+        boats <- 0
+
+        WHILE left <= right
+
+            IF people[left] + people[right] <= limit
+                left <- left + 1
+
+            right <- right - 1
+            boats <- boats + 1
+
+        END WHILE
+
+        RETURN boats
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Sort the people array from lightest to heaviest
+
+    Set left  = 0                        (lightest person)
+    Set right = length of array - 1       (heaviest person)
+    Set boats = 0
+
+    Repeat while left is less than or equal to right
+
+        Check if the lightest and heaviest fit together:
+            if people[left] + people[right] <= limit
+                Move left pointer one step right
+                left = left + 1
+            (the lightest boarded this boat)
+
+        The heaviest always boards this boat:
+            Move right pointer one step left
+            right = right - 1
+
+        Count this boat:
+            boats = boats + 1
+
+    END Repeat
+
+    Return boats
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +-----------------------+
+    | sort(people)          |
+    | left  = 0             |
+    | right = n - 1         |
+    | boats = 0             |
+    +----------+------------+
+               |
+               v
+        +---------------+
+        | left <= right |<------------------+
+        +------+--------+                    |
+               | Yes                         |
+               v                             |
+    +-------------------------------+        |
+    | people[left]+people[right]    | Yes    |
+    | <= limit ?                    +--> left = left + 1
+    +------------+------------------+        |
+               | No / after                  |
+               v                             |
+        +-------------------+                |
+        | right = right - 1 |                |
+        | boats = boats + 1 |----------------+
+        +-------------------+
+               |
+               | (when left > right)
+               v
+        +---------------+
+        | RETURN boats  |
+        +-------+-------+
+                v
+             +-----+
+             | END |
+             +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I sort the weights, then put a pointer on the lightest person
+ and one on the heaviest. The heaviest person always has to take
+ a boat, so I move the right pointer in and count a boat every
+ step. The only decision is whether the lightest person can share
+ that boat: if people[left] + people[right] <= limit, I pair them
+ and also move the left pointer in. Greedily pairing the heaviest
+ with the lightest who fits is optimal, and I just keep going until
+ the pointers cross.
+
+ Time:  O(n log n)   (the sort dominates)
+ Space: O(1)
+ It's the sorting + greedy opposite-ends two-pointer pattern."
+
+
+==================================================
+The heaviest always boards; the lightest tags along
+only if they fit — sort, then sweep from both ends.
+==================================================

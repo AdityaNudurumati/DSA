@@ -1,0 +1,361 @@
+==================================================
+SQUARES OF A SORTED ARRAY  —  Two Pointers from Both Ends
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given a SORTED integer array nums (sorted ascending, but it
+CAN contain negative numbers), return an array of the squares
+of each number, sorted in non-decreasing order.
+
+Example:
+    nums = [-4, -1, 0, 3, 10]
+
+    square each:
+        (-4)^2 = 16
+        (-1)^2 = 1
+        ( 0)^2 = 0
+        ( 3)^2 = 9
+        (10)^2 = 100
+
+    sorted ascending  ->  answer = [0, 1, 9, 16, 100]
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def sortedSquares(nums):
+
+        n = len(nums)
+
+        result = [0] * n
+
+        left  = 0
+        right = n - 1
+
+        pos = n - 1
+
+        while left <= right:
+
+            if abs(nums[left]) > abs(nums[right]):
+                result[pos] = nums[left] ** 2
+                left += 1
+            else:
+                result[pos] = nums[right] ** 2
+                right -= 1
+
+            pos -= 1
+
+        return result
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4
+    array:  [-4, -1,  0,  3, 10 ]
+
+    left  = 0
+    right = 4
+    pos   = 4        (we fill the RESULT from the back)
+
+         L                  R
+         v                  v
+       [-4, -1,  0,  3, 10 ]
+
+    result:  [ _,  _,  _,  _,  _ ]
+                                ^
+                               pos
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH?
+--------------------------------------------------
+The naive way is: square every element, then SORT.
+    square -> [16, 1, 0, 9, 100]
+    sort   -> [0, 1, 9, 16, 100]
+    cost   -> O(n log n)  because of the sort.
+
+But the input is ALREADY sorted. The only thing that ruins
+the order is the NEGATIVE numbers (a big negative squares into
+a big positive). So the LARGEST square must sit at one of the
+two ENDS of the array.
+
+Two pointers from both ends let us pick the largest square each
+step and place it directly  ->  single pass  ->  O(n).
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [-4,-1,0,3,10])
+--------------------------------------------------
+
+Iteration 1
+    left=0  right=4   pos=4
+    abs(-4)=4   vs   abs(10)=10   ->  right wins
+    result[4] = 10^2 = 100   ->  right-- (right=3)  pos-- (pos=3)
+
+         L              R
+         v              v
+       [-4, -1,  0,  3, 10 ]
+
+    result:  [ _,  _,  _,  _, 100 ]
+
+Iteration 2
+    left=0  right=3   pos=3
+    abs(-4)=4   vs   abs(3)=3   ->  left wins
+    result[3] = (-4)^2 = 16   ->  left++ (left=1)  pos-- (pos=2)
+
+         L          R
+         v          v
+       [-4, -1,  0,  3, 10 ]
+
+    result:  [ _,  _,  _, 16, 100 ]
+
+Iteration 3
+    left=1  right=3   pos=2
+    abs(-1)=1   vs   abs(3)=3   ->  right wins
+    result[2] = 3^2 = 9   ->  right-- (right=2)  pos-- (pos=1)
+
+             L      R
+             v      v
+       [-4, -1,  0,  3, 10 ]
+
+    result:  [ _,  _,  9, 16, 100 ]
+
+Iteration 4
+    left=1  right=2   pos=1
+    abs(-1)=1   vs   abs(0)=0   ->  left wins
+    result[1] = (-1)^2 = 1   ->  left++ (left=2)  pos-- (pos=0)
+
+             L  R
+             v  v
+       [-4, -1,  0,  3, 10 ]
+
+    result:  [ _,  1,  9, 16, 100 ]
+
+Iteration 5
+    left=2  right=2   pos=0
+    abs(0)=0   vs   abs(0)=0   ->  else branch (right wins)
+    result[0] = 0^2 = 0   ->  right-- (right=1)  pos-- (pos=-1)
+
+                L
+                R
+                v
+       [-4, -1,  0,  3, 10 ]
+
+    result:  [ 0,  1,  9, 16, 100 ]
+
+Now left(2) > right(1)  ->  loop ends.
+
+Output: [0, 1, 9, 16, 100]
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+Because the array can contain NEGATIVES, the BIGGEST square is
+always at one of the two ENDS, never in the middle.
+
+    most negative  ----------------  most positive
+        left                            right
+      abs is big                      abs is big
+                middle abs is small
+
+So compare the absolute values at the two ends:
+
+    abs(nums[left]) > abs(nums[right])
+        ->  left end has the bigger square  ->  take it, left += 1
+    else
+        ->  right end has the bigger square ->  take it, right -= 1
+
+The chosen square is the LARGEST remaining, so it goes to the
+BACK of result (pos), and pos walks down: n-1, n-2, ... 0.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [-7, -3, 2, 3, 11])
+--------------------------------------------------
+
+    L                  R    abs(-7)=7 > abs(11)=11? no -> right, 121
+    v                  v    result[4]=121, right--
+  [-7, -3,  2,  3, 11 ]
+
+    L              R        abs(-7)=7 > abs(3)=3? yes -> left, 49
+    v              v        result[3]=49, left++
+  [-7, -3,  2,  3, 11 ]
+
+        L          R        abs(-3)=3 > abs(3)=3? no -> right, 9
+        v          v        result[2]=9, right--
+  [-7, -3,  2,  3, 11 ]
+
+        L      R            abs(-3)=3 > abs(2)=2? yes -> left, 9
+        v      v            result[1]=9, left++
+  [-7, -3,  2,  3, 11 ]
+
+            L  R            abs(2)=2 > abs(2)=2? no -> right, 4
+            v  v            result[0]=4, right--
+  [-7, -3,  2,  3, 11 ]
+
+    left > right -> stop
+    result = [4, 9, 9, 49, 121]
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+"Negatives hide the biggest square at the ENDS."
+
+    Two guards stand at each end of the sorted line.
+    The one holding the bigger ABSOLUTE value wins,
+    and his square is dropped into the BACK of result.
+
+        biggest abs ----> goes to the back (pos--)
+        fill result:  end, then inward, then start
+                      n-1  ...............  0
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach              | Time       | Space |
+    | --------------------- | ---------- | ----- |
+    | Square then sort      | O(n log n) | O(n)  |
+    | Two pointers (ends)   | O(n)       | O(n)  |
+
+Each pointer moves at most n times -> single pass -> O(n) time.
+The result array of size n is required output -> O(n) space.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION sortedSquares(nums)
+
+        n      <- length(nums)
+        result <- array of n zeros
+
+        left  <- 0
+        right <- n - 1
+        pos   <- n - 1
+
+        WHILE left <= right
+
+            IF abs(nums[left]) > abs(nums[right])
+                result[pos] <- nums[left] * nums[left]
+                left <- left + 1
+            ELSE
+                result[pos] <- nums[right] * nums[right]
+                right <- right - 1
+
+            pos <- pos - 1
+
+        END WHILE
+
+        RETURN result
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set n = length of nums
+    Make result = a list of n zeros
+
+    Set left  = 0
+    Set right = n - 1
+    Set pos   = n - 1     (we fill result from the back)
+
+    Repeat while left is less than or equal to right
+
+        Compare the absolute value of the two ends:
+
+        If abs(nums[left]) is greater than abs(nums[right])
+            Put square of nums[left] at result[pos]
+            Move left pointer one step right
+            left = left + 1
+
+        Otherwise
+            Put square of nums[right] at result[pos]
+            Move right pointer one step left
+            right = right - 1
+
+        Move pos one step toward the front
+        pos = pos - 1
+
+    END Repeat
+
+    Return result
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +---------------------+
+    | left  = 0           |
+    | right = n - 1       |
+    | pos   = n - 1       |
+    +----------+----------+
+               |
+               v
+       +-----------------+
+       | left <= right ? |<-----------------+
+       +--------+--------+                   |
+                | Yes                        |
+                v                            |
+   +-------------------------------+         |
+   | abs(nums[left]) >             | Yes     |
+   | abs(nums[right]) ?            +--> result[pos] = nums[left]^2
+   +--------+----------------------+         |   left = left + 1
+            | No                             |         |
+            v                                |         |
+   +-------------------------------+         |         |
+   | result[pos] = nums[right]^2   |         |         |
+   | right = right - 1             |         |         |
+   +--------------+----------------+         |         |
+                  |                          |         |
+                  v                          |         |
+            +-------------+                  |         |
+            | pos = pos-1 |<-----------------|---------+
+            +------+------+                  |
+                   |                         |
+                   +-------------------------+
+                   |
+                   | (left > right)
+                   v
+              +----------+
+              | RETURN   |
+              | result   |
+              +----------+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"The array is sorted but can have negatives, so the biggest
+ square is always at one of the two ends, not in the middle.
+ I put one pointer at each end and compare their absolute values.
+ Whichever end has the larger absolute value, I square it and
+ place it at the BACK of the result array, then move that pointer
+ inward and move my fill position one step toward the front.
+ This fills the result from largest to smallest in one pass,
+ avoiding the O(n log n) sort.
+
+ Time:  O(n)
+ Space: O(n)"
+
+
+==================================================
+Negatives push the biggest square to the ENDS, so
+two pointers fill the result from the back in O(n).
+==================================================

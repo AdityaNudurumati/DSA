@@ -1,0 +1,269 @@
+==================================================
+TWO SUM II  —  Two Pointers on a Sorted Array
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given a SORTED array and a target number, find two numbers
+whose sum equals the target. Return their 1-based indices.
+
+Example:
+    numbers = [2, 7, 11, 15]
+    target  = 9
+
+    2 + 7 = 9
+        2 -> index 0
+        7 -> index 1
+
+    Problem wants 1-based indexing  ->  answer = [1, 2]
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def twoSum(numbers, target):
+        left  = 0
+        right = len(numbers) - 1
+
+        while left < right:
+            current = numbers[left] + numbers[right]
+            if current == target:
+                return [left + 1, right + 1]
+            elif current < target:
+                left += 1          # sum too small -> grow it
+            else:
+                right -= 1         # sum too big   -> shrink it
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3
+    array:  [ 2,  7, 11, 15 ]
+
+    left  = 0
+    right = 3
+
+         L            R
+         v            v
+       [ 2,  7, 11, 15 ]
+
+
+--------------------------------------------------
+4. WHY TWO POINTERS?
+--------------------------------------------------
+Because the array is already SORTED.
+
+Brute force checks every pair  ->  O(n^2):
+    2+7  2+11  2+15  7+11  7+15  11+15
+
+Two pointers solve it in a single pass  ->  O(n).
+
+
+--------------------------------------------------
+5. DRY RUN  (numbers = [2,7,11,15], target = 9)
+--------------------------------------------------
+
+Iteration 1
+    left=0  right=3
+    current = 2 + 15 = 17
+    17 > 9  ->  too big  ->  right -= 1   (right = 2)
+
+         L         R
+         v         v
+       [ 2,  7, 11, 15 ]
+
+Iteration 2
+    left=0  right=2
+    current = 2 + 11 = 13
+    13 > 9  ->  too big  ->  right -= 1   (right = 1)
+
+         L     R
+         v     v
+       [ 2,  7, 11, 15 ]
+
+Iteration 3
+    left=0  right=1
+    current = 2 + 7 = 9
+    9 == 9  ->  FOUND
+
+    return [left + 1, right + 1] = [0+1, 1+1] = [1, 2]
+
+Output: [1, 2]   (+1 because the answer is 1-based)
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (how to move the pointers)
+--------------------------------------------------
+
+Sum too SMALL  (current < target):
+    move  left += 1     (toward LARGER values -> increases sum)
+
+    e.g. 2 + 7 = 9, target = 20  ->  too small
+         step left:  2 -> 7 -> 11 -> 15
+
+Sum too BIG  (current > target):
+    move  right -= 1    (toward SMALLER values -> decreases sum)
+
+    e.g. 2 + 15 = 17, target = 9  ->  too big
+         step right: 15 -> 11 -> 7
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (numbers = [1,2,4,6,10], target = 8)
+--------------------------------------------------
+
+    L                 R       1 + 10 = 11   too big  -> right--
+    v                 v
+  [ 1,  2,  4,  6, 10 ]
+
+    L              R          1 + 6 = 7     too small -> left++
+    v              v
+  [ 1,  2,  4,  6, 10 ]
+
+        L          R          2 + 6 = 8     FOUND
+        v          v
+  [ 1,  2,  4,  6, 10 ]
+
+    return [2, 4]
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Two people standing at both ends of a sorted line:
+
+    Smallest -------------------- Largest
+       left                        right
+
+    too small  ->  left  += 1   (need a bigger number)
+    too big    ->  right -= 1   (need a smaller number)
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach      | Time   | Space |
+    | ------------- | ------ | ----- |
+    | Brute force   | O(n^2) | O(1)  |
+    | Two pointers  | O(n)   | O(1)  |
+
+Each pointer moves at most n times, so O(n) total.
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION twoSum(numbers, target)
+
+        left  <- 0
+        right <- length(numbers) - 1
+
+        WHILE left < right
+
+            current <- numbers[left] + numbers[right]
+
+            IF current = target
+                RETURN [left + 1, right + 1]
+
+            ELSE IF current < target
+                left <- left + 1
+
+            ELSE
+                right <- right - 1
+
+        END WHILE
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set left  = 0
+    Set right = length of array - 1
+
+    Repeat while left is less than right
+
+        Calculate sum:
+            current = numbers[left] + numbers[right]
+
+        If current equals target
+            Return positions (left + 1, right + 1)
+
+        Otherwise if current is less than target
+            Move left pointer one step right
+            left = left + 1
+
+        Otherwise
+            Move right pointer one step left
+            right = right - 1
+
+    END Repeat
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     ┌─────────┐
+     │  START  │
+     └────┬────┘
+          │
+          ▼
+    ┌─────────────────────┐
+    │ left  = 0           │
+    │ right = n - 1       │
+    └─────────┬───────────┘
+              │
+              ▼
+       ┌──────────────┐
+       │ left < right │◄────────────┐
+       └──────┬───────┘             │
+              │ Yes                 │
+              ▼                     │
+    ┌─────────────────────────────┐│
+    │ current = numbers[left] +   ││
+    │           numbers[right]    ││
+    └─────────────┬───────────────┘│
+                  ▼                 │
+          ┌────────────────┐        │
+          │ current ==     │ Yes    │
+          │ target ?       ├──► RETURN [left+1, right+1] ─► END
+          └──────┬─────────┘        │
+                 │ No               │
+                 ▼                  │
+          ┌────────────────┐        │
+          │ current <      │ Yes    │
+          │ target ?       ├──► left = left + 1 ──────────┤
+          └──────┬─────────┘        │
+                 │ No               │
+                 ▼                  │
+          ┌────────────────┐        │
+          │ right = right-1│────────┘
+          └────────────────┘
+    (when left >= right: loop ends, no pair found)
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"Since the array is sorted, I place one pointer at the start and
+ one at the end and look at their sum.
+ - If the sum equals the target, return the indices.
+ - If the sum is too small, move the LEFT pointer right to increase it.
+ - If the sum is too big, move the RIGHT pointer left to decrease it.
+ Repeat until the pair is found.
+
+ Time:  O(n)
+ Space: O(1)
+ It's the standard Two-Pointers pattern for sorted arrays."
+
+
+==================================================
+This is the classic example of the two-pointer
+technique on a SORTED array.
+==================================================

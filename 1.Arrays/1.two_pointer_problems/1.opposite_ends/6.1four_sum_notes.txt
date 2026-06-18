@@ -1,0 +1,406 @@
+==================================================
+4SUM  —  Sort + Two Fixed Indices + Two Pointers
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an integer array nums and an integer target, return ALL
+unique quadruplets [a, b, c, d] such that:
+
+    a + b + c + d = target
+
+The result must NOT contain duplicate quadruplets.
+
+Example:
+    nums   = [1, 0, -1, 0, -2, 2]
+    target = 0
+
+    Quadruplets that sum to 0:
+        -2 + -1 + 1 + 2 = 0
+        -2 +  0 + 0 + 2 = 0
+        -1 +  0 + 0 + 1 = 0
+
+    answer = [[-2, -1, 1, 2],
+              [-2,  0, 0, 2],
+              [-1,  0, 0, 1]]
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def fourSum(nums, target):
+        nums.sort()
+        n = len(nums)
+        result = []
+
+        for i in range(n - 3):
+            # skip duplicate first element
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
+
+            for j in range(i + 1, n - 2):
+                # skip duplicate second element
+                if j > i + 1 and nums[j] == nums[j - 1]:
+                    continue
+
+                left  = j + 1
+                right = n - 1
+
+                while left < right:
+                    total = nums[i] + nums[j] + nums[left] + nums[right]
+
+                    if total == target:
+                        result.append([nums[i], nums[j],
+                                       nums[left], nums[right]])
+                        left  += 1
+                        right -= 1
+                        # skip duplicate left
+                        while left < right and nums[left] == nums[left - 1]:
+                            left += 1
+                        # skip duplicate right
+                        while left < right and nums[right] == nums[right + 1]:
+                            right -= 1
+
+                    elif total < target:
+                        left += 1      # sum too small -> grow it
+
+                    else:
+                        right -= 1     # sum too big   -> shrink it
+
+        return result
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    Step 1: SORT the array.
+
+    before:  [ 1,  0, -1,  0, -2,  2 ]
+    after :  [-2, -1,  0,  0,  1,  2 ]
+
+    index:     0   1   2   3   4   5
+    array:  [ -2, -1,  0,  0,  1,  2 ]
+
+    Two FIXED indices:
+        i  -> outer loop  (first  number)
+        j  -> inner loop  (second number, j = i + 1 ...)
+
+    Two MOVING pointers inside (i, j):
+        left  = j + 1
+        right = n - 1
+
+         i   j   L           R
+         v   v   v           v
+       [-2, -1,  0,  0,  1,  2 ]
+
+    We want:  nums[left] + nums[right] == target - nums[i] - nums[j]
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH?  (vs O(n^4) brute force)
+--------------------------------------------------
+Brute force tries EVERY group of four indices  ->  O(n^4):
+
+    for i: for j: for k: for l:  check sum   (4 nested loops)
+
+For n = 100 that is ~10^8 checks just for one array - wasteful,
+and it still needs extra work to remove duplicates.
+
+Better idea: the array is SORTED, so the inner two-number search
+is the Two-Sum-on-sorted trick (two pointers, one pass).
+
+    Fix i and j  (two outer loops      -> O(n^2))
+    Two-pointer the remaining two      -> O(n) per (i, j)
+    Total                              -> O(n^3)
+
+Sorting also lets us SKIP duplicates by comparing each value to its
+neighbor, so equal quadruplets are never produced.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [-2,-1,0,0,1,2] after sort, target = 0)
+--------------------------------------------------
+
+i = 0 (nums[i] = -2)
+  j = 1 (nums[j] = -1)   need pair sum = 0 - (-2) - (-1) = 3
+      L=2 R=5  ->  nums[L]+nums[R] = 0 + 2 = 2  < 3  -> left++
+      L=3 R=5  ->  0 + 2 = 2  < 3            -> left++
+      L=4 R=5  ->  1 + 2 = 3  == 3  FOUND -> [-2,-1,1,2]
+                   left++, right-- (L=5 R=4, loop ends)
+
+  j = 2 (nums[j] = 0)    need pair sum = 0 - (-2) - 0 = 2
+      L=3 R=5  ->  0 + 2 = 2  == 2  FOUND -> [-2,0,0,2]
+                   left++, right-- (L=4 R=4, loop ends)
+
+  j = 3 (nums[j] = 0)    DUPLICATE of j=2  -> skip (nums[3]==nums[2])
+
+i = 1 (nums[i] = -1)
+  j = 2 (nums[j] = 0)    need pair sum = 0 - (-1) - 0 = 1
+      L=3 R=5  ->  0 + 2 = 2  > 1  -> right--
+      L=3 R=4  ->  0 + 1 = 1  == 1  FOUND -> [-1,0,0,1]
+                   left++, right-- (L=4 R=3, loop ends)
+
+  j = 3 (nums[j] = 0)    DUPLICATE of j=2  -> skip
+
+i = 2 (nums[i] = 0)      (continues, no new quadruplets sum to 0)
+i = 3 ... i loop ends at n - 3.
+
+Output:
+    [[-2, -1, 1, 2],
+     [-2,  0, 0, 2],
+     [-1,  0, 0, 1]]
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+4Sum is just k-Sum with k = 4. The pattern GENERALIZES:
+
+    Fix (k - 2) indices with nested loops,
+    then run TWO POINTERS on the remaining two numbers.
+
+        k = 2  ->  fix 0, two-pointer       (Two Sum II)
+        k = 3  ->  fix 1, two-pointer       (3Sum)
+        k = 4  ->  fix 2, two-pointer       (4Sum)
+        k = K  ->  fix K-2, two-pointer
+
+Sorting does TWO jobs at once:
+    (1) It lets the two pointers decide which way to move:
+            pair sum too SMALL -> left  += 1  (toward larger values)
+            pair sum too BIG   -> right -= 1  (toward smaller values)
+    (2) It puts equal values next to each other, so DEDUP is just
+        "skip a value equal to the previous one" on i, j, left, right.
+
+Target for the inner pair:
+    need = target - nums[i] - nums[j]
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [2,2,2,2,2], target = 8)
+--------------------------------------------------
+
+    after sort:  [2, 2, 2, 2, 2]
+
+    i = 0, j = 1:  need = 8 - 2 - 2 = 4
+        L=2 R=4  ->  2 + 2 = 4  == 4  FOUND -> [2,2,2,2]
+        left++, right--  -> dedup skips the equal 2's -> loop ends
+
+    i = 0, j = 2,3...   skipped as duplicates of j = 1
+    i = 1,2...          skipped as duplicates of i = 0
+
+    Output: [[2, 2, 2, 2]]      (only ONE unique quadruplet)
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+"Pin two, walk two."
+
+    Pin   i and j   (two fixed thumbtacks on the sorted line)
+    Walk  left and right toward each other looking for the rest:
+
+        i   j   L --------------> <-------------- R
+       pinned pinned         (two pointers close in)
+
+    too small -> left  += 1   (need a bigger number)
+    too big   -> right -= 1   (need a smaller number)
+    on a hit  -> step both, then skip neighbors that are equal.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach        | Time   | Space               |
+    | --------------- | ------ | ------------------- |
+    | Brute force     | O(n^4) | O(1)                |
+    | Sort + 2 ptr    | O(n^3) | O(1) excl. output   |
+
+    Sorting:        O(n log n)
+    Two outer loops: O(n^2)
+    Inner two ptr:   O(n) per (i, j)  ->  O(n^3) dominates.
+
+No known general k-Sum solution beats O(n^(k-1)) for k = 4.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION fourSum(nums, target)
+
+        SORT(nums)
+        n      <- length(nums)
+        result <- empty list
+
+        FOR i <- 0 TO n - 4
+            IF i > 0 AND nums[i] = nums[i - 1]
+                CONTINUE
+
+            FOR j <- i + 1 TO n - 3
+                IF j > i + 1 AND nums[j] = nums[j - 1]
+                    CONTINUE
+
+                left  <- j + 1
+                right <- n - 1
+
+                WHILE left < right
+                    total <- nums[i] + nums[j] + nums[left] + nums[right]
+
+                    IF total = target
+                        APPEND [nums[i], nums[j], nums[left], nums[right]] TO result
+                        left  <- left + 1
+                        right <- right - 1
+                        WHILE left < right AND nums[left] = nums[left - 1]
+                            left <- left + 1
+                        WHILE left < right AND nums[right] = nums[right + 1]
+                            right <- right - 1
+
+                    ELSE IF total < target
+                        left <- left + 1
+
+                    ELSE
+                        right <- right - 1
+
+                END WHILE
+            END FOR
+        END FOR
+
+        RETURN result
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Sort the array from smallest to largest.
+    Set n = length of array.
+    Make an empty list called result.
+
+    Loop i over the array (first fixed number):
+        If this i value is the same as the previous i value, skip it
+        (so we do not repeat quadruplets).
+
+        Loop j from i + 1 (second fixed number):
+            If this j value is the same as the previous j value
+            (and j is not the first after i), skip it.
+
+            Set left  = j + 1
+            Set right = n - 1
+
+            Repeat while left is less than right:
+
+                Calculate sum:
+                    total = nums[i] + nums[j] + nums[left] + nums[right]
+
+                If total equals target:
+                    Save [nums[i], nums[j], nums[left], nums[right]].
+                    Move left one step right.
+                    Move right one step left.
+                    Skip any left values equal to the one just used.
+                    Skip any right values equal to the one just used.
+
+                Otherwise if total is less than target:
+                    Move left pointer one step right (need a bigger sum).
+
+                Otherwise:
+                    Move right pointer one step left (need a smaller sum).
+
+            END Repeat
+
+    Return result.
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +---------------------+
+    | sort(nums)          |
+    | result = []         |
+    +----------+----------+
+               |
+               v
+       +----------------+
+       | i loop (fix 1) |<----------------------+
+       +-------+--------+                        |
+               | i value                         |
+               v                                 |
+       +----------------+   dup? yes             |
+       | nums[i]==prev? |---------> skip i ------+
+       +-------+--------+                        |
+               | no                              |
+               v                                 |
+       +----------------+                        |
+       | j loop (fix 2) |<---------------+       |
+       +-------+--------+                |       |
+               | j value                |       |
+               v                         |       |
+       +----------------+  dup? yes      |       |
+       | nums[j]==prev? |----> skip j ---+       |
+       +-------+--------+                        |
+               | no                              |
+               v                                 |
+       +-----------------------+                 |
+       | left  = j + 1         |                 |
+       | right = n - 1         |                 |
+       +----------+------------+                 |
+                  |                              |
+                  v                              |
+          +---------------+   no (next j / i) ---+
+          | left < right  |--------------------->
+          +-------+-------+
+                  | yes
+                  v
+       +---------------------------------+
+       | total = nums[i]+nums[j]         |
+       |       + nums[left]+nums[right]  |
+       +----------------+----------------+
+                        v
+              +--------------------+ yes
+              | total == target ?  |---> save quad, left++, right--,
+              +---------+----------+      skip dup left, skip dup right
+                        | no                       |
+                        v                          | (back to while)
+              +--------------------+ yes           |
+              | total <  target ?  |---> left  = left  + 1 -----+
+              +---------+----------+                            |
+                        | no                                    |
+                        v                                       |
+              +--------------------+                            |
+              | right = right - 1  |----------------------------+
+              +--------------------+   (back to: left < right)
+
+    (when i loop ends -> RETURN result -> END)
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"First I sort the array. Then I fix the first two numbers with two
+ nested loops, i and j. For the remaining two numbers I use the
+ sorted two-pointer trick: left starts at j+1, right at the end, and
+ I look for a pair that sums to target - nums[i] - nums[j].
+ - If the four-sum equals target, I record the quadruplet and move
+   both pointers inward, skipping equal values to avoid duplicates.
+ - If it's too small, I move left right; if too big, I move right left.
+ I also skip duplicate i and j values so every quadruplet is unique.
+ This is the general k-Sum pattern: fix k-2 indices, two-pointer the
+ rest - 2Sum, 3Sum and 4Sum are the same idea at k = 2, 3, 4.
+
+ Time:  O(n^3)
+ Space: O(1) excluding the output."
+
+
+==================================================
+4Sum = sorted array + fix two indices + two pointers;
+the general k-Sum pattern (fix k-2, two-pointer the rest).
+==================================================

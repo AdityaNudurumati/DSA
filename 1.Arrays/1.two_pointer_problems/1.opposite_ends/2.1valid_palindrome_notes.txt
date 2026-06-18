@@ -1,0 +1,306 @@
+==================================================
+VALID PALINDROME  —  Two Pointers from Both Ends
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given a string s, decide whether it reads the same
+forward and backward AFTER ignoring:
+    - spaces
+    - punctuation
+    - case (treat upper/lower as equal)
+
+Return True if it is a palindrome, otherwise False.
+
+Example:
+    s = "A man, a plan, a canal: Panama"
+
+    Strip non-alphanumeric + lowercase  ->  "amanaplanacanalpanama"
+    Reversed                            ->  "amanaplanacanalpanama"
+    Same forward and backward           ->  answer = True
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def isPalindrome(s):
+
+        left = 0
+        right = len(s) - 1
+
+        while left < right:
+
+            while left < right and not s[left].isalnum():
+                left += 1
+
+            while left < right and not s[right].isalnum():
+                right -= 1
+
+            if s[left].lower() != s[right].lower():
+                return False
+
+            left += 1
+            right -= 1
+
+        return True
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4  ...
+    string:   A   (space) m   a   n  ...
+
+    left  = 0
+    right = len(s) - 1   (the last character, 'a')
+
+         L                          R
+         v                          v
+       [ A   m a n ,   a   ... P a n a m a ]
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+We only need to compare the FIRST useful character with
+the LAST useful character, then move inward.
+
+Brute force builds a cleaned copy, reverses it, and
+compares  ->  O(n) time but O(n) EXTRA space:
+    cleaned  = "amanaplanacanalpanama"
+    reversed = "amanaplanacanalpanama"
+    cleaned == reversed ?
+
+Two pointers compare in place  ->  O(n) time, O(1) space.
+No second string is built.
+
+
+--------------------------------------------------
+5. DRY RUN  (s = "race a car"  ->  expected False)
+--------------------------------------------------
+
+    index:   0 1 2 3 4 5 6 7 8
+    chars:   r a c e _ a _ c a r
+    (note: '_' shown for the space characters)
+
+Step 1
+    left=0 ('r')  right=9 ('r')
+    both alnum, compare 'r' vs 'r'  ->  equal
+    left += 1, right -= 1
+
+         L                   R
+         v                   v
+       [ r a c e _ a _ c a r ]
+
+Step 2
+    left=1 ('a')  right=8 ('a')
+    both alnum, compare 'a' vs 'a'  ->  equal
+    left += 1, right -= 1
+
+           L               R
+           v               v
+       [ r a c e _ a _ c a r ]
+
+Step 3
+    left=2 ('c')  right=7 ('c')
+    both alnum, compare 'c' vs 'c'  ->  equal
+    left += 1, right -= 1
+
+             L           R
+             v           v
+       [ r a c e _ a _ c a r ]
+
+Step 4
+    left=3 ('e')  right=6 (' ')
+    right is NOT alnum  ->  skip: right -= 1  (right=5, 'a')
+    now compare 'e' vs 'a'  ->  NOT equal
+    return False
+
+               L     R
+               v     v
+       [ r a c e _ a _ c a r ]
+
+Output: False
+
+
+--------------------------------------------------
+6. KEY IDEA
+--------------------------------------------------
+Shrink two pointers inward; SKIP any non-alphanumeric
+character on either side, then compare the lowercased
+characters. One mismatch means it is NOT a palindrome.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (s = "A man, a plan, a canal: Panama" -> True)
+--------------------------------------------------
+
+         L                              R
+         v                              v
+       [ A , ... , P a n a m a ]
+    left='A'  right='a'  ->  'a' == 'a'   move inward
+
+After many inward steps the pointers keep skipping
+spaces, commas, and the colon, always comparing the
+next alnum letters:
+
+    A=a, m=m, a=a, n=n, a=a, p=p, l=l, ...
+
+Every compared pair matches and the pointers meet in
+the middle without a single mismatch.
+
+    left >= right  ->  loop ends  ->  return True
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+"Skip the junk, lower the case, match the ends."
+
+    Two readers start at both ends:
+        Front --------------------- Back
+         left                       right
+    Hop over anything that is not a letter/digit,
+    then check if the letters match. Walk inward.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach        | Time   | Space |
+    | --------------- | ------ | ----- |
+    | Clean + reverse | O(n)   | O(n)  |
+    | Two pointers    | O(n)   | O(1)  |
+
+Each pointer moves at most n times, so O(n) total, and
+no extra string is built, so O(1) space.
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION isPalindrome(s)
+
+        left  <- 0
+        right <- length(s) - 1
+
+        WHILE left < right
+
+            WHILE left < right AND s[left] is NOT alphanumeric
+                left <- left + 1
+
+            WHILE left < right AND s[right] is NOT alphanumeric
+                right <- right - 1
+
+            IF lowercase(s[left]) != lowercase(s[right])
+                RETURN False
+
+            left  <- left + 1
+            right <- right - 1
+
+        END WHILE
+
+        RETURN True
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set left  = 0
+    Set right = length of string - 1
+
+    Repeat while left is less than right
+
+        While left < right and the left character is
+        not a letter or digit:
+            Move left pointer one step right (left = left + 1)
+
+        While left < right and the right character is
+        not a letter or digit:
+            Move right pointer one step left (right = right - 1)
+
+        Compare the two characters in lowercase
+            If they are different
+                Return False (not a palindrome)
+
+        Move both pointers inward:
+            left  = left + 1
+            right = right - 1
+
+    END Repeat
+
+    Return True (it is a palindrome)
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+    +---------+
+    |  START  |
+    +----+----+
+         |
+         v
+    +---------------------+
+    | left  = 0           |
+    | right = n - 1       |
+    +----------+----------+
+               |
+               v
+        +--------------+
+        | left < right |<-----------------+
+        +------+-------+                   |
+               | Yes                       |
+               v                           |
+    +-------------------------------+      |
+    | skip non-alnum on LEFT:       |      |
+    |   while !alnum(s[left])       |      |
+    |     left = left + 1           |      |
+    +--------------+----------------+      |
+                   v                       |
+    +-------------------------------+      |
+    | skip non-alnum on RIGHT:      |      |
+    |   while !alnum(s[right])      |      |
+    |     right = right - 1         |      |
+    +--------------+----------------+      |
+                   v                       |
+        +-----------------------+          |
+        | lower(s[left]) ==     | No       |
+        | lower(s[right]) ?     +--> RETURN False -> END
+        +----------+------------+          |
+                   | Yes                   |
+                   v                       |
+        +-----------------------+          |
+        | left  = left + 1      |          |
+        | right = right - 1     |----------+
+        +-----------------------+
+    (when left >= right: loop ends -> RETURN True)
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I use two pointers, one at the start and one at the end.
+ On each side I skip over any character that is not a
+ letter or digit. Then I compare the two characters in
+ lowercase.
+ - If they differ, it's not a palindrome, return False.
+ - If they match, I move both pointers inward.
+ I stop when the pointers meet; if I never hit a
+ mismatch, it's a palindrome and I return True.
+ I never build a second string, so it's in place.
+
+ Time:  O(n)
+ Space: O(1)
+ It's the opposite-ends Two-Pointers pattern."
+
+
+==================================================
+Two pointers from both ends, skip non-alnum, compare
+lowercase, shrink inward until they meet.
+==================================================

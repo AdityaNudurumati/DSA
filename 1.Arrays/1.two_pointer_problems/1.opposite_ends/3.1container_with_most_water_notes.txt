@@ -1,0 +1,370 @@
+==================================================
+CONTAINER WITH MOST WATER  —  Two Pointers (Greedy)
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+You are given an array height where each element is the
+height of a vertical line standing on the x-axis.
+
+Pick TWO lines that, together with the x-axis, form a
+container. Return the MAXIMUM amount of water it can hold.
+
+The water a container holds is its area:
+    area = width * height
+    width  = distance between the two lines (right - left)
+    height = the SHORTER of the two lines (water spills
+             over the shorter side)
+
+Example:
+    height = [1, 8, 6, 2, 5, 4, 8, 3, 7]
+
+    Best choice -> the 8 at index 1 and the 7 at index 8
+        width  = 8 - 1        = 7
+        height = min(8, 7)    = 7
+        area   = 7 * 7        = 49
+
+    answer = 49
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def maxArea(height):
+        left  = 0
+        right = len(height) - 1
+        answer = 0
+
+        while left < right:
+            area = (right - left) * min(height[left], height[right])
+            answer = max(answer, area)
+
+            if height[left] < height[right]:
+                left += 1          # shorter line on left  -> move left
+            else:
+                right -= 1         # shorter line on right -> move right
+
+        return answer
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5   6   7   8
+    height: [ 1,  8,  6,  2,  5,  4,  8,  3,  7 ]
+
+    left  = 0
+    right = 8
+    answer = 0
+
+     L                                       R
+     v                                       v
+   [ 1,  8,  6,  2,  5,  4,  8,  3,  7 ]
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH  (vs brute force O(n^2))
+--------------------------------------------------
+Brute force tries EVERY pair of lines and computes the area
+for each  ->  O(n^2):
+    (0,1) (0,2) (0,3) ... (1,2) (1,3) ... (7,8)
+
+Two pointers start at the WIDEST container (both ends) and
+walk inward in a single pass  ->  O(n).
+
+We start wide because width is largest at the start; as we
+move inward width only shrinks, so the only way to win back
+area is to find a TALLER shorter-line. That is why we always
+discard the shorter line (see section 6).
+
+
+--------------------------------------------------
+5. DRY RUN  (height = [1,8,6,2,5,4,8,3,7])
+--------------------------------------------------
+
+Iteration 1
+    left=0  right=8
+    area = (8-0) * min(1, 7) = 8 * 1 = 8
+    answer = 8
+    height[left]=1 < height[right]=7  ->  move left++  (left=1)
+
+     L                                       R
+     v                                       v
+   [ 1,  8,  6,  2,  5,  4,  8,  3,  7 ]
+
+Iteration 2
+    left=1  right=8
+    area = (8-1) * min(8, 7) = 7 * 7 = 49
+    answer = max(8, 49) = 49
+    height[left]=8 >= height[right]=7  ->  move right-- (right=7)
+
+         L                                   R
+         v                                   v
+   [ 1,  8,  6,  2,  5,  4,  8,  3,  7 ]
+
+Iteration 3
+    left=1  right=7
+    area = (7-1) * min(8, 3) = 6 * 3 = 18
+    answer = max(49, 18) = 49
+    height[left]=8 >= height[right]=3  ->  move right-- (right=6)
+
+         L                               R
+         v                               v
+   [ 1,  8,  6,  2,  5,  4,  8,  3,  7 ]
+
+Iteration 4
+    left=1  right=6
+    area = (6-1) * min(8, 8) = 5 * 8 = 40
+    answer = max(49, 40) = 49
+    height[left]=8 >= height[right]=8  ->  move right-- (right=5)
+
+         L                           R
+         v                           v
+   [ 1,  8,  6,  2,  5,  4,  8,  3,  7 ]
+
+Iteration 5
+    left=1  right=5
+    area = (5-1) * min(8, 4) = 4 * 4 = 16
+    answer = max(49, 16) = 49
+    height[left]=8 >= height[right]=4  ->  move right-- (right=4)
+
+         L                       R
+         v                       v
+   [ 1,  8,  6,  2,  5,  4,  8,  3,  7 ]
+
+Iteration 6
+    left=1  right=4
+    area = (4-1) * min(8, 5) = 3 * 5 = 15
+    answer = max(49, 15) = 49
+    height[left]=8 >= height[right]=5  ->  move right-- (right=3)
+
+         L               R
+         v               v
+   [ 1,  8,  6,  2,  5,  4,  8,  3,  7 ]
+
+Iteration 7
+    left=1  right=3
+    area = (3-1) * min(8, 2) = 2 * 2 = 4
+    answer = max(49, 4) = 49
+    height[left]=8 >= height[right]=2  ->  move right-- (right=2)
+
+         L           R
+         v           v
+   [ 1,  8,  6,  2,  5,  4,  8,  3,  7 ]
+
+Iteration 8
+    left=1  right=2
+    area = (2-1) * min(8, 6) = 1 * 6 = 6
+    answer = max(49, 6) = 49
+    height[left]=8 >= height[right]=6  ->  move right-- (right=1)
+
+         L   R
+         v   v
+   [ 1,  8,  6,  2,  5,  4,  8,  3,  7 ]
+
+    Now left=1, right=1  ->  left < right is FALSE  ->  loop ends.
+
+Output: 49
+
+
+--------------------------------------------------
+6. KEY IDEA  (why move the SHORTER line)
+--------------------------------------------------
+At every step the area is capped by the SHORTER line:
+    area = (right - left) * min(height[left], height[right])
+
+If we move the TALLER line inward:
+    - width   shrinks  (right - left gets smaller)
+    - height  is STILL capped by the same shorter line
+      (or by something even shorter)
+    -> area can NEVER increase.
+
+So moving the taller line is wasted. The ONLY pointer with a
+chance to improve the area is the SHORTER one: by discarding
+it we might find a taller line that lifts the min().
+
+Therefore:
+    height[left] < height[right]  ->  left  += 1
+    otherwise                     ->  right -= 1
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (height = [1, 1])
+--------------------------------------------------
+
+     L   R          area = (1-0) * min(1,1) = 1 * 1 = 1
+     v   v
+   [ 1,  1 ]
+
+    answer = 1
+    (then left meets right, loop ends)
+
+A second example  (height = [4, 3, 2, 1, 4]):
+
+     L               R     area = (4-0)*min(4,4) = 16
+     v               v
+   [ 4,  3,  2,  1,  4 ]
+
+    Best container uses the two 4's at the ends -> 16.
+    answer = 16
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Two people hold the ends of a tarp full of water:
+
+    left  ----------------- right
+     |                        |
+    short side               tall side
+
+    Water spills over the SHORT side, so only the short side
+    limits how much you hold.
+
+    "Always WALK IN the SHORT person."
+    (moving the tall person just makes the tarp narrower
+     for no gain)
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach      | Time   | Space |
+    | ------------- | ------ | ----- |
+    | Brute force   | O(n^2) | O(1)  |
+    | Two pointers  | O(n)   | O(1)  |
+
+The two pointers start at opposite ends and only move toward
+each other, so together they take at most n steps  ->  O(n).
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION maxArea(height)
+
+        left   <- 0
+        right  <- length(height) - 1
+        answer <- 0
+
+        WHILE left < right
+
+            area <- (right - left) * MIN(height[left], height[right])
+            answer <- MAX(answer, area)
+
+            IF height[left] < height[right]
+                left <- left + 1
+            ELSE
+                right <- right - 1
+
+        END WHILE
+
+        RETURN answer
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set left   = 0
+    Set right  = length of array - 1
+    Set answer = 0
+
+    Repeat while left is less than right
+
+        Compute the width:
+            width = right - left
+
+        Compute the limiting height:
+            shorter = the smaller of height[left] and height[right]
+
+        Compute the area:
+            area = width * shorter
+
+        Keep the best so far:
+            answer = the larger of answer and area
+
+        Decide which pointer to move:
+            If height[left] is smaller than height[right]
+                Move left pointer one step right
+                left = left + 1
+            Otherwise
+                Move right pointer one step left
+                right = right - 1
+
+    END Repeat
+
+    Return answer
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+    +-----------+
+    |   START   |
+    +-----+-----+
+          |
+          v
+    +-------------------------+
+    | left   = 0              |
+    | right  = n - 1          |
+    | answer = 0              |
+    +-----------+-------------+
+                |
+                v
+        +----------------+
+        |  left < right  |<-------------------+
+        +-------+--------+                    |
+                | Yes                         |
+                v                             |
+    +-------------------------------------+   |
+    | area = (right - left) *             |   |
+    |        min(h[left], h[right])       |   |
+    | answer = max(answer, area)          |   |
+    +-----------------+-------------------+   |
+                      |                       |
+                      v                       |
+            +---------------------+  Yes       |
+            | h[left] < h[right] ?+--> left  = left  + 1 --+
+            +---------+-----------+            |
+                      | No                     |
+                      v                        |
+                right = right - 1 -------------+
+
+        (when left >= right: loop ends)
+                |
+                v
+          +-----------+
+          | RETURN    |
+          | answer    |
+          +-----------+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I put one pointer at each end, which gives the widest
+ container. The area is the width times the shorter of the
+ two lines. I record the max, then move the pointer at the
+ SHORTER line inward.
+ The reason is that the shorter line caps the area: moving
+ the taller line only shrinks the width while the height
+ stays capped, so it can never help. Moving the shorter line
+ is the only move that can find a taller wall and improve the
+ area. I keep going until the pointers meet.
+
+ Time:  O(n)
+ Space: O(1)
+ It's the greedy Two-Pointers pattern from opposite ends."
+
+
+==================================================
+Greedy two pointers: always shrink the SHORTER
+side inward -> max area in one O(n) pass.
+==================================================
