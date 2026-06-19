@@ -353,6 +353,206 @@ over the prefix-max version, which uses two extra O(n) arrays).
  Space: O(1)"
 
 
+--------------------------------------------------
+14. DEEP DIVE  —  WHERE IS THE WATER, STEP BY STEP
+--------------------------------------------------
+This is one of the hardest Two Pointer problems because the
+statement does not immediately tell you WHERE the water is.
+Let's visualize it from scratch.
+
+Step 1: Think of bars as walls
+    height = [0,1,0,2,1,0,1,3,2,1,2,1]
+
+                      |
+              |       | |     |
+              |   |   | | |   | |
+        |     | | |   | | | | | |
+        |     | | | | | | | | | |
+    --------------------------------
+        0 1 0 2 1 0 1 3 2 1 2 1
+
+    Imagine it rains. Water gets trapped between taller walls.
+
+Step 2: Where can water stay?  -> tiny example [3,0,3]
+
+        |   |
+        | ~ |          left wall  = 3
+        | ~ |          right wall = 3
+        -----          water level = 3
+        3 0 3          trapped = 3 - 0 = 3   ->  answer = 3
+
+Step 3: Another example  [4,2,0,3]
+
+        |                      |~~~~~~|
+        |       |    rain ->   |~~|~~~|
+        |   |   |              |~~|~~~|
+        |   |   |              |~|~|~|
+        --------               --------
+        4   2 0 3              4  2 0 3
+
+    Index 1: height 2,  left_max 4, right_max 3  ->  min(4,3)-2 = 1
+    Index 2: height 0,  left_max 4, right_max 3  ->  min(4,3)-0 = 3
+    Total = 1 + 3 = 4
+
+Step 4: The KEY formula
+    water[i] = min(maxLeft, maxRight) - height[i]
+
+    Why? Water can only rise to the height of the SHORTER wall.
+
+        left wall = 10, right wall = 4
+        |
+        |
+        |
+        |          |
+        |          |       water level = min(10, 4) = 4
+        |          |       water cannot rise above 4
+        -------------
+        10         4
+
+Step 5: Solve the sample by hand
+    [0,1,0,2,1,0,1,3,2,1,2,1]
+
+    idx  height  maxLeft  maxRight  water
+     0     0        0         3       0
+     1     1        1         3       0
+     2     0        1         3       1
+     3     2        2         3       0
+     4     1        2         3       1
+     5     0        2         3       2
+     6     1        2         3       1
+     7     3        3         3       0
+     8     2        3         2       0
+     9     1        3         2       1
+    10     2        3         2       0
+    11     1        3         1       0
+
+    Total = 1 + 1 + 2 + 1 + 1 = 6   ->   Answer: 6
+
+Step 6: Visualize the trapped water  (~ = water)
+                      |
+              |~~~~~~~|
+              |~|~~~|~| |
+        |~~~|~|~|~|~|~|~|
+        |~|~|~|~|~|~|~|~|
+    --------------------------------
+        0 1 0 2 1 0 1 3 2 1 2 1
+
+    Count the ~ blocks: 1 + 1 + 2 + 1 + 1 = 6
+
+Step 7: Why Two Pointers?
+    Naive: for every index, scan left for maxLeft and scan right
+    for maxRight  ->  O(n^2).
+    Trick: keep left, right, left_max, right_max and move inward.
+
+Step 8: The most confusing line  ->  if left_max < right_max:
+    Suppose left_max = 4, right_max = 7:
+        4 .......... 7
+        For the LEFT position: water = min(4,7) = 4.
+        The right wall is already taller, so the left side's
+        water is decided entirely by left_max. Move LEFT.
+
+    Suppose left_max = 8, right_max = 5:
+        8 .......... 5
+        Now the level is limited by 5. Move RIGHT.
+
+Mental model (very important):
+    Two giant walls walking toward each other.
+        left_max                right_max
+            v                        v
+        | | |       valley        | |
+    The SHORTER wall always decides the water level. Therefore:
+        if left_max < right_max: process left
+        else:                    process right
+    This single idea is the entire solution.
+
+Interview shortcut:
+    See "array of heights" + "water trapped between bars" + "O(n)"
+        -> water[i] = min(maxLeft, maxRight) - height[i]
+        -> two pointers left/right + left_max/right_max
+        -> move the SMALLER side.
+
+
+--------------------------------------------------
+15. FRAME-BY-FRAME ANIMATION  (height = [4,2,0,3,2,5])
+--------------------------------------------------
+Watch left, right, left_max, right_max, and water change each
+iteration. Expected answer = 9.
+
+Initial state
+    index : 0  1  2  3  4  5
+    height: 4  2  0  3  2  5
+
+    L                 R
+    4  2  0  3  2  5
+    ^              ^
+    left_max  = 4
+    right_max = 5
+    water     = 0
+    left_max(4) < right_max(5)  ->  move LEFT
+
+Step 1   move left: index 0 -> 1
+    4  2  0  3  2  5
+       ^
+    left_max = max(4,2) = 4
+    water += 4 - 2 = 2          water = 2
+
+        |       |
+        |~~~~~~~|
+        |~|~~~~~|
+        ----------
+        4 2 0 3 2 5      (2 units sit above the height-2 bar)
+
+Step 2   move left: 1 -> 2
+    4  2  0  3  2  5
+          ^
+    left_max = max(4,0) = 4
+    water += 4 - 0 = 4          water = 6
+
+Step 3   move left: 2 -> 3
+    4  2  0  3  2  5
+             ^
+    left_max = max(4,3) = 4
+    water += 4 - 3 = 1          water = 7
+
+Step 4   move left: 3 -> 4
+    4  2  0  3  2  5
+                ^
+    left_max = max(4,2) = 4
+    water += 4 - 2 = 2          water = 9
+
+Step 5   left and right meet  ->  STOP  ->  return 9
+
+Why we never computed maxRight for every index:
+    left_max = 4, right_max = 5. The smaller wall is 4, so water
+    on the left can NEVER exceed 4 - every left position is
+    already determined. That is why we safely process the left.
+
+    left_max = 3, right_max = 7:
+        3 .......... 7
+        min(3, anything bigger) = 3. We don't care if the right
+        is 7, 70, or 700 - the left side is fully determined.
+        Move LEFT.
+
+    left_max = 8, right_max = 4:
+        8 .......... 4
+        Now the RIGHT wall (4) limits everything. Move RIGHT.
+
+The entire algorithm in one picture:
+    left_max < right_max          left_max > right_max
+         4 ........... 7               8 ........... 5
+    water level = 4                water level = 5
+    move LEFT                      move RIGHT
+
+Interview memory trick:
+    Two people holding water between them:
+        Tall person (8)      Short person (5)
+    They can only hold water up to the SHORTER person's height.
+        SHORTER SIDE DECIDES THE WATER LEVEL
+    That is exactly:
+        if left_max < right_max: left  += 1
+        else:                    right -= 1
+
+
 ==================================================
 The shorter wall decides the level: advance the
 smaller-max side and bank its trapped water.
