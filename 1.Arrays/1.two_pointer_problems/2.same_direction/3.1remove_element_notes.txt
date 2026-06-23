@@ -1,0 +1,314 @@
+==================================================
+REMOVE ELEMENT  —  Slow / Fast Pointer (Same Direction)
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an integer array nums and a value val, remove ALL
+occurrences of val in-place. Return the count k of elements
+that are NOT equal to val.
+
+The first k elements of nums must hold the kept values
+(their order can vary, leftover slots don't matter).
+
+Example:
+    nums = [3, 2, 2, 3]
+    val  = 3
+
+    remove every 3
+        keep 2, keep 2
+
+    k = 2
+    nums becomes: [2, 2, _, _]   (only first k matter)
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def removeElement(nums, val):
+        slow = 0
+
+        for fast in range(len(nums)):
+            if nums[fast] != val:
+                nums[slow] = nums[fast]
+                slow += 1
+
+        return slow
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3
+    array:  [ 3,  2,  2,  3 ]
+
+    slow = 0   (next slot to write a kept value)
+    fast = 0   (scans every element)
+
+         S
+         F
+         v
+       [ 3,  2,  2,  3 ]
+
+    Both start at index 0. Fast walks forward,
+    slow only steps when something is kept.
+
+
+--------------------------------------------------
+4. WHY SLOW / FAST POINTERS?
+--------------------------------------------------
+We must do it IN-PLACE (no new array, O(1) space).
+
+Brute force idea  ->  build a fresh list of kept values:
+    result = [x for x in nums if x != val]
+This is O(n) time but uses O(n) EXTRA space.
+
+Slow/fast does it in one pass with NO extra array:
+    fast reads,  slow writes the survivors to the front.
+    ->  O(n) time, O(1) space.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [3,2,2,3], val = 3)
+--------------------------------------------------
+
+Iteration fast=0
+    nums[0] = 3  ==  val  ->  SKIP (don't write, slow stays 0)
+
+         S
+         F
+         v
+       [ 3,  2,  2,  3 ]
+
+Iteration fast=1
+    nums[1] = 2  !=  val  ->  KEEP
+    nums[slow=0] = 2  ->  slow becomes 1
+
+         S
+             F
+         v   v
+       [ 2,  2,  2,  3 ]
+
+Iteration fast=2
+    nums[2] = 2  !=  val  ->  KEEP
+    nums[slow=1] = 2  ->  slow becomes 2
+
+             S
+                 F
+             v   v
+       [ 2,  2,  2,  3 ]
+
+Iteration fast=3
+    nums[3] = 3  ==  val  ->  SKIP (slow stays 2)
+
+                 S
+                     F
+                 v   v
+       [ 2,  2,  2,  3 ]
+
+Loop ends.  return slow = 2
+
+Output: k = 2,  nums[:k] = [2, 2]
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (how the two pointers behave)
+--------------------------------------------------
+
+FAST always moves forward, one step every iteration:
+    it just READS and inspects each element.
+
+SLOW only moves when we KEEP a value:
+    nums[fast] != val  ->  write to nums[slow], slow += 1
+    nums[fast] == val  ->  do nothing, slow waits
+
+So slow marks the boundary:
+    [ kept values | junk we can ignore ]
+                   ^
+                  slow
+
+Everything before slow is the cleaned answer.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [0,1,2,2,3,0,4,2], val = 2)
+--------------------------------------------------
+
+    S F     0 != 2  keep  ->  write nums[0]=0, slow=1
+    v
+  [ 0, 1, 2, 2, 3, 0, 4, 2 ]
+
+       S F     1 != 2  keep  ->  write nums[1]=1, slow=2
+       v
+  [ 0, 1, 2, 2, 3, 0, 4, 2 ]
+
+          S  F     2 == 2  skip  (slow stays 2)
+          v
+  [ 0, 1, 2, 2, 3, 0, 4, 2 ]
+
+          S     F     2 == 2  skip  (slow stays 2)
+          v
+  [ 0, 1, 2, 2, 3, 0, 4, 2 ]
+
+          S        F     3 != 2  keep -> nums[2]=3, slow=3
+          v
+  [ 0, 1, 3, 2, 3, 0, 4, 2 ]
+
+             S        F     0 != 2 keep -> nums[3]=0, slow=4
+             v
+  [ 0, 1, 3, 0, 3, 0, 4, 2 ]
+
+                S        F  4 != 2 keep -> nums[4]=4, slow=5
+                v
+  [ 0, 1, 3, 0, 4, 0, 4, 2 ]
+
+                   S        F  2 == 2 skip (slow stays 5)
+                   v
+  [ 0, 1, 3, 0, 4, 0, 4, 2 ]
+
+    return k = 5,  nums[:5] = [0, 1, 3, 0, 4]
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Think of a writer and a reader walking a line:
+
+    fast = READER  (looks at every element)
+    slow = WRITER  (only writes the keepers, packed to the left)
+
+    keep it  ->  write it down, writer steps forward
+    drop it  ->  writer holds its place, reader moves on
+
+    "Reader never stops, writer only stamps survivors."
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach        | Time   | Space |
+    | --------------- | ------ | ----- |
+    | Filter new list | O(n)   | O(n)  |
+    | Slow / fast     | O(n)   | O(1)  |
+
+Fast visits each element once, so O(n) total.
+Nothing extra is allocated, so O(1) space.
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION removeElement(nums, val)
+
+        slow <- 0
+
+        FOR fast FROM 0 TO length(nums) - 1
+
+            IF nums[fast] != val
+                nums[slow] <- nums[fast]
+                slow <- slow + 1
+
+        END FOR
+
+        RETURN slow
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set slow = 0   (where the next kept value goes)
+
+    Repeat fast from 0 to last index of array
+
+        Look at nums[fast]
+
+        If nums[fast] is NOT equal to val
+            Copy it to the slow position
+                nums[slow] = nums[fast]
+            Move slow one step right
+                slow = slow + 1
+
+        Otherwise (it equals val)
+            Do nothing, leave slow where it is
+
+    END Repeat
+
+    Return slow   (this is k, the count of kept values)
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+    +-----------+
+    |   START   |
+    +-----+-----+
+          |
+          v
+    +---------------------+
+    | slow = 0            |
+    | fast = 0            |
+    +----------+----------+
+               |
+               v
+       +----------------+
+       | fast < length? |<-------------+
+       +-------+--------+               |
+               | Yes                    |
+               v                        |
+       +----------------+               |
+       | nums[fast]     | No            |
+       | != val ?       +-----------+   |
+       +-------+--------+           |   |
+               | Yes                |   |
+               v                    |   |
+    +-------------------------+     |   |
+    | nums[slow] = nums[fast] |     |   |
+    | slow = slow + 1         |     |   |
+    +-----------+-------------+     |   |
+               |                    |   |
+               v                    |   |
+       +----------------+           |   |
+       | fast = fast+1  |<----------+   |
+       +-------+--------+               |
+               |                        |
+               +------------------------+
+          | (when fast reaches length)
+          v
+    +-----------------+
+    | RETURN slow (k) |
+    +--------+--------+
+             |
+             v
+        +---------+
+        |   END   |
+        +---------+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I use two pointers moving in the same direction. A fast
+ pointer scans every element, and a slow pointer marks
+ where the next kept value should go.
+ - If nums[fast] is not equal to val, I copy it to nums[slow]
+   and advance slow.
+ - If it equals val, I skip it and only advance fast.
+ At the end, slow is the count k, and the first k elements
+ hold all the kept values. It's all done in-place.
+
+ Time:  O(n)
+ Space: O(1)
+ This is the standard slow/fast pointer pattern for in-place
+ array filtering."
+
+
+==================================================
+This is the classic slow/fast (same-direction)
+two-pointer technique for in-place removal.
+==================================================

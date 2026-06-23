@@ -1,0 +1,366 @@
+==================================================
+SORT COLORS  —  Dutch National Flag (3-Way Partition)
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an array nums of n objects colored red, white, or blue,
+represented by the integers 0, 1, and 2, sort them IN-PLACE so
+equal colors are adjacent and ordered 0 -> 1 -> 2.
+Do it in ONE PASS, without a counting/library sort.
+
+Example:
+    nums = [2, 0, 2, 1, 1, 0]
+
+    sort so all 0s, then all 1s, then all 2s
+
+    answer = [0, 0, 1, 1, 2, 2]
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def sortColors(nums):
+
+        low  = 0                  # everything before low is 0
+        mid  = 0                  # current element under inspection
+        high = len(nums) - 1      # everything after high is 2
+
+        while mid <= high:
+
+            if nums[mid] == 0:
+                nums[low], nums[mid] = nums[mid], nums[low]
+                low  += 1
+                mid  += 1
+
+            elif nums[mid] == 1:
+                mid  += 1
+
+            else:  # nums[mid] == 2
+                nums[mid], nums[high] = nums[high], nums[mid]
+                high -= 1
+                # don't advance mid: swapped-in value is unexamined
+
+        return nums
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5
+    array:  [ 2,  0,  2,  1,  1,  0 ]
+
+    low  = 0
+    mid  = 0
+    high = 5
+
+      low
+      mid                     high
+       v                       v
+     [ 2,  0,  2,  1,  1,  0 ]
+
+    Three regions the pointers build up:
+        [ 0 0 0 | 1 1 1 | ? ? ? | 2 2 2 ]
+          before   known   un-     after
+          low      1s     known   high
+
+    Rule of thumb:
+        before low  -> all 0s   (settled)
+        low .. mid  -> all 1s   (settled)
+        mid .. high -> UNKNOWN  (still inspecting)
+        after high  -> all 2s   (settled)
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH?
+--------------------------------------------------
+The naive fix is COUNTING SORT (two passes):
+    Pass 1: count how many 0s, 1s, 2s.
+    Pass 2: overwrite the array with that many 0s, then 1s, then 2s.
+
+That works and is O(n), but it reads the array TWICE.
+
+Dutch National Flag does it in a SINGLE pass:
+    One scan, three pointers, swap into place as we go.
+    No extra array, no second read  ->  O(n) time, O(1) space.
+
+Both are O(n), but one-pass is the asked-for / optimal version.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [2,0,2,1,1,0])
+--------------------------------------------------
+
+Start
+    low=0  mid=0  high=5
+
+      low,mid                  high
+       v                        v
+     [ 2,  0,  2,  1,  1,  0 ]
+
+Step 1   nums[mid]=2  ->  swap mid,high ; high-- ; mid STAYS
+    swap index0<->index5 ; high = 4
+
+      low,mid               high
+       v                     v
+     [ 0,  0,  2,  1,  1,  2 ]
+
+Step 2   nums[mid]=0  ->  swap low,mid ; low++ ; mid++
+    swap index0<->index0 (self) ; low = 1 ; mid = 1
+
+           low,mid           high
+            v                 v
+     [ 0,  0,  2,  1,  1,  2 ]
+
+Step 3   nums[mid]=0  ->  swap low,mid ; low++ ; mid++
+    swap index1<->index1 (self) ; low = 2 ; mid = 2
+
+                low,mid       high
+                 v             v
+     [ 0,  0,  2,  1,  1,  2 ]
+
+Step 4   nums[mid]=2  ->  swap mid,high ; high-- ; mid STAYS
+    swap index2<->index4 ; high = 3
+
+                low,mid   high
+                 v         v
+     [ 0,  0,  1,  1,  2,  2 ]
+
+Step 5   nums[mid]=1  ->  mid++  (1 belongs in the middle)
+    mid = 3
+
+                low    mid,high
+                 v      v
+     [ 0,  0,  1,  1,  2,  2 ]
+
+Step 6   nums[mid]=1  ->  mid++
+    mid = 4
+
+                low        high  mid
+                 v          v     v
+     [ 0,  0,  1,  1,  2,  2 ]
+
+    Now mid (4) > high (3)  ->  loop ends.
+
+Output: [0, 0, 1, 1, 2, 2]
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (how to move the pointers)
+--------------------------------------------------
+
+Look at nums[mid], the current element:
+
+nums[mid] == 0:
+    swap it down to the low region.
+    swap nums[low], nums[mid]  ->  low += 1 , mid += 1
+    (the value coming UP from low is already a known 1 or the same
+     spot, so it is safe to advance mid too)
+
+nums[mid] == 1:
+    it is already in the middle region. leave it.
+    mid += 1
+
+nums[mid] == 2:
+    swap it up to the high region.
+    swap nums[mid], nums[high]  ->  high -= 1
+    DO NOT advance mid.
+
+*** WHY mid does NOT advance after swapping with high ***
+    When we swap with HIGH, the value that lands at mid came from
+    the UNKNOWN region (mid .. high). We have NOT looked at it yet.
+    It could be a 0, a 1, or even another 2.
+    So we must re-inspect mid on the next loop.
+
+    Contrast with the 0-case: the value pulled up from LOW is
+    already from the inspected 0/1 region, so advancing mid is safe.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [2,1,0])
+--------------------------------------------------
+
+    low,mid       high       nums[mid]=2 -> swap mid,high ; high--
+     v             v          mid STAYS
+   [ 2,  1,  0 ]
+
+    low,mid   high            after swap: [0,1,2] , high=1
+     v         v              nums[mid]=0 -> swap low,mid ; low++ mid++
+   [ 0,  1,  2 ]
+
+           low,mid            nums[mid]=1 -> mid++
+            v                 mid=2
+   [ 0,  1,  2 ]
+           high
+            ^                 now mid(2) > high(1) -> stop
+
+    return [0, 1, 2]
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Think of sorting a flag into three stripes:
+
+    [ 0 0 0 | 1 1 1 | 2 2 2 ]
+       low     mid     high
+
+    low  pushes 0s to the FRONT
+    high pushes 2s to the BACK
+    mid  walks through the middle, leaving 1s where they sit
+
+Saying it out loud:
+    "ZERO -> swap to low, both step forward.
+     ONE  -> leave it, just step mid.
+     TWO  -> swap to high, mid waits (look again)."
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach          | Time   | Space |
+    | ----------------- | ------ | ----- |
+    | Counting (2-pass) | O(n)   | O(1)  |
+    | Dutch flag (1)    | O(n)   | O(1)  |
+
+mid and high move toward each other; each index is handled at
+most once, so the whole thing is a single O(n) pass.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION sortColors(nums)
+
+        low  <- 0
+        mid  <- 0
+        high <- length(nums) - 1
+
+        WHILE mid <= high
+
+            IF nums[mid] = 0
+                SWAP nums[low], nums[mid]
+                low <- low + 1
+                mid <- mid + 1
+
+            ELSE IF nums[mid] = 1
+                mid <- mid + 1
+
+            ELSE
+                SWAP nums[mid], nums[high]
+                high <- high - 1
+
+        END WHILE
+
+        RETURN nums
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set low  = 0           (left edge, where the next 0 goes)
+    Set mid  = 0           (the element we are looking at now)
+    Set high = length - 1  (right edge, where the next 2 goes)
+
+    Repeat while mid is less than or equal to high
+
+        Look at the value at mid:
+
+        If the value is 0
+            Swap the values at low and mid
+            Move low one step right   (low = low + 1)
+            Move mid one step right    (mid = mid + 1)
+
+        Otherwise if the value is 1
+            Leave it in place
+            Move mid one step right    (mid = mid + 1)
+
+        Otherwise (the value is 2)
+            Swap the values at mid and high
+            Move high one step left    (high = high - 1)
+            DO NOT move mid
+            (we must re-check the new value that landed at mid)
+
+    END Repeat
+
+    The array is now sorted 0s, then 1s, then 2s
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+        +-----------+
+        |   START   |
+        +-----+-----+
+              |
+              v
+    +-----------------------+
+    | low  = 0              |
+    | mid  = 0              |
+    | high = n - 1          |
+    +-----------+-----------+
+                |
+                v
+        +---------------+
+        | mid <= high ? |<-------------------------+
+        +-------+-------+                           |
+                | Yes                               |
+                v                                   |
+        +---------------+                           |
+        | nums[mid] = 0 |  Yes                      |
+        |     ?         +---> swap low,mid          |
+        +-------+-------+     low++ ; mid++ --------+
+                | No                                |
+                v                                   |
+        +---------------+                           |
+        | nums[mid] = 1 |  Yes                      |
+        |     ?         +---> mid++ -----------------+
+        +-------+-------+                           |
+                | No                                |
+                v                                   |
+        +-----------------------+                   |
+        | swap mid,high         |                   |
+        | high--  (mid STAYS)   +-------------------+
+        +-----------------------+
+                |
+                | (when mid > high: loop ends)
+                v
+        +---------------+
+        |  RETURN nums  |
+        +-------+-------+
+                |
+                v
+            +-------+
+            |  END  |
+            +-------+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"This is the Dutch National Flag problem. I keep three pointers:
+ low for the 0s boundary, high for the 2s boundary, and mid for the
+ element I'm currently inspecting.
+ - If nums[mid] is 0, I swap it to low and advance BOTH low and mid.
+ - If nums[mid] is 1, it's already in the middle, so I just advance mid.
+ - If nums[mid] is 2, I swap it to high and shrink high, but I do NOT
+   advance mid, because the value swapped in from the right is still
+   unexamined and must be checked again.
+ The loop runs while mid <= high, sorting everything in one pass.
+
+ Time:  O(n)
+ Space: O(1)
+ It's the classic three-way partition pattern."
+
+
+==================================================
+This is the classic Dutch National Flag three-way
+partition: one pass, three pointers, sorted in-place.
+==================================================

@@ -1,0 +1,342 @@
+==================================================
+QUICK SELECT  —  Kth Largest via Partitioning
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an integer array and a number k, find the k-th LARGEST
+element (in sorted order, NOT the k-th distinct value).
+
+We do NOT sort the whole array. We use partitioning and only
+recurse into the side that contains the answer  ->  average O(n).
+
+Example:
+    nums = [3, 2, 1, 5, 6, 4]
+    k    = 2
+
+    sorted:  [1, 2, 3, 4, 5, 6]
+                            ^
+              2nd largest = 5
+
+    Trick: k-th LARGEST sits at sorted index (n - k)
+           n = 6, k = 2  ->  target index = 6 - 2 = 4
+
+    answer = 5
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def partition(nums, low, high):
+
+        pivot = nums[high]
+        i = low - 1
+
+        for j in range(low, high):
+            if nums[j] <= pivot:
+                i += 1
+                nums[i], nums[j] = nums[j], nums[i]
+
+        nums[i + 1], nums[high] = nums[high], nums[i + 1]
+        return i + 1
+
+
+    def findKthLargest(nums, k):
+
+        # k-th largest = the element at sorted index (n - k)
+        target = len(nums) - k
+
+        low = 0
+        high = len(nums) - 1
+
+        while low <= high:
+
+            p = partition(nums, low, high)
+
+            if p == target:
+                return nums[p]
+            elif p < target:
+                low = p + 1
+            else:
+                high = p - 1
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5
+    array:  [ 3,  2,  1,  5,  6,  4 ]
+
+    k       = 2
+    n       = 6
+    target  = n - k = 4        (sorted index we want)
+
+    low  = 0
+    high = 5                   (pivot = nums[high] = 4)
+
+         L                   H
+         v                   v
+       [ 3,  2,  1,  5,  6,  4 ]
+                              |
+                            pivot
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH?  (vs full sort)
+--------------------------------------------------
+Sorting the whole array just to read ONE position is wasteful.
+
+Full sort  ->  O(n log n):
+    [3,2,1,5,6,4]  ->  [1,2,3,4,5,6]  then read index 4
+
+Quick Select partitions, then THROWS AWAY the half that
+cannot contain the answer  ->  average O(n).
+
+    Each step shrinks the search range:  n + n/2 + n/4 + ...  =  2n  ->  O(n)
+
+We never sort both sides, only chase the one side holding target.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [3,2,1,5,6,4], k = 2, target = 4)
+--------------------------------------------------
+
+Round 1
+    low=0  high=5   pivot = nums[5] = 4
+    partition: move everything <= 4 to the left
+
+         L                   H
+         v                   v
+       [ 3,  2,  1,  5,  6,  4 ]
+
+    walk j: 3<=4 swap, 2<=4 swap, 1<=4 swap, 5>4 skip, 6>4 skip
+    finally place pivot:
+
+       [ 3,  2,  1,  4,  6,  5 ]     pivot landed at index p = 3
+
+    p = 3,  target = 4
+    p < target  ->  answer is to the RIGHT  ->  low = p + 1 = 4
+                    (we DROP indices 0..3 forever)
+
+Round 2
+    low=4  high=5   pivot = nums[5] = 5
+
+                          L    H
+                          v    v
+       [ 3,  2,  1,  4,  6,  5 ]
+
+    walk j: 6>5 skip
+    place pivot:
+
+       [ 3,  2,  1,  4,  5,  6 ]     pivot landed at p = 4
+
+    p = 4,  target = 4
+    p == target  ->  FOUND
+
+    return nums[4] = 5
+
+Output: 5
+
+Notice: we recursed into ONLY ONE side each round (right, then done).
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (which side to keep)
+--------------------------------------------------
+
+After partition, pivot sits at its FINAL sorted position p.
+Everything left of p is smaller-or-equal, everything right is bigger.
+
+    p == target  ->  pivot IS the answer, return nums[p]
+
+    p <  target  ->  answer lies to the RIGHT
+                     low = p + 1     (discard the left side)
+
+    p >  target  ->  answer lies to the LEFT
+                     high = p - 1    (discard the right side)
+
+We only ever search ONE side. That discarding is why it's O(n) average.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [3,2,3,1,2,4,5,5,6], k = 4)
+--------------------------------------------------
+
+    n = 9,  k = 4  ->  target = 9 - 4 = 5
+    sorted: [1,2,2,3,3,4,5,5,6]
+                            ^ index 5 = 4    (expected answer)
+
+    low=0 high=8  pivot=6  -> pivot lands at p=8
+        p=8 > target=5  ->  high = 7   (keep left)
+
+    low=0 high=7  pivot=5  -> after partition pivot lands at p=6
+        p=6 > target=5  ->  high = 5   (keep left)
+
+    low=0 high=5  pivot=4  -> 4 is the max of this range, lands at p=5
+        p=5 == target=5  ->  FOUND
+
+    return 4
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Think of a guessing game on a sorted shelf:
+
+    place pivot in its true slot  ->  ask "too left or too right?"
+
+    pivot slot == target  ->  got it
+    target is bigger slot  ->  go RIGHT   (low  = p + 1)
+    target is smaller slot ->  go LEFT    (high = p - 1)
+
+    "Partition, peek the pivot's slot, chase only ONE half."
+
+    And remember the conversion:
+        k-th LARGEST  ->  sorted index (n - k)
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach          | Time            | Space |
+    | ----------------- | --------------- | ----- |
+    | Full sort         | O(n log n)      | O(1)  |
+    | Heap (size k)     | O(n log k)      | O(k)  |
+    | Quick Select avg  | O(n)            | O(1)  |
+    | Quick Select worst| O(n^2)          | O(1)  |
+
+Average O(n): each partition halves the range -> n + n/2 + ... = 2n.
+Worst  O(n^2): bad pivots shrink the range by only 1 each time
+               (e.g. already-sorted input with last-element pivot).
+Fix: pick a RANDOM pivot to make the worst case very unlikely.
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION partition(nums, low, high)
+        pivot <- nums[high]
+        i <- low - 1
+        FOR j FROM low TO high - 1
+            IF nums[j] <= pivot
+                i <- i + 1
+                SWAP nums[i], nums[j]
+        SWAP nums[i + 1], nums[high]
+        RETURN i + 1
+    END FUNCTION
+
+    FUNCTION findKthLargest(nums, k)
+        target <- length(nums) - k
+        low  <- 0
+        high <- length(nums) - 1
+        WHILE low <= high
+            p <- partition(nums, low, high)
+            IF p = target
+                RETURN nums[p]
+            ELSE IF p < target
+                low <- p + 1
+            ELSE
+                high <- p - 1
+        END WHILE
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Convert the request:
+        target = length of array - k
+        (this is the sorted index of the k-th largest)
+
+    Set low  = 0
+    Set high = length of array - 1
+
+    Repeat while low is less than or equal to high
+
+        Partition the range low..high:
+            Choose the last element as the pivot
+            Move every element <= pivot to the left part
+            Put the pivot right after that left part
+            Let p = the index where the pivot ended up
+
+        If p equals target
+            Return nums[p]   (this is the answer)
+
+        Otherwise if p is less than target
+            The answer is to the RIGHT
+            Set low = p + 1   (ignore the left side)
+
+        Otherwise
+            The answer is to the LEFT
+            Set high = p - 1  (ignore the right side)
+
+    END Repeat
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+            +-----------+
+            |   START   |
+            +-----+-----+
+                  |
+                  v
+        +---------------------+
+        | target = n - k      |
+        | low = 0             |
+        | high = n - 1        |
+        +---------+-----------+
+                  |
+                  v
+          +---------------+
+          | low <= high ? |<--------------------+
+          +-------+-------+                      |
+                  | Yes                          |
+                  v                              |
+        +---------------------+                  |
+        | p = partition(      |                  |
+        |     nums, low, high)|                  |
+        +---------+-----------+                  |
+                  |                              |
+                  v                              |
+          +---------------+   Yes                |
+          | p == target ? +-----> RETURN nums[p] +--> END
+          +-------+-------+                      |
+                  | No                           |
+                  v                              |
+          +---------------+   Yes                |
+          | p < target ?  +-----> low = p + 1 ---+
+          +-------+-------+                      |
+                  | No                           |
+                  v                              |
+          +---------------+                      |
+          | high = p - 1  +----------------------+
+          +---------------+
+        (when low > high: loop ends)
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I turn 'k-th largest' into a sorted index: target = n - k.
+ Then I run Quick Select. I partition the array around a pivot,
+ which drops the pivot into its final sorted position p.
+ - If p equals target, that element is the answer.
+ - If p is less than target, the answer is to the right, so I
+   search only low = p + 1 onward.
+ - If p is greater, I search only the left, high = p - 1.
+ Because I throw away one side each time, it averages linear time.
+
+ Time:  O(n) average, O(n^2) worst (fixable with a random pivot)
+ Space: O(1) since it's iterative and in-place.
+ It's the standard Partition + Selection pattern."
+
+
+==================================================
+Quick Select = QuickSort that recurses into only
+ONE side — partition, then chase the half holding k.
+==================================================

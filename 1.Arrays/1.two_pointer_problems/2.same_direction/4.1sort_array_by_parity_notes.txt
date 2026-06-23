@@ -1,0 +1,318 @@
+==================================================
+SORT ARRAY BY PARITY  —  Slow / Fast Pointers
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an integer array, move ALL the EVEN numbers to the
+front and ALL the ODD numbers to the back. Any order inside
+each group is fine. Do it IN-PLACE.
+
+Example:
+    nums = [3, 1, 2, 4]
+
+    evens -> 2, 4
+    odds  -> 3, 1
+
+    One valid output:
+        [2, 4, 3, 1]   (evens first, odds after)
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def sortArrayByParity(nums):
+
+        slow = 0   # next position to place an even number
+
+        for fast in range(len(nums)):
+
+            if nums[fast] % 2 == 0:
+                nums[slow], nums[fast] = nums[fast], nums[slow]
+                slow += 1
+
+        return nums
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3
+    array:  [ 3,  1,  2,  4 ]
+
+    slow = 0   (boundary: everything before it is EVEN)
+    fast = 0   (scanner: looks at every element)
+
+         S
+         v
+       [ 3,  1,  2,  4 ]
+         ^
+         F
+
+
+--------------------------------------------------
+4. WHY SLOW / FAST POINTERS?
+--------------------------------------------------
+We want evens on the left WITHOUT extra arrays.
+
+Brute force: build a new list of evens + a new list of odds,
+then join them  ->  O(n) time but O(n) EXTRA space.
+
+Slow / fast does it IN-PLACE in a single pass  ->  O(1) space.
+
+    slow = the wall between the "even zone" and the rest
+    fast = scout that finds the next even to drag back
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [3,1,2,4])
+--------------------------------------------------
+
+Iteration 1
+    slow=0  fast=0   nums[fast]=3  -> ODD  -> skip, only fast moves
+
+         S
+         v
+       [ 3,  1,  2,  4 ]
+         ^
+         F
+
+Iteration 2
+    slow=0  fast=1   nums[fast]=1  -> ODD  -> skip, only fast moves
+
+         S
+         v
+       [ 3,  1,  2,  4 ]
+             ^
+             F
+
+Iteration 3
+    slow=0  fast=2   nums[fast]=2  -> EVEN -> swap(slow,fast), slow++
+
+    swap index 0 and 2:
+       [ 2,  1,  3,  4 ]
+
+         S        ->  S now = 1
+             v
+       [ 2,  1,  3,  4 ]
+                 ^
+                 F
+
+Iteration 4
+    slow=1  fast=3   nums[fast]=4  -> EVEN -> swap(slow,fast), slow++
+
+    swap index 1 and 3:
+       [ 2,  4,  3,  1 ]
+
+             S    ->  S now = 2
+                 v
+       [ 2,  4,  3,  1 ]
+                     ^
+                     F
+
+Loop ends (fast ran off the array).
+
+Output: [2, 4, 3, 1]   (evens first, odds after)
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (how to move the pointers)
+--------------------------------------------------
+
+fast looks at EVERY element, one by one.
+
+Element is ODD  (nums[fast] % 2 != 0):
+    do nothing, just let fast move on
+    (the odd stays put for now)
+
+Element is EVEN  (nums[fast] % 2 == 0):
+    swap it into the slow position, then slow += 1
+    (this drags the even into the front "even zone")
+
+INVARIANT:
+    everything in indices [0 .. slow-1] is guaranteed EVEN.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [0,5,8,3,6])
+--------------------------------------------------
+
+    S                     0 is EVEN -> swap(0,0), slow=1
+    v
+  [ 0,  5,  8,  3,  6 ]
+    ^
+    F
+
+        S                 5 is ODD -> skip
+        v
+  [ 0,  5,  8,  3,  6 ]
+        ^
+        F
+
+        S                 8 is EVEN -> swap(1,2), slow=2
+        v
+  [ 0,  8,  5,  3,  6 ]   (5 and 8 swapped)
+            ^
+            F
+
+            S             3 is ODD -> skip
+            v
+  [ 0,  8,  5,  3,  6 ]
+                ^
+                F
+
+            S             6 is EVEN -> swap(2,4), slow=3
+            v
+  [ 0,  8,  6,  3,  5 ]   (5 and 6 swapped)
+                    ^
+                    F
+
+    return [0, 8, 6, 3, 5]   (evens first)
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Think of building a wall of evens from the left:
+
+    [ EVENS | ... unsorted ... ]
+            ^
+           slow  (the wall)
+
+    fast walks ahead scouting.
+    Sees an EVEN  ->  toss it behind the wall, push wall right.
+    Sees an ODD   ->  leave it, keep scouting.
+
+    "Even? Swap it home. Odd? Walk on."
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach        | Time   | Space |
+    | --------------- | ------ | ----- |
+    | Two new arrays  | O(n)   | O(n)  |
+    | Slow / fast     | O(n)   | O(1)  |
+
+fast visits each element exactly once, so O(n) total.
+Swaps happen in place, so O(1) extra space.
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION sortArrayByParity(nums)
+
+        slow <- 0
+
+        FOR fast FROM 0 TO length(nums) - 1
+
+            IF nums[fast] is EVEN
+                SWAP nums[slow] AND nums[fast]
+                slow <- slow + 1
+
+        END FOR
+
+        RETURN nums
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set slow = 0   (the front "even zone" boundary)
+
+    Repeat fast from 0 up to last index
+
+        Look at the current element nums[fast]
+
+        If nums[fast] is even (remainder 0 when divided by 2)
+            Swap nums[slow] and nums[fast]
+            Move slow one step right
+            slow = slow + 1
+
+        Otherwise (it is odd)
+            Do nothing, fast moves on by itself
+
+    END Repeat
+
+    Return the array (evens are now in front)
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +---------------------+
+    | slow = 0            |
+    | fast = 0            |
+    +----------+----------+
+               |
+               v
+        +--------------+
+        | fast < n ?   |<-------------+
+        +------+-------+              |
+               | Yes                  |
+               v                      |
+        +------------------+          |
+        | nums[fast] even? |          |
+        +------+-----+-----+          |
+        Yes    |     | No             |
+               v     |                |
+    +----------------+--+             |
+    | swap nums[slow]   |             |
+    |   and nums[fast]  |             |
+    | slow = slow + 1   |             |
+    +---------+---------+             |
+              |                       |
+              +-----------+-----------+
+                          |
+                          v
+                  +---------------+
+                  | fast = fast+1 |---------+
+                  +---------------+         |
+                          (loops back up)---+
+
+    (when fast = n: loop ends)
+              |
+              v
+        +-----------------+
+        | RETURN nums     |
+        +-------+---------+
+                |
+                v
+             +-----+
+             | END |
+             +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I use two same-direction pointers, slow and fast. The slow
+ pointer marks the boundary of the even zone at the front,
+ and fast scans through every element.
+ - If fast sees an EVEN number, I swap it into the slow
+   position and move slow forward.
+ - If fast sees an ODD number, I just skip it.
+ By the end, every even has been dragged to the front and the
+ odds are left at the back, all done in place.
+
+ Time:  O(n)
+ Space: O(1)
+ It's the slow/fast partition pattern."
+
+
+==================================================
+This is the classic slow / fast partition: build
+the EVEN zone at the front in a single in-place pass.
+==================================================

@@ -1,0 +1,337 @@
+==================================================
+MOVE NEGATIVES  —  Two Pointers Opposite-Ends Partition
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an integer array, rearrange it IN-PLACE so that all
+negative numbers come before all non-negative numbers.
+Order within each group does NOT need to be preserved.
+
+Example:
+    nums = [-1, 2, -3, 4, 5, 6, -7, 8, 9]
+
+    negatives:     -1, -3, -7
+    non-negatives:  2,  4,  5,  6,  8,  9
+
+    One valid output  ->  [-1, -3, -7, 4, 5, 6, 2, 8, 9]
+    (any arrangement with negatives first is correct)
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def moveNegatives(nums):
+        left  = 0
+        right = len(nums) - 1
+
+        while left < right:
+            if nums[left] < 0:            # negative already on correct side
+                left += 1
+            elif nums[right] >= 0:        # non-negative already on correct side
+                right -= 1
+            else:                         # left >= 0 AND right < 0  -> swap
+                nums[left], nums[right] = nums[right], nums[left]
+                left  += 1
+                right -= 1
+
+        return nums
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5   6   7   8
+    array:  [-1,  2, -3,  4,  5,  6, -7,  8,  9 ]
+
+    left  = 0
+    right = 8
+
+         L                              R
+         v                              v
+       [-1,  2, -3,  4,  5,  6, -7,  8,  9 ]
+
+
+--------------------------------------------------
+4. WHY TWO POINTERS?
+--------------------------------------------------
+We only need negatives on the LEFT and non-negatives on the
+RIGHT. Relative order does not matter, so we can swap freely.
+
+Brute force (build a new array, copy negatives then the rest)
+costs O(n) EXTRA space.
+
+Two pointers partition the array in a single pass, IN-PLACE
+    ->  O(n) time, O(1) space.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [-1,2,-3,4,5,6,-7,8,9])
+--------------------------------------------------
+
+Iteration 1
+    left=0  right=8
+    nums[left] = -1  ->  negative, correct side  ->  left += 1   (left = 1)
+
+         L                              R
+         v                              v
+       [-1,  2, -3,  4,  5,  6, -7,  8,  9 ]
+
+Iteration 2
+    left=1  right=8
+    nums[left] = 2 (>= 0), nums[right] = 9 (>= 0)
+    right side already non-negative  ->  right -= 1   (right = 7)
+
+             L                          R
+             v                          v
+       [-1,  2, -3,  4,  5,  6, -7,  8,  9 ]
+
+Iteration 3
+    left=1  right=7
+    nums[left] = 2 (>= 0), nums[right] = 8 (>= 0)  ->  right -= 1   (right = 6)
+
+             L                      R
+             v                      v
+       [-1,  2, -3,  4,  5,  6, -7,  8,  9 ]
+
+Iteration 4
+    left=1  right=6
+    nums[left] = 2 (>= 0), nums[right] = -7 (< 0)  ->  SWAP
+    swap index 1 and 6, then left += 1, right -= 1   (left = 2, right = 5)
+
+       [-1, -7, -3,  4,  5,  6,  2,  8,  9 ]
+                 L              R
+                 v              v
+
+Iteration 5
+    left=2  right=5
+    nums[left] = -3  ->  negative, correct side  ->  left += 1   (left = 3)
+
+       [-1, -7, -3,  4,  5,  6,  2,  8,  9 ]
+                     L          R
+                     v          v
+
+Iteration 6
+    left=3  right=5
+    nums[left] = 4 (>= 0), nums[right] = 6 (>= 0)  ->  right -= 1   (right = 4)
+
+       [-1, -7, -3,  4,  5,  6,  2,  8,  9 ]
+                     L      R
+                     v      v
+
+Iteration 7
+    left=3  right=4
+    nums[left] = 4 (>= 0), nums[right] = 5 (>= 0)  ->  right -= 1   (right = 3)
+
+       [-1, -7, -3,  4,  5,  6,  2,  8,  9 ]
+                     L
+                     R
+                     v
+
+    Now left (3) is NOT < right (3)  ->  loop ends
+
+Output: [-1, -7, -3, 4, 5, 6, 2, 8, 9]
+    (all negatives first, non-negatives after — valid)
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (how to move the pointers)
+--------------------------------------------------
+
+LEFT pointer guards the negatives region.
+RIGHT pointer guards the non-negatives region.
+
+Case 1 — nums[left] < 0  (negative on the left):
+    already correct  ->  left += 1
+
+Case 2 — nums[right] >= 0  (non-negative on the right):
+    already correct  ->  right -= 1
+
+Case 3 — nums[left] >= 0 AND nums[right] < 0  (both misplaced):
+    a non-negative sits on the left, a negative sits on the right
+    SWAP them, then  left += 1  and  right -= 1
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [3, -2, -8, 1, -5])
+--------------------------------------------------
+
+    L              R     nums[L]=3 (>=0), nums[R]=-5 (<0)  -> SWAP, L++, R--
+    v              v
+  [ 3, -2, -8,  1, -5 ]
+
+  [-5, -2, -8,  1,  3 ]
+        L      R          nums[L]=-2 (<0)  -> negative ok, L++
+        v      v
+
+  [-5, -2, -8,  1,  3 ]
+            L  R          nums[L]=-8 (<0)  -> negative ok, L++
+            v  v
+
+  [-5, -2, -8,  1,  3 ]
+                LR        L (3) not < R (3)  -> loop ends
+                v
+
+    result = [-5, -2, -8, 1, 3]   (negatives first, valid)
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Two people sweep inward from both ends, sorting a line:
+
+    Negatives -------------------- Non-negatives
+       left                            right
+
+    left  sees a negative      ->  good, step left  += 1
+    right sees a non-negative  ->  good, step right -= 1
+    both see the WRONG sign    ->  SWAP them, then close in
+
+The pointers stop when they meet — everything is partitioned.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach            | Time   | Space |
+    | ------------------- | ------ | ----- |
+    | Extra-array copy    | O(n)   | O(n)  |
+    | Two pointers (here) | O(n)   | O(1)  |
+
+Each pointer moves at most n times total, so O(n).
+Swaps are in-place, so O(1) extra space.
+NOTE: does NOT preserve relative order.
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION moveNegatives(nums)
+
+        left  <- 0
+        right <- length(nums) - 1
+
+        WHILE left < right
+
+            IF nums[left] < 0
+                left <- left + 1
+
+            ELSE IF nums[right] >= 0
+                right <- right - 1
+
+            ELSE
+                SWAP nums[left] AND nums[right]
+                left  <- left + 1
+                right <- right - 1
+
+        END WHILE
+
+        RETURN nums
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set left  = 0
+    Set right = length of array - 1
+
+    Repeat while left is less than right
+
+        If the left value is negative
+            It is already on the correct side
+            Move left pointer one step right
+            left = left + 1
+
+        Otherwise if the right value is non-negative (zero or more)
+            It is already on the correct side
+            Move right pointer one step left
+            right = right - 1
+
+        Otherwise (left is non-negative AND right is negative)
+            Both values are on the wrong side
+            Swap the two values
+            Move left pointer right:  left  = left + 1
+            Move right pointer left:  right = right - 1
+
+    END Repeat
+
+    Return the rearranged array
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+    +---------+
+    |  START  |
+    +----+----+
+         |
+         v
+    +---------------------+
+    | left  = 0           |
+    | right = n - 1       |
+    +----------+----------+
+               |
+               v
+        +--------------+
+        | left < right |<-----------------+
+        +------+-------+                   |
+               | Yes                       |
+               v                           |
+        +----------------+   Yes           |
+        | nums[left] < 0 +----> left += 1 -+
+        +------+---------+                  |
+               | No                         |
+               v                            |
+        +-----------------+  Yes            |
+        | nums[right] >= 0+----> right -= 1 +
+        +------+----------+                  |
+               | No                          |
+               v                             |
+        +-----------------------------+      |
+        | SWAP nums[left], nums[right] |      |
+        | left += 1                    |      |
+        | right -= 1                   +------+
+        +-----------------------------+
+               |
+               | (when left >= right: loop ends)
+               v
+         +-----------+
+         | RETURN    |
+         | nums      |
+         +-----+-----+
+               |
+               v
+            +-----+
+            | END |
+            +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I use two pointers, one at the start and one at the end, to
+ partition the array in place.
+ - If the left value is already negative, it's on the correct
+   side, so I move left forward.
+ - If the right value is already non-negative, it's correct,
+   so I move right backward.
+ - Otherwise a non-negative is on the left and a negative is on
+   the right, so I swap them and move both pointers inward.
+ The pointers meet when the partition is complete.
+
+ Time:  O(n)
+ Space: O(1)
+ It's the opposite-ends partition variant of the two-pointer
+ pattern. Note it does not preserve relative order."
+
+
+==================================================
+This is the opposite-ends partition pattern:
+sweep both ends inward and swap mismatched pairs.
+==================================================

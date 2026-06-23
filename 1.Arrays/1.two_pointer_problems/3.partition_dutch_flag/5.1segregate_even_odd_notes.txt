@@ -1,0 +1,313 @@
+==================================================
+SEGREGATE EVEN AND ODD  —  Opposite-Ends Partition
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an integer array, rearrange it IN-PLACE so that all
+EVEN numbers come before all ODD numbers. Order within each
+group does NOT need to be preserved.
+
+Example:
+    nums = [12, 34, 45, 9, 8, 90, 3]
+
+    evens -> 12, 34, 8, 90
+    odds  -> 45, 9, 3
+
+    One valid output -> [12, 34, 8, 90, 45, 9, 3]
+    (any arrangement with evens first is correct)
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def segregateEvenOdd(nums):
+        left  = 0
+        right = len(nums) - 1
+
+        while left < right:
+            if nums[left] % 2 == 0:        # even already on correct side
+                left += 1
+            elif nums[right] % 2 == 1:     # odd already on correct side
+                right -= 1
+            else:                          # left odd, right even -> swap
+                nums[left], nums[right] = nums[right], nums[left]
+                left  += 1
+                right -= 1
+
+        return nums
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5   6
+    array:  [12, 34, 45,  9,  8, 90,  3 ]
+
+    left  = 0
+    right = 6
+
+         L                            R
+         v                            v
+       [12, 34, 45,  9,  8, 90,  3 ]
+
+
+--------------------------------------------------
+4. WHY TWO POINTERS?
+--------------------------------------------------
+We want all evens on the LEFT and all odds on the RIGHT.
+
+Brute force ideas waste space or time:
+    - build a new array      ->  O(n) extra space
+    - sort by parity         ->  O(n log n)
+
+Two pointers do it IN-PLACE in a single pass  ->  O(n), O(1).
+
+    left  scans from the start looking for an ODD  (wrong side)
+    right scans from the end   looking for an EVEN (wrong side)
+    when both are wrong -> SWAP them.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [12,34,45,9,8,90,3])
+--------------------------------------------------
+
+Iteration 1
+    left=0  right=6
+    nums[left]=12 is EVEN  ->  correct side  ->  left += 1  (left = 1)
+
+         L                            R
+         v                            v
+       [12, 34, 45,  9,  8, 90,  3 ]
+
+Iteration 2
+    left=1  right=6
+    nums[left]=34 is EVEN  ->  correct side  ->  left += 1  (left = 2)
+
+             L                        R
+             v                        v
+       [12, 34, 45,  9,  8, 90,  3 ]
+
+Iteration 3
+    left=2  right=6
+    nums[left]=45 is ODD   ->  wrong side, check right
+    nums[right]=3 is ODD   ->  correct side ->  right -= 1  (right = 5)
+
+                 L                    R
+                 v                    v
+       [12, 34, 45,  9,  8, 90,  3 ]
+
+Iteration 4
+    left=2  right=5
+    nums[left]=45 ODD, nums[right]=90 EVEN  ->  both wrong  ->  SWAP
+    swap 45 and 90  ->  left += 1 (3), right -= 1 (4)
+
+                 L                R
+                 v                v
+       [12, 34, 90,  9,  8, 45,  3 ]
+
+Iteration 5
+    left=3  right=4
+    nums[left]=9 ODD, nums[right]=8 EVEN  ->  both wrong  ->  SWAP
+    swap 9 and 8  ->  left += 1 (4), right -= 1 (3)
+
+                     R   L
+                     v   v
+       [12, 34, 90,  8,  9, 45,  3 ]
+
+Loop ends: left (4) >= right (3)
+
+Output: [12, 34, 90, 8, 9, 45, 3]   (evens first, odds after)
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (how to move the pointers)
+--------------------------------------------------
+
+Look at LEFT first:
+    nums[left] is EVEN  ->  already on correct side  ->  left += 1
+
+Else look at RIGHT:
+    nums[right] is ODD  ->  already on correct side  ->  right -= 1
+
+Else (left is ODD and right is EVEN):
+    both are on the WRONG side  ->  SWAP, then move BOTH inward
+        left  += 1
+        right -= 1
+
+Pointers march toward each other; when they meet, every even
+is left of every odd.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [1, 4, 3, 6, 5])
+--------------------------------------------------
+
+    L              R       left=1 ODD, right=5 ODD -> right--
+    v              v
+  [ 1,  4,  3,  6,  5 ]
+
+    L          R           left=1 ODD, right=6 EVEN -> SWAP, both move
+    v          v
+  [ 1,  4,  3,  6,  5 ]
+
+        L  R               after swap -> [6, 4, 3, 1, 5]
+        v  v
+  [ 6,  4,  3,  1,  5 ]
+                           left=4 EVEN -> correct side -> left++
+
+           LR              left (2) is now at right (2)? left=2 right=2
+           v               left < right is FALSE -> loop ends
+  [ 6,  4,  3,  1,  5 ]
+
+    result: [6, 4, 3, 1, 5]   (evens 6,4 first; odds 3,1,5 after)
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Two sorters working from both ends of a line:
+
+    EVENS side -------------------- ODDS side
+       left                          right
+
+    left sees EVEN   ->  keep it, step in  (left  += 1)
+    right sees ODD   ->  keep it, step in  (right -= 1)
+    left ODD + right EVEN  ->  both misplaced  ->  SWAP them
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach        | Time       | Space |
+    | --------------- | ---------- | ----- |
+    | Extra array     | O(n)       | O(n)  |
+    | Sort by parity  | O(n log n) | O(1)  |
+    | Two pointers    | O(n)       | O(1)  |
+
+Each pointer moves at most n times, so O(n) total, in-place.
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION segregateEvenOdd(nums)
+
+        left  <- 0
+        right <- length(nums) - 1
+
+        WHILE left < right
+
+            IF nums[left] is EVEN
+                left <- left + 1
+
+            ELSE IF nums[right] is ODD
+                right <- right - 1
+
+            ELSE
+                SWAP nums[left] and nums[right]
+                left  <- left + 1
+                right <- right - 1
+
+        END WHILE
+
+        RETURN nums
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set left  = 0
+    Set right = length of array - 1
+
+    Repeat while left is less than right
+
+        If the number at left is even
+            It is already on the correct (left) side
+            Move left pointer one step right
+            left = left + 1
+
+        Otherwise if the number at right is odd
+            It is already on the correct (right) side
+            Move right pointer one step left
+            right = right - 1
+
+        Otherwise
+            Left holds an odd and right holds an even (both wrong)
+            Swap the two numbers
+            Move left pointer one step right  (left  = left + 1)
+            Move right pointer one step left  (right = right - 1)
+
+    END Repeat
+
+    Return the rearranged array
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+    +-----------+
+    |   START   |
+    +-----+-----+
+          |
+          v
+    +---------------------+
+    | left  = 0           |
+    | right = n - 1       |
+    +----------+----------+
+               |
+               v
+       +--------------+
+       | left < right |<-------------------+
+       +------+-------+                     |
+              | Yes                         |
+              v                             |
+       +----------------+   Yes             |
+       | nums[left]     +---> left = left+1 -+
+       | is EVEN ?      |                    |
+       +------+---------+                    |
+              | No                           |
+              v                              |
+       +----------------+   Yes              |
+       | nums[right]    +---> right = right-1-+
+       | is ODD ?       |                     |
+       +------+---------+                     |
+              | No                            |
+              v                               |
+       +-----------------------+              |
+       | SWAP nums[left],      |              |
+       |      nums[right]      |              |
+       | left  = left  + 1     |--------------+
+       | right = right - 1     |
+       +-----------------------+
+
+    (when left >= right: loop ends -> RETURN nums)
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I use two pointers, one at the start and one at the end.
+ The left side is for evens, the right side is for odds.
+ - If the left number is already even, I move left inward.
+ - If the right number is already odd, I move right inward.
+ - If the left is odd AND the right is even, both are misplaced,
+   so I swap them and move both pointers inward.
+ I repeat until the pointers meet, leaving every even before
+ every odd, all done in-place.
+
+ Time:  O(n)
+ Space: O(1)
+ It's the Opposite-Ends Partition (two-pointer) pattern."
+
+
+==================================================
+This is the Opposite-Ends Partition technique:
+evens to the left, odds to the right, in a single pass.
+==================================================

@@ -1,0 +1,361 @@
+==================================================
+PARTITION AROUND PIVOT  —  Dutch National Flag
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an array and a pivot VALUE, rearrange it in-place so that:
+    - all elements LESS than pivot come first,
+    - then all elements EQUAL to pivot,
+    - then all elements GREATER than pivot.
+
+Relative order within groups need not be preserved.
+
+Example:
+    nums  = [9, 12, 3, 5, 14, 10, 10]
+    pivot = 10
+
+    < 10  ->  9, 3, 5
+    == 10 ->  10, 10
+    > 10  ->  12, 14
+
+    answer = [9, 3, 5, 10, 10, 12, 14]
+    (any arrangement with  <10 | ==10 | >10  is valid)
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def partitionAroundPivot(nums, pivot):
+
+        low = 0                  # boundary of the "< pivot" region
+        mid = 0
+        high = len(nums) - 1     # boundary of the "> pivot" region
+
+        while mid <= high:
+
+            if nums[mid] < pivot:
+                nums[low], nums[mid] = nums[mid], nums[low]
+                low += 1
+                mid += 1
+
+            elif nums[mid] > pivot:
+                nums[mid], nums[high] = nums[high], nums[mid]
+                high -= 1
+
+            else:  # equal to pivot
+                mid += 1
+
+        return nums
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5   6
+    array:  [ 9, 12,  3,  5, 14, 10, 10 ]   pivot = 10
+
+    low  = 0     (start of unknown region / "< pivot" wall)
+    mid  = 0     (scanner)
+    high = 6     (end of unknown region / "> pivot" wall)
+
+     L
+     M                          H
+     v                          v
+   [ 9, 12,  3,  5, 14, 10, 10 ]
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+We have THREE groups: <pivot, ==pivot, >pivot.
+
+Brute force: make three passes or build new arrays  ->  extra space.
+
+Dutch National Flag uses THREE pointers to sort all three groups
+in a SINGLE in-place pass  ->  O(n) time, O(1) space.
+
+    low  -> everything left of low  is  < pivot
+    mid  -> scanner currently being examined
+    high -> everything right of high is  > pivot
+
+The region  [low .. mid-1]  becomes the ==pivot block as mid advances.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [9,12,3,5,14,10,10], pivot = 10)
+--------------------------------------------------
+
+Iteration 1
+    low=0 mid=0 high=6   nums[mid]=9   9 < 10  -> swap(low,mid), low++, mid++
+    (swaps 9 with itself)   low=1 mid=1 high=6
+
+       L
+       M                       H
+       v                       v
+   [ 9, 12,  3,  5, 14, 10, 10 ]
+
+Iteration 2
+    low=1 mid=1 high=6   nums[mid]=12  12 > 10 -> swap(mid,high), high--
+    swap 12 <-> 10        low=1 mid=1 high=5
+
+       L
+       M                   H
+       v                   v
+   [ 9, 10,  3,  5, 14, 12, 10 ]
+
+Iteration 3
+    low=1 mid=1 high=5   nums[mid]=10  10 == 10 -> mid++
+    low=1 mid=2 high=5
+
+       L   M               H
+       v   v               v
+   [ 9, 10,  3,  5, 14, 12, 10 ]
+
+Iteration 4
+    low=1 mid=2 high=5   nums[mid]=3   3 < 10  -> swap(low,mid), low++, mid++
+    swap 10 <-> 3         low=2 mid=3 high=5
+
+           L   M           H
+           v   v           v
+   [ 9,  3, 10,  5, 14, 12, 10 ]
+
+Iteration 5
+    low=2 mid=3 high=5   nums[mid]=5   5 < 10  -> swap(low,mid), low++, mid++
+    swap 10 <-> 5         low=3 mid=4 high=5
+
+               L   M       H
+               v   v       v
+   [ 9,  3,  5, 10, 14, 12, 10 ]
+
+Iteration 6
+    low=3 mid=4 high=5   nums[mid]=14  14 > 10 -> swap(mid,high), high--
+    swap 14 <-> 10       low=3 mid=4 high=4
+
+               L   M   H
+               v   v   v
+   [ 9,  3,  5, 10, 10, 12, 14 ]
+
+Iteration 7
+    low=3 mid=4 high=4   nums[mid]=10  10 == 10 -> mid++
+    low=3 mid=5 high=4
+
+               L       H   M
+               v       v   v
+   [ 9,  3,  5, 10, 10, 12, 14 ]
+
+    mid (5) > high (4)  ->  loop ends
+
+Output: [9, 3, 5, 10, 10, 12, 14]
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (how to move the pointers)
+--------------------------------------------------
+
+nums[mid] < pivot  (belongs LEFT):
+    swap nums[low] and nums[mid]
+    low  += 1   (grow the "< pivot" wall)
+    mid  += 1   (the swapped-in value was already scanned)
+
+nums[mid] > pivot  (belongs RIGHT):
+    swap nums[mid] and nums[high]
+    high -= 1   (grow the "> pivot" wall)
+    DO NOT move mid  (the swapped-in value is NEW and unchecked)
+
+nums[mid] == pivot  (belongs MIDDLE):
+    mid  += 1   (leave it in place, just advance)
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [2,7,4,7,1], pivot = 7)
+--------------------------------------------------
+
+    L M             H        2 < 7  -> swap(L,M), L++, M++
+    v v             v
+  [ 2,  7,  4,  7,  1 ]
+
+       L  M         H        7 == 7 -> M++
+       v  v         v
+  [ 2,  7,  4,  7,  1 ]
+
+       L     M      H        4 < 7  -> swap(L,M), L++, M++
+       v     v      v
+  [ 2,  7,  4,  7,  1 ]
+
+          L     M   H        7 == 7 -> M++
+          v     v   v
+  [ 2,  4,  7,  7,  1 ]
+
+          L        M H       1 < 7  -> swap(L,M), L++, M++  (swap 7<->1)
+          v        v v
+  [ 2,  4,  7,  7,  1 ]
+
+             L        M (>H) 1 lands left; M passes H -> stop
+             v        v
+  [ 2,  4,  1,  7,  7 ]
+
+    result = [2, 4, 1, 7, 7]   (<7 | ==7 | nothing >7)
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Three buckets, one scanner (mid) walking the line:
+
+    [ < pivot ][ == pivot ][ unknown ][ > pivot ]
+       low^        mid^                  ^high
+
+    smaller  ->  toss LEFT  (swap low, advance BOTH low & mid)
+    bigger   ->  toss RIGHT (swap high, shrink high, RECHECK mid)
+    equal    ->  keep, just step mid forward
+
+    "Less moves both, Greater holds mid, Equal walks on."
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach          | Time   | Space |
+    | ----------------- | ------ | ----- |
+    | Count + rebuild   | O(n)   | O(n)  |
+    | Dutch flag (this) | O(n)   | O(1)  |
+
+mid (and high) traverse the array once, so O(n) total, in-place.
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION partitionAroundPivot(nums, pivot)
+
+        low  <- 0
+        mid  <- 0
+        high <- length(nums) - 1
+
+        WHILE mid <= high
+
+            IF nums[mid] < pivot
+                SWAP nums[low], nums[mid]
+                low <- low + 1
+                mid <- mid + 1
+
+            ELSE IF nums[mid] > pivot
+                SWAP nums[mid], nums[high]
+                high <- high - 1
+
+            ELSE
+                mid <- mid + 1
+
+        END WHILE
+
+        RETURN nums
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set low  = 0
+    Set mid  = 0
+    Set high = length of array - 1
+
+    Repeat while mid is less than or equal to high
+
+        Look at the value under mid: nums[mid]
+
+        If nums[mid] is less than pivot
+            Swap it into the left region:
+                swap nums[low] and nums[mid]
+            Move left wall:  low = low + 1
+            Move scanner:    mid = mid + 1
+
+        Otherwise if nums[mid] is greater than pivot
+            Swap it into the right region:
+                swap nums[mid] and nums[high]
+            Shrink right wall: high = high - 1
+            Do NOT move mid (must recheck the new value)
+
+        Otherwise (equal to pivot)
+            Leave it; just move scanner: mid = mid + 1
+
+    END Repeat
+
+    Return nums
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+    +-----------+
+    |   START   |
+    +-----+-----+
+          |
+          v
+    +---------------------+
+    | low  = 0            |
+    | mid  = 0            |
+    | high = n - 1        |
+    +----------+----------+
+               |
+               v
+        +--------------+
+        | mid <= high  |<--------------------+
+        +------+-------+                     |
+               | Yes                         |
+               v                             |
+        +-----------------+                  |
+        | nums[mid] <     | Yes              |
+        | pivot ?         +--> swap(low,mid) |
+        +------+----------+    low++; mid++ -+
+               | No                          |
+               v                             |
+        +-----------------+                  |
+        | nums[mid] >     | Yes              |
+        | pivot ?         +--> swap(mid,high)|
+        +------+----------+    high-- -------+
+               | No                          |
+               v                             |
+        +-----------------+                  |
+        | mid = mid + 1   |------------------+
+        +-----------------+
+               |
+               | (mid > high: loop ends)
+               v
+        +-----------------+
+        | RETURN nums     |
+        +--------+--------+
+                 |
+                 v
+             +-------+
+             |  END  |
+             +-------+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"This is the Dutch National Flag pattern with an arbitrary pivot value.
+ I keep three pointers: low marks the end of the < pivot region,
+ high marks the start of the > pivot region, and mid scans forward.
+ - If nums[mid] < pivot, I swap it down to low and advance both low and mid.
+ - If nums[mid] > pivot, I swap it up to high and shrink high, but I do
+   NOT move mid because the swapped-in value is still unchecked.
+ - If nums[mid] == pivot, I just advance mid.
+ The loop runs while mid <= high, so everything is sorted into the three
+ groups in one in-place pass.
+
+ Time:  O(n)
+ Space: O(1)
+ It's the classic three-way partition used in quicksort."
+
+
+==================================================
+This is the Dutch National Flag technique
+generalized to partition around any pivot value.
+==================================================

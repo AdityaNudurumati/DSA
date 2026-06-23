@@ -1,0 +1,301 @@
+==================================================
+REMOVE DUPLICATES FROM SORTED ARRAY  —  Slow / Fast Pointer
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given a SORTED array, remove the duplicates IN-PLACE so that
+each unique element appears only once. Return the count k of
+unique elements; the first k slots must hold the unique values.
+
+Example:
+    nums = [0, 0, 1, 1, 1, 2, 2, 3, 3, 4]
+
+    unique values -> 0, 1, 2, 3, 4
+
+    k = 5
+    nums becomes [0, 1, 2, 3, 4, _, _, _, _, _]
+
+    (the _ slots past index k don't matter)
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def removeDuplicates(nums):
+
+        slow = 1
+
+        for fast in range(1, len(nums)):
+
+            if nums[fast] != nums[fast - 1]:
+                nums[slow] = nums[fast]
+                slow += 1
+
+        return slow
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4
+    array:  [ 0,  0,  1,  1,  2 ]
+
+    slow = 1
+    fast = 1
+
+         S
+         v
+       [ 0,  0,  1,  1,  2 ]
+         ^
+         F
+
+    slow = next free slot for a unique value
+    fast = scanner that walks the whole array
+
+
+--------------------------------------------------
+4. WHY SLOW / FAST POINTERS?
+--------------------------------------------------
+The array is SORTED, so duplicates always sit next to each other.
+
+Brute force: build a fresh array / use a set  ->  extra O(n) space:
+    seen = set(); result = []
+    for x in nums: if x not in seen ...
+
+Slow / fast pointers fix it IN-PLACE in one pass:
+    fast scans every element,
+    slow marks where the next unique value belongs.
+    ->  O(n) time, O(1) space.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [0,0,1,1,2])
+--------------------------------------------------
+
+Start
+    slow = 1
+         S
+         v
+       [ 0,  0,  1,  1,  2 ]
+
+fast=1
+    nums[1]=0  nums[0]=0  ->  equal  ->  skip (duplicate)
+         S
+         v
+       [ 0,  0,  1,  1,  2 ]
+         ^
+         F
+
+fast=2
+    nums[2]=1  nums[1]=0  ->  different  ->  unique!
+    nums[slow=1] = 1 ; slow becomes 2
+             S
+             v
+       [ 0,  1,  1,  1,  2 ]
+             ^
+             F
+
+fast=3
+    nums[3]=1  nums[2]=1  ->  equal  ->  skip (duplicate)
+             S
+             v
+       [ 0,  1,  1,  1,  2 ]
+                 ^
+                 F
+
+fast=4
+    nums[4]=2  nums[3]=1  ->  different  ->  unique!
+    nums[slow=2] = 2 ; slow becomes 3
+                 S
+                 v
+       [ 0,  1,  2,  1,  2 ]
+                     ^
+                     F
+
+Loop ends. return slow = 3
+First 3 slots = [0, 1, 2]   (the unique values)
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (how to move the pointers)
+--------------------------------------------------
+
+fast ALWAYS moves forward every iteration (it scans all elements).
+
+slow only advances when a NEW unique value is found:
+
+    nums[fast] == nums[fast-1]  (same as neighbour):
+        duplicate  ->  do nothing, slow stays put
+
+    nums[fast] != nums[fast-1]  (new value):
+        copy it forward:  nums[slow] = nums[fast]
+        then  slow += 1
+
+So slow always points at the next free slot for a unique value.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [1,1,2,3,3])
+--------------------------------------------------
+
+    slow=1
+         S                      start
+         v
+       [ 1,  1,  2,  3,  3 ]
+         ^
+         F  (fast=1)
+
+  fast=1: 1 == 1  -> duplicate  -> skip
+  fast=2: 2 != 1  -> unique  -> nums[1]=2, slow=2
+  fast=3: 3 != 2  -> unique  -> nums[2]=3, slow=3
+  fast=4: 3 == 3  -> duplicate  -> skip
+
+    return slow = 3
+    first 3 slots = [1, 2, 3]
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Two runners on the same track, both heading the SAME way:
+
+    SLOW -------> places unique values
+    FAST -------> scouts ahead looking for new ones
+
+    same as neighbour  ->  fast runs on alone
+    new value          ->  hand it back to slow, slow steps forward
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach        | Time   | Space |
+    | --------------- | ------ | ----- |
+    | Set / new array | O(n)   | O(n)  |
+    | Slow / fast     | O(n)   | O(1)  |
+
+fast visits each element once -> O(n) time.
+Everything is done in-place -> O(1) extra space.
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION removeDuplicates(nums)
+
+        slow <- 1
+
+        FOR fast FROM 1 TO length(nums) - 1
+
+            IF nums[fast] != nums[fast - 1]
+                nums[slow] <- nums[fast]
+                slow <- slow + 1
+
+        END FOR
+
+        RETURN slow
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set slow = 1   (first slot is already a unique value)
+
+    Repeat fast from 1 up to the last index
+
+        Compare current element with the one before it:
+            current = nums[fast]
+            previous = nums[fast - 1]
+
+        If current is different from previous
+            (this is a brand new unique value)
+            Copy it into the slow slot:
+                nums[slow] = nums[fast]
+            Move slow one step forward:
+                slow = slow + 1
+
+        Otherwise (it is the same -> a duplicate)
+            Do nothing, just let fast move on
+
+    END Repeat
+
+    Return slow  (the count of unique elements)
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +---------------------+
+    | slow = 1            |
+    | fast = 1            |
+    +---------+-----------+
+              |
+              v
+       +--------------+
+       | fast < n     |<------------+
+       +------+-------+              |
+              | Yes                  |
+              v                      |
+       +-------------------------+   |
+       | nums[fast] !=           |   |
+       | nums[fast-1] ?          |   |
+       +------+-----------+------+   |
+              | Yes       | No       |
+              v           |          |
+    +--------------------+|          |
+    | nums[slow]=        ||          |
+    |     nums[fast]     ||          |
+    | slow = slow + 1    ||          |
+    +---------+----------+|          |
+              |           |          |
+              v           v          |
+           +-----------------+       |
+           | fast = fast + 1 |-------+
+           +-----------------+
+              |
+              | (when fast reaches n: loop ends)
+              v
+       +---------------+
+       | RETURN slow   |
+       +-------+-------+
+               |
+               v
+            +-----+
+            | END |
+            +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"Because the array is sorted, duplicates are always next to each
+ other, so I use two pointers moving the same direction.
+ - 'fast' scans every element.
+ - 'slow' marks where the next unique value should go.
+ For each element I compare it with its previous neighbour:
+ - If it's the same, it's a duplicate, so I just skip it.
+ - If it's different, it's new, so I copy it to the slow slot and
+   advance slow.
+ At the end slow is the count of unique elements, done in-place.
+
+ Time:  O(n)
+ Space: O(1)
+ It's the standard slow/fast same-direction two-pointer pattern."
+
+
+==================================================
+This is the classic in-place de-duplication using
+the SLOW / FAST (same-direction) two-pointer pattern.
+==================================================

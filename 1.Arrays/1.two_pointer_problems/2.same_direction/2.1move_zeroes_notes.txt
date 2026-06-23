@@ -1,0 +1,272 @@
+==================================================
+MOVE ZEROES  —  Slow / Fast Pointers (Same Direction)
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an integer array, move all 0s to the END while
+keeping the relative order of the non-zero elements.
+Must be done IN-PLACE (no extra array).
+
+Example:
+    nums = [0, 1, 0, 3, 12]
+
+    move every 0 to the back, keep 1, 3, 12 in order
+
+    answer = [1, 3, 12, 0, 0]
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def moveZeroes(nums):
+        slow = 0
+
+        for fast in range(len(nums)):
+            if nums[fast] != 0:
+                nums[slow], nums[fast] = nums[fast], nums[slow]
+                slow += 1
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4
+    array:  [ 0,  1,  0,  3, 12 ]
+
+    slow = 0   (next slot for a non-zero)
+    fast = 0   (scans every element)
+
+         S
+         F
+         v
+       [ 0,  1,  0,  3, 12 ]
+
+    Both start at the front and move the SAME direction (->).
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Brute force: build a NEW array, copy non-zeros first, then
+pad zeros at the end  ->  O(n) time but O(n) extra SPACE.
+
+Slow/Fast pointers do it IN-PLACE in one pass:
+    - fast finds the next non-zero
+    - slow marks where that non-zero belongs
+    - swap them, then advance slow
+Result  ->  O(n) time, O(1) space.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [0,1,0,3,12])
+--------------------------------------------------
+
+Iteration 1
+    fast=0  slow=0   nums[fast]=0  ->  zero, skip (slow stays)
+
+         S
+         F
+         v
+       [ 0,  1,  0,  3, 12 ]
+
+Iteration 2
+    fast=1  slow=0   nums[fast]=1  ->  swap(0,1), slow -> 1
+
+         S   F
+         v   v
+       [ 1,  0,  0,  3, 12 ]
+
+Iteration 3
+    fast=2  slow=1   nums[fast]=0  ->  zero, skip (slow stays)
+
+             S   F
+             v   v
+       [ 1,  0,  0,  3, 12 ]
+
+Iteration 4
+    fast=3  slow=1   nums[fast]=3  ->  swap(1,3), slow -> 2
+
+             S       F
+             v       v
+       [ 1,  3,  0,  0, 12 ]
+
+Iteration 5
+    fast=4  slow=2   nums[fast]=12 ->  swap(2,4), slow -> 3
+
+                 S       F
+                 v       v
+       [ 1,  3, 12,  0,  0 ]
+
+Output: [1, 3, 12, 0, 0]
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (how to move the pointers)
+--------------------------------------------------
+
+fast hits a ZERO  (nums[fast] == 0):
+    do nothing, just let fast keep scanning
+    (slow stays put, "waiting" for a non-zero)
+
+fast hits a NON-ZERO  (nums[fast] != 0):
+    swap nums[slow] and nums[fast]
+    advance slow += 1
+
+slow always points to the slot where the NEXT non-zero
+should land. Everything before slow is already correct.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [4,0,5,0,0,6])
+--------------------------------------------------
+
+    S  F                4 != 0  -> swap(0,0), slow -> 1
+    v  v
+  [ 4,  0,  5,  0,  0,  6 ]
+
+       S     F          0       -> skip
+       v     v
+  [ 4,  0,  5,  0,  0,  6 ]
+
+       S        F       5 != 0  -> swap(1,2), slow -> 2
+       v        v
+  [ 4,  5,  0,  0,  0,  6 ]
+
+          S           F  6 != 0  -> swap(2,5), slow -> 3
+          v           v
+  [ 4,  5,  6,  0,  0,  0 ]
+
+    result = [4, 5, 6, 0, 0, 0]
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Two runners on the same track, moving the same way:
+
+    front ----------------------------> back
+      slow                        fast
+
+    fast = scout  (runs ahead, finds non-zeros)
+    slow = wall   (holds the boundary of placed non-zeros)
+
+    found a non-zero  ->  swap it back to slow, push wall forward
+    found a zero      ->  leave it, only fast moves
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach        | Time   | Space |
+    | --------------- | ------ | ----- |
+    | New array       | O(n)   | O(n)  |
+    | Slow / Fast     | O(n)   | O(1)  |
+
+fast visits each element once, so O(n) total, no extra array.
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION moveZeroes(nums)
+
+        slow <- 0
+
+        FOR fast FROM 0 TO length(nums) - 1
+
+            IF nums[fast] != 0
+                SWAP nums[slow] AND nums[fast]
+                slow <- slow + 1
+
+        END FOR
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set slow = 0   (where the next non-zero goes)
+
+    Repeat fast from 0 to last index
+
+        Look at nums[fast]
+
+        If nums[fast] is NOT zero
+            Swap nums[slow] with nums[fast]
+            Move slow one step right
+            slow = slow + 1
+
+        Otherwise (it is zero)
+            Do nothing, just continue
+            (only fast moves forward)
+
+    END Repeat
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +---------------------+
+    | slow = 0            |
+    | fast = 0            |
+    +----------+----------+
+               |
+               v
+       +----------------+
+       | fast < n ?     |<-------------+
+       +-------+--------+              |
+               | Yes                  |
+               v                      |
+       +----------------+             |
+       | nums[fast]     | No          |
+       | != 0 ?         +-------------+
+       +-------+--------+             |
+               | Yes                 |
+               v                     |
+    +----------------------------+   |
+    | swap nums[slow], nums[fast]|   |
+    | slow = slow + 1            |   |
+    +-------------+--------------+   |
+                  |                  |
+                  v                  |
+            (fast = fast + 1) -------+
+               |
+               | No (fast >= n)
+               v
+          +---------+
+          |   END   |
+          +---------+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I use two pointers moving the same direction: slow and fast.
+ fast scans every element, while slow marks where the next
+ non-zero belongs.
+ - If nums[fast] is zero, I skip it and only fast moves.
+ - If nums[fast] is non-zero, I swap it into the slow slot
+   and advance slow.
+ This packs all non-zeros to the front in order, pushing the
+ zeros to the end, all in-place in a single pass.
+
+ Time:  O(n)
+ Space: O(1)
+ It's the standard slow/fast (same-direction) two-pointer pattern."
+
+
+==================================================
+This is the classic same-direction two-pointer
+technique: keep good elements in front, in-place.
+==================================================
