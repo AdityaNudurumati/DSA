@@ -553,6 +553,329 @@ Interview memory trick:
         else:                    right -= 1
 
 
+--------------------------------------------------
+16. EXPLAIN LIKE I'M 5  —  THE BLOCKS-AND-RAIN STORY
+--------------------------------------------------
+Imagine you're 5 years old and playing with blocks.
+
+Blocks  [3, 0, 3]:
+    |   |
+    |   |          The two tall blocks are like walls.
+    |   |
+    -----
+    3 0 3
+
+Now it rains.  Where does the water go?
+    | ~ |
+    | ~ |          The middle space fills with water.
+    | ~ |          How much?  3 units.  Easy.
+    -----
+    3 0 3
+
+Blocks  [3, 1, 3]:
+    |   |              | ~ |
+    | | |   rain ->    | | |     middle is already height 1,
+    | | |              | | |     walls are 3, so water fills
+    -----              -----     3 - 1 = 2 units
+    3 1 3              3 1 3
+
+Blocks  [3, 2, 3]:
+    |   |              | ~ |
+    | | |   rain ->    | | |     only 3 - 2 = 1 unit
+    | | |              | | |
+    -----              -----
+    3 2 3              3 2 3
+
+What if one wall is shorter?  [5, 0, 2]
+    |                  |
+    |                  |
+    |                  |
+    |     |            |~~~~~|       You might think water = 5
+    |     |            |~~~~~|       because the left wall is 5.
+    -------            -------       NO! The right wall is only 2.
+    5 0 2              5 0 2         Water spills over the short wall.
+                                     Like a bucket with one short side:
+                                     water = 2 - 0 = 2
+
+BIG IDEA:
+    Water listens to the SHORTER wall, not the taller wall.
+
+    [10, 0, 4]:  tall wall 10, short wall 4.
+    Water says: "I can only stay up to height 4, then I spill out."
+
+The formula at every position:
+    water = (smaller wall) - (current height)
+          = min(maxLeft, maxRight) - height[i]
+
+Now the two pointers  [4,2,0,3,2,5]:
+    4 2 0 3 2 5
+    L         R
+    Left wall = 4,  right wall = 5.  Which is shorter?  4 < 5, the LEFT.
+    Water listens to the shorter wall, so the level on the left is
+    ALREADY decided by 4 - we don't need the right side yet.
+    Safe to compute the left, so we move:  left += 1
+
+Kid story version:
+    Left Giant = 4 feet,  Right Giant = 5 feet.
+    Water: "How high can I go?"
+    Giants: "Only as high as the SHORTER giant" (else you fall over it).
+    Water picks 4 feet.
+
+    Left Giant = 8,  Right Giant = 3  ->  water picks 3 feet.
+
+Why is moving the smaller side safe?
+    Left Giant = 4, Right Giant = 100      -> water level = 4
+    Left Giant = 4, Right Giant = 1000     -> water level = 4
+    Left Giant = 4, Right Giant = 1,000,000-> water level = 4
+
+    Once the right wall is taller than 4, its exact height does NOT
+    matter. So we can process the left side immediately. That is the
+    magic behind:  if left_max < right_max:
+
+One last picture (cups):
+    Tall Cup      Short Cup
+       |             |
+       |             |
+       |             |
+       |        _____|
+    ___|_______|
+    Water can only stay up to the SHORT cup's height, not the tall one.
+
+Trapping Rain Water = how much water stays before spilling over the
+shortest wall.
+
+
+--------------------------------------------------
+17. CARTOON STORY  —  EVERY FRAME OF [4,2,0,3,2,5]
+--------------------------------------------------
+Each number is a wall.
+    Index:  0 1 2 3 4 5
+    Height: 4 2 0 3 2 5
+
+                    |
+    |               |
+    |     |         |
+    | |   | |       |
+    | |   | |       |
+    -------------------
+    4 2 0 3 2 5
+
+Frame 0: Start
+                    |
+    |               |
+    |     |         |
+    | |   | |       |
+    | |   | |       |
+    -------------------
+    L               R
+    4 2 0 3 2 5
+
+    left = 0   right = 5   left_max = 4   right_max = 5   water = 0
+    Compare 4 < 5  ->  left wall is shorter  ->  MOVE LEFT
+
+Frame 1: Visit index 1
+                    |
+    |               |
+    |     |         |
+    | |   | |       |
+    | |   | |       |
+    -------------------
+        L           R
+    4 2 0 3 2 5
+
+    height[1] = 2,  left_max = 4
+    Water can rise to 4, wall is 2  ->  stored 4 - 2 = 2
+
+                    |
+    |               |
+    |~~~~           |
+    |~|~~ | |       |
+    |~|~~ | |       |
+    -------------------
+    4 2 0 3 2 5
+
+    water += 2   ->   water = 2
+
+Frame 2: Visit index 2  (move left)
+                    |
+    |               |
+    |     |         |
+    | |   | |       |
+    | |   | |       |
+    -------------------
+          L         R
+    4 2 0 3 2 5
+
+    height[2] = 0,  left_max = 4  ->  water = 4 - 0 = 4
+
+                    |
+    |               |
+    |~~~~~~~        |
+    |~|~~~~| |      |
+    |~|~~~~| |      |
+    -------------------
+    4 2 0 3 2 5
+
+    water += 4   ->   water = 6
+
+Frame 3: Visit index 3  (move left)
+                    |
+    |               |
+    |     |         |
+    | |   | |       |
+    | |   | |       |
+    -------------------
+            L       R
+    4 2 0 3 2 5
+
+    height[3] = 3,  left_max = 4  ->  water = 4 - 3 = 1
+
+                    |
+    |               |
+    |~~~~~~~~       |
+    |~|~~~~|~|      |
+    |~|~~~~|~|      |
+    -------------------
+    4 2 0 3 2 5
+
+    water += 1   ->   water = 7
+
+Frame 4: Visit index 4  (move left)
+                    |
+    |               |
+    |     |         |
+    | |   | |       |
+    | |   | |       |
+    -------------------
+              L     R
+    4 2 0 3 2 5
+
+    height[4] = 2,  left_max = 4  ->  water = 4 - 2 = 2
+
+                    |
+    |               |
+    |~~~~~~~~~~     |
+    |~|~~~~|~|~~    |
+    |~|~~~~|~|~|    |
+    -------------------
+    4 2 0 3 2 5
+
+    water += 2   ->   water = 9
+
+Frame 5: Stop  (pointers meet)
+    Count all water:
+        index 1 = 2
+        index 2 = 4
+        index 3 = 1
+        index 4 = 2
+        total   = 2 + 4 + 1 + 2 = 9
+
+    Answer = 9
+
+The secret that makes two pointers work:
+    At every frame left_max = 4 and right_max = 5. Since 4 < 5, the
+    water level is GUARANTEED to be limited by 4, so we never need to
+    look at the right side. That is why we safely keep moving left.
+
+        Left Wall = 4 feet,  Right Wall = 5 feet
+        Water: "How high can I go?"  ->  "Only 4, the shorter wall."
+
+    So at each new left position:  water_here = 4 - current_height,
+    and we add it immediately.
+
+
+--------------------------------------------------
+18. THE BIG CONFUSION  —  "HOW CAN TWO POINTERS
+    WORK IF I NEED maxLeft AND maxRight EVERYWHERE?"
+--------------------------------------------------
+You already understood:  water[i] = min(maxLeft, maxRight) - height[i].
+The confusion is: "If I need maxLeft AND maxRight for EVERY position,
+how can two pointers solve it?"  Great question.
+
+First, the brute force:
+    height = [0,1,0,2,1,0,1,3,2,1,2,1]
+    For index 5:  maxLeft = 2, maxRight = 3  ->  water = 2
+    For index 6:  compute maxLeft, maxRight again...
+    For index 7:  again...
+    For index 8:  again...
+    -> the same left/right scans repeat over and over  ->  O(n^2).
+
+Two-pointer idea:
+    Instead of asking "what is maxLeft and maxRight for EVERY index?",
+    ask "can I determine the water for ONE side RIGHT NOW?"
+
+    height = [4,2,0,3,2,5]
+        4 2 0 3 2 5
+        L         R
+    left = 0  right = 5  left_max = 4  right_max = 5
+
+    left_max  = highest wall seen from the LEFT  so far  = 4
+    right_max = highest wall seen from the RIGHT so far  = 5
+
+The magic question:  which is smaller?  min(4, 5) = 4.
+
+Why does that matter?  water = min(maxLeft, maxRight), and:
+        even if the right side were 50, 500, or 5000,
+        min(4, 5000) is STILL 4.
+    The left side is already the limiter. So for the next left
+    position (index 1, height 2) we already KNOW:
+        water = 4 - 2 = 2          (no need to look right at all!)
+    Therefore: left += 1.
+
+Walk it:
+        4 2 0 3 2 5
+        L         R        left_max=4 < right_max=5  ->  move LEFT
+
+        4 2 0 3 2 5
+          L       R        wall = 2  ->  water = 4 - 2 = 2   (add 2)
+
+        4 2 0 3 2 5        still left_max=4 < right_max=5  ->  move LEFT
+            L     R        wall = 0  ->  water = 4 - 0 = 4   (add 4)
+
+Why don't we calculate maxRight here?
+    Because we already KNOW right_max >= left_max. The shorter wall is
+    left_max, and that alone decides the water level on the left.
+
+What if the opposite happens?
+        8 2 0 3 2 5
+        L         R        left_max = 8, right_max = 5
+    Now the smaller side is 5 (the RIGHT), so the right wall limits the
+    water and we process:  right -= 1  instead.
+
+The real secret  (two pointers are NOT finding water at every index
+directly; they repeat this loop):
+    1. find which side is smaller
+    2. process that side  (bank its water)
+    3. move that pointer inward
+    4. update that side's max
+    5. repeat
+
+Think of two security guards:
+        4 2 0 3 2 5
+        ^         ^
+    Each guard remembers the highest wall seen so far on their side.
+    Whichever guard has the SMALLER wall, min(left_max, right_max),
+    gets to move - because that smaller wall decides the water level.
+
+The entire algorithm:
+    while left < right:
+        if left_max < right_max:
+            left += 1
+            left_max = max(left_max, height[left])
+            water   += left_max - height[left]
+        else:
+            right -= 1
+            right_max = max(right_max, height[right])
+            water    += right_max - height[right]
+
+The key realization:
+    We are NOT computing maxLeft and maxRight for every index. Instead,
+    at every step, when left_max < right_max we know with 100%
+    certainty that the water on the left is already determined, so we
+    bank it immediately. That is exactly why this is O(n) instead of
+    repeatedly scanning left and right for each position.
+
+
 ==================================================
 The shorter wall decides the level: advance the
 smaller-max side and bank its trapped water.
