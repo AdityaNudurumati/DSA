@@ -295,6 +295,77 @@ Everything is done in-place -> O(1) extra space.
  It's the standard slow/fast same-direction two-pointer pattern."
 
 
+--------------------------------------------------
+14. EXPLAIN LIKE I'M 5  —  THE TWO HELPER BLOCKS
+--------------------------------------------------
+Imagine a line of toy blocks with numbers on them:
+    [0, 0, 1, 1, 1, 2, 2, 3, 3, 4]
+Some numbers repeat, but you only want ONE copy of each:
+    [0, 1, 2, 3, 4]
+
+Meet the two helpers:
+    SLOW (turtle)  marks "where do I place the next NEW number?"
+    FAST (rabbit)  runs ahead looking for new numbers.
+
+Initial setup:
+    slow = 1   (the very first number is always unique, so it stays)
+    fast starts at index 1
+
+    index: 0 1 2 3 4 5 6 7 8 9
+    nums:  0 0 1 1 1 2 2 3 3 4
+             ^
+            slow
+
+Step 1: fast at index 1
+    0 0 1 1 1 2 2 3 3 4
+    ^ ^
+    nums[1] == nums[0]  ->  0 == 0  ->  duplicate!  skip, move fast.
+
+Step 2: fast at index 2
+    0 0 1 1 1 2 2 3 3 4
+        ^
+    1 != 0  ->  NEW number!  put it where slow points:
+        nums[slow] = nums[fast]
+        before: [0, 0, 1, 1, 1, 2, 2, 3, 3, 4]
+        after:  [0, 1, 1, 1, 1, 2, 2, 3, 3, 4]
+        slow = 2
+
+Step 3: fast sees another 1  ->  1 == 1  ->  duplicate, skip.
+
+Step 4: fast reaches 2  ->  2 != 1  ->  NEW! copy to slow:
+        [0, 1, 2, 1, 1, 2, 2, 3, 3, 4]
+        slow = 3
+
+Continue: another 2 -> skip,  3 -> copy,  another 3 -> skip,  4 -> copy
+    [0, 1, 2, 3, 4, 2, 2, 3, 3, 4]
+     \---first 5---/  <- only these matter
+       [0, 1, 2, 3, 4]
+
+What does slow mean at the end?
+    slow = 5  ->  "there are 5 unique numbers"  ->  k = 5
+    nums[:k] = [0, 1, 2, 3, 4]
+
+Visual animation  (S = slow, F = fast):
+    [0,0,1,1,1,2,2,3,3,4]      start
+     S F
+    [0,0,1,1,1,2,2,3,3,4]      0==0 duplicate -> skip
+     S   F
+    [0,1,1,1,1,2,2,3,3,4]      found 1 -> copy to S
+       S   F
+    [0,1,2,1,1,2,2,3,3,4]      found 2 -> copy to S
+         S     F
+    [0,1,2,3,1,2,2,3,3,4]      found 3 -> copy to S
+           S       F
+    [0,1,2,3,4,2,2,3,3,4]      found 4 -> copy to S
+             S
+
+Kid's rule:
+    Think of SLOW as a basket for unique numbers. FAST runs through
+    all the blocks. Whenever FAST shouts "I found a new number!",
+    SLOW drops it into the next empty spot. At the end, all the unique
+    numbers are neatly packed at the FRONT of the array.
+
+
 ==================================================
 This is the classic in-place de-duplication using
 the SLOW / FAST (same-direction) two-pointer pattern.
