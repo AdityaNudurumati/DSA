@@ -1,0 +1,392 @@
+==================================================
+MERGE SORT  —  Divide and Conquer, Stable Sort
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Sort an integer array in ascending order using Merge Sort.
+
+Split the array into two halves, recursively sort each half,
+then MERGE the two sorted halves back into one sorted array.
+
+The merge takes the smaller front element each step, breaking
+ties in favor of the LEFT half, so equal elements keep their
+original order (this makes it STABLE).
+
+Example:
+    nums = [5, 2, 8, 1, 9, 3]
+
+    -> [1, 2, 3, 5, 8, 9]
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def merge(left, right):
+
+        merged = []
+        i = j = 0
+        # walk both sorted halves, taking the smaller front each time
+        while i < len(left) and j < len(right):
+            if left[i] <= right[j]:   # <= keeps it stable (left wins ties)
+                merged.append(left[i]); i += 1
+            else:
+                merged.append(right[j]); j += 1
+        # append whatever remains (only one of these is non-empty)
+        merged.extend(left[i:])
+        merged.extend(right[j:])
+        return merged
+
+
+    def mergeSort(nums):
+
+        # 0 or 1 element is already sorted
+        if len(nums) <= 1:
+            return nums
+
+        mid = len(nums) // 2
+        left = mergeSort(nums[:mid])
+        right = mergeSort(nums[mid:])
+        return merge(left, right)
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5
+    array:  [ 5,  2,  8,  1,  9,  3 ]
+
+    mid = len(nums) // 2 = 6 // 2 = 3
+
+    split into two halves:
+
+        left  = [ 5,  2,  8 ]     (index 0..2)
+        right = [ 1,  9,  3 ]     (index 3..5)
+
+              SPLIT HERE
+                  |
+       [ 5,  2,  8 | 1,  9,  3 ]
+                  v
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH?  (Divide and Conquer)
+--------------------------------------------------
+A big unsorted array is hard to sort directly.
+So we break the problem into smaller easy pieces:
+
+    1. DIVIDE  -> split the array in half.
+    2. CONQUER -> recursively sort each half
+                  (a half of size 1 is already sorted).
+    3. COMBINE -> merge the two sorted halves.
+
+Merging two ALREADY sorted lists is cheap: just compare the
+front of each and pick the smaller one. That single trick is
+what makes the whole thing fast and reliable.
+
+Unlike quicksort, the split is always a clean half, so the
+depth is ALWAYS log n and the time is ALWAYS O(n log n) —
+no worst-case blow-up.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [5,2,8,1,9,3])
+--------------------------------------------------
+
+STEP A — SPLIT (recursion breaks it down to single elements)
+
+    [ 5, 2, 8, 1, 9, 3 ]
+              |
+       -------+-------
+       |             |
+    [5,2,8]       [1,9,3]
+       |             |
+     --+--         --+--
+     |   |         |   |
+    [5] [2,8]     [1] [9,3]
+         |             |
+        -+-           -+-
+        |  |          |  |
+       [2] [8]       [9] [3]
+
+    Everything is now size 1 -> each piece is "sorted".
+
+
+STEP B — MERGE (combine sorted halves back up, bottom to top)
+
+    merge [2] + [8]:
+        2 <= 8  -> take 2      -> [2]
+        left done, append [8]  -> [2, 8]
+
+    merge [5] + [2,8]:
+        5 <= 2 ? no -> take 2   -> [2]
+        5 <= 8 ? yes -> take 5  -> [2, 5]
+        left done, append [8]   -> [2, 5, 8]
+
+    LEFT HALF sorted -> [2, 5, 8]
+
+    merge [9] + [3]:
+        9 <= 3 ? no -> take 3   -> [3]
+        left done, append [9]   -> [3, 9]
+
+    merge [1] + [3,9]:
+        1 <= 3 ? yes -> take 1  -> [1]
+        left done, append [3,9] -> [1, 3, 9]
+
+    RIGHT HALF sorted -> [1, 3, 9]
+
+
+STEP C — FINAL MERGE:  [2,5,8]  +  [1,3,9]
+
+        i=0 j=0   2 <= 1 ? no  -> take 1   -> [1]
+        i=0 j=1   2 <= 3 ? yes -> take 2   -> [1,2]
+        i=1 j=1   5 <= 3 ? no  -> take 3   -> [1,2,3]
+        i=1 j=2   5 <= 9 ? yes -> take 5   -> [1,2,3,5]
+        i=2 j=2   8 <= 9 ? yes -> take 8   -> [1,2,3,5,8]
+        left done, append right[2:] = [9]  -> [1,2,3,5,8,9]
+
+Output: [1, 2, 3, 5, 8, 9]
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+
+Two ideas multiply together:
+
+    (a) MERGING two sorted lists is O(n).
+        Each side has a pointer at its front. Compare the two
+        fronts, take the smaller, advance that pointer.
+        Every element is copied exactly once per merge.
+
+            left  = [2, 5, 8]      right = [1, 3, 9]
+                     ^                      ^
+                     i                      j
+             pick min(left[i], right[j]), advance that pointer
+
+    (b) RECURSION DEPTH is log n.
+        Halving repeatedly: n -> n/2 -> n/4 -> ... -> 1.
+        That is log2(n) levels.
+
+    Each of the log n levels does O(n) total merge work,
+    so:   O(n) * O(log n)  =  O(n log n).
+
+The <= in "left[i] <= right[j]" is what keeps it STABLE:
+on a tie, the LEFT element (the earlier one) goes first.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [3, 3, 1])
+--------------------------------------------------
+
+    SPLIT:
+        [3a, 3b, 1]        mid = 3 // 2 = 1
+              |
+           ---+---
+           |     |
+         [3a]  [3b, 1]
+                  |
+                --+--
+                |   |
+              [3b] [1]
+
+    MERGE [3b] + [1]:
+        3 <= 1 ? no -> take 1   -> [1]
+        left done, append [3b]  -> [1, 3b]
+
+    MERGE [3a] + [1, 3b]:
+        3a <= 1 ? no  -> take 1        -> [1]
+        3a <= 3b ? yes -> take 3a      -> [1, 3a]   (tie: left wins)
+        left done, append [3b]         -> [1, 3a, 3b]
+
+    Output: [1, 3, 3]
+    Note 3a stayed before 3b  ->  STABLE.
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Think "SPLIT down, MERGE up":
+
+           split, split, split ...   (break to single items)
+                    \
+                     v  reach size 1
+                    /
+           merge, merge, merge ...   (zip sorted halves back)
+
+Merging is like shuffling two sorted decks of cards:
+flip whichever top card is smaller onto the output pile,
+until both decks are empty.
+
+    "Divide in half, sort each, zip them together."
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Case    | Time       | Space |
+    | ------- | ---------- | ----- |
+    | Best    | O(n log n) | O(n)  |
+    | Average | O(n log n) | O(n)  |
+    | Worst   | O(n log n) | O(n)  |
+
+    Stable: YES  (<= tie-break keeps left element first)
+
+Time is O(n log n) in EVERY case (clean half-split every time).
+Space is O(n) for the merge buffer (the temporary merged list).
+This is optimal for comparison sorts: Omega(n log n) lower bound.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION mergeSort(nums)
+        IF length(nums) <= 1
+            RETURN nums
+
+        mid   <- length(nums) / 2
+        left  <- mergeSort(nums[0 .. mid-1])
+        right <- mergeSort(nums[mid .. end])
+        RETURN merge(left, right)
+    END FUNCTION
+
+
+    FUNCTION merge(left, right)
+        merged <- empty list
+        i <- 0
+        j <- 0
+
+        WHILE i < length(left) AND j < length(right)
+            IF left[i] <= right[j]
+                append left[i] to merged;  i <- i + 1
+            ELSE
+                append right[j] to merged; j <- j + 1
+
+        append remaining left[i ..]  to merged
+        append remaining right[j ..] to merged
+        RETURN merged
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    To SORT a list:
+        If the list has 0 or 1 element
+            It is already sorted -> return it as is.
+
+        Find the middle position.
+        Cut the list into a left half and a right half.
+
+        Sort the left half  (call SORT on it).
+        Sort the right half (call SORT on it).
+
+        Now MERGE the two sorted halves:
+
+            Put a finger at the start of each half.
+
+            Repeat while BOTH halves still have elements:
+                Compare the two fingered elements.
+                If left one is smaller or equal
+                    Copy it out, move the left finger forward.
+                Otherwise
+                    Copy it out, move the right finger forward.
+
+            One half is now empty.
+            Copy every leftover element from the other half.
+
+        Return the merged (fully sorted) list.
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+
+    RECURSION (split down, merge up):
+
+              +-----------------------+
+              | mergeSort(nums)       |
+              +-----------+-----------+
+                          |
+                          v
+                  +----------------+       Yes
+                  | len(nums) <= 1 |----------> RETURN nums
+                  +--------+-------+
+                          | No
+                          v
+              +-------------------------+
+              | mid = len(nums) // 2    |
+              +-----------+-------------+
+                          |
+             +------------+------------+
+             |                         |
+             v                         v
+    +------------------+      +-------------------+
+    | left =           |      | right =           |
+    | mergeSort(       |      | mergeSort(        |
+    |   nums[:mid])    |      |   nums[mid:])     |
+    +--------+---------+      +---------+---------+
+             |                          |
+             +-----------+--------------+
+                         |
+                         v
+              +----------------------+
+              | merge(left, right)   |
+              +----------+-----------+
+                         |
+                         v
+                    RETURN merged
+
+
+    MERGE step (two sorted halves -> one):
+
+        left:  [ ... i ... ]      right: [ ... j ... ]
+                    ^                          ^
+                    +------------+-------------+
+                                 |
+                                 v
+                       +--------------------+      Yes    +----------------+
+                       | left[i] <= right[j]|----------->| take left[i]   |
+                       +---------+----------+            | i = i + 1      |
+                                 | No                    +--------+-------+
+                                 v                                |
+                       +--------------------+                     |
+                       | take right[j]      |                     |
+                       | j = j + 1          |                     |
+                       +---------+----------+                     |
+                                 |                                |
+                                 +----------------+---------------+
+                                                  |
+                                                  v
+                              (loop until one half empties,
+                               then append the leftovers)
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"Merge Sort is divide and conquer. I split the array into two
+ halves, recursively sort each half, and then merge the two
+ sorted halves into one.
+ - Merging is cheap: I compare the front of each half and take
+   the smaller one, so merging two sorted lists is O(n).
+ - Because I always split in half, the recursion is log n deep,
+   and each level does O(n) merge work.
+ - Using <= on ties keeps equal elements in original order,
+   so it's stable.
+ The clean half-split means it's O(n log n) in ALL cases,
+ with no worst-case blow-up like quicksort.
+
+ Time:  O(n log n)  (best, average, worst)
+ Space: O(n)        (merge buffer)"
+
+
+==================================================
+This is the classic STABLE, divide-and-conquer
+sort with a guaranteed O(n log n) running time.
+==================================================

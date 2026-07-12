@@ -56,8 +56,8 @@ Example:
     high = 5
 
       low
-      mid                     high
-       v                       v
+      mid                 high
+       v                   v
      [ 2,  0,  2,  1,  1,  0 ]
 
     Three regions the pointers build up:
@@ -181,8 +181,8 @@ nums[mid] == 2:
 7. ANOTHER EXAMPLE  (nums = [2,1,0])
 --------------------------------------------------
 
-    low,mid       high       nums[mid]=2 -> swap mid,high ; high--
-     v             v          mid STAYS
+    low,mid high             nums[mid]=2 -> swap mid,high ; high--
+     v       v               mid STAYS
    [ 2,  1,  0 ]
 
     low,mid   high            after swap: [0,1,2] , high=1
@@ -358,6 +358,240 @@ most once, so the whole thing is a single O(n) pass.
  Time:  O(n)
  Space: O(1)
  It's the classic three-way partition pattern."
+
+
+--------------------------------------------------
+14. DEEP DIVE  —  THINK IN 4 REGIONS (three pointers)
+--------------------------------------------------
+This is one of the hardest "two-pointer" problems for beginners
+because it is NOT really two pointers - it uses THREE:
+    low, mid, high.
+Forget the code first. Build the intuition.
+
+Step 1: The goal
+    input  = [2,0,2,1,1,0]
+    output = [0,0,1,1,2,2]
+    Imagine three boxes: 0's box, 1's box, 2's box. We want
+    000...111...222, but IN-PLACE and in ONE pass (no extra array).
+
+Step 2: See the array as FOUR regions  (the key idea)
+    +---------+-----------+--------------+----------+
+    |   0's   |    1's    |   Unknown    |   2's    |
+    +---------+-----------+--------------+----------+
+              low        mid            high
+    Initially everything is Unknown:
+        0's: none   1's: none   2's: none
+        Unknown: [2,0,2,1,1,0]
+
+Step 3: What each pointer means
+    low  -> "where the next 0 should go";  everything BEFORE low is 0.
+    high -> "where the next 2 should go";  everything AFTER high is 2.
+    mid  -> the element we are currently CHECKING (a scanner).
+    The zone between mid and high is the shrinking Unknown region.
+
+Step 4-10: Full walk on [2,0,2,1,1,0]
+    low=0 mid=0 high=5
+
+    nums[mid]=2 -> a 2 belongs at the END -> swap mid<->high, high--
+        [2,0,2,1,1,0]  ->  [0,0,2,1,1,2]
+         L                  L
+         M                  M
+                 H                H(=4)
+        *** mid does NOT move: the value swapped in from the end (0)
+            has never been checked - it is still Unknown. ***
+
+    nums[mid]=0 -> a 0 belongs at the FRONT -> swap mid<->low, low++,mid++
+        [0,0,2,1,1,2]  (low==mid, so nothing physically moves)
+          L(=1)
+          M(=1)
+              H(=4)
+        (this 0 is now correct, so we advance past it)
+
+    nums[mid]=0 -> swap mid<->low again, low++, mid++
+        [0,0,2,1,1,2]
+            L(=2)
+            M(=2)
+              H(=4)
+
+    nums[mid]=2 -> belongs at END -> swap mid<->high, high--
+        [0,0,2,1,1,2]  ->  [0,0,1,1,2,2]
+            L                  L(=2)
+            M                  M(=2)
+              H                  H(=3)
+        *** again mid stays: the value swapped in (1) is unchecked. ***
+
+    nums[mid]=1 -> a 1 is already in the middle region -> do nothing, mid++
+        [0,0,1,1,2,2]
+            L(=2)
+              M(=3)
+              H(=3)
+
+    nums[mid]=1 -> already correct -> mid++
+        [0,0,1,1,2,2]
+            L(=2)
+                M(=4)
+              H(=3)
+        now mid(4) > high(3)  ->  loop STOPS.
+
+    Final: [0,0,1,1,2,2]
+
+The three rules (all mid ever does):
+    | nums[mid] | action                        | pointers      |
+    |   0       | swap with low (send to front) | low++, mid++  |
+    |   1       | leave it (already middle)     | mid++         |
+    |   2       | swap with high (send to end)  | high-- ONLY   |
+
+Why do we NOT move mid after swapping with high?  (the whole trick)
+    Tiny example [2,1,0]:  low=mid=0, high=2.
+    mid sees 2 -> swap with high -> [0,1,2].
+    If we did mid++ now, we'd SKIP the 0 that just arrived from the end
+    and leave it unprocessed. The value swapped in from high is UNKNOWN
+    - we must inspect it next. So after a high-swap: high--, mid stays.
+    (After a low-swap it's safe to advance mid, because the value coming
+     from low was already scanned - it sat in the 0's/checked region.)
+
+Remember it as sorting colored balls:
+    low  = left basket for red balls (0)
+    high = right basket for blue balls (2)
+    mid  = your hand holding the current ball
+    - red (0)  -> drop in left basket, move hand forward (low++, mid++)
+    - white(1) -> already middle, move hand forward (mid++)
+    - blue (2) -> drop in right basket, but LOOK at the new ball that
+                  fell into your hand before moving on (high-- only)
+
+One question to test yourself:
+    We swapped [0,0,2,1,1,2] -> [0,0,1,1,2,2] and then decreased ONLY
+    high, not mid. Why? If you can explain that one decision in your own
+    words, you understand 90% of the Dutch National Flag algorithm.
+
+    SOLUTION:
+    A swap moves TWO values. Look at what each side hands to the other.
+
+    Case A: nums[mid] == 2  ->  swap mid <-> high
+        The array was:  [0,0, 2 ,1,1, 1 ]    (mid=2, the end holds 1)
+                              ^mid       ^high
+        After the swap:  [0,0, 1 ,1,1, 2 ]
+                              ^mid       ^high
+        - The value we SENT to high (a 2) is now correct: everything
+          after high is 2's. Good, so high--.
+        - But the value we RECEIVED at mid came from the high end, which
+          was part of the UNKNOWN region. It could be 0, 1, or 2 - here
+          it's a 1, but we did NOT know that in advance. We have never
+          scanned it.
+        - So we must let mid INSPECT it on the next loop. If we did mid++
+          here, we would step over an unexamined value and could leave a
+          0 or 2 stranded in the wrong region.
+        => after a high-swap: move high only, keep mid put.
+
+    Case B (contrast): nums[mid] == 0  ->  swap mid <-> low
+        - The value we RECEIVED at mid came from LOW. Everything from low
+          up to mid has ALREADY been scanned (it's the checked zone), and
+          low only ever held a 1 (or low==mid, so it's the same cell).
+        - That received value is therefore guaranteed <= 1 and already
+          known - safe to pass over. So we CAN do mid++ (and low++).
+        => after a low-swap: move both low and mid.
+
+    One-line answer:
+        The element pulled in from HIGH is unchecked (it came from the
+        Unknown region), so mid must examine it next - that is why a
+        2-swap advances only high. The element pulled in from LOW was
+        already checked, so a 0-swap can safely advance mid too.
+
+
+--------------------------------------------------
+15. STEP-BY-STEP  —  WHAT EACH POINTER IS THINKING
+--------------------------------------------------
+nums = [2,0,2,1,1,0]
+    low  = 0   -> where the next 0 should go
+    mid  = 0   -> the element I'm currently checking
+    high = 5   -> where the next 2 should go
+
+Before we start, see the array as 4 regions:
+    |--0's--|--1's--|------Unknown------|--2's--|
+             low     mid               high
+    Initially everything is Unknown.
+
+Step 1
+    [2,0,2,1,1,0]      low=0  mid=0  high=5
+     L
+     M
+               H
+    nums[mid] = 2  ->  "every 2 belongs at the END"  ->  swap mid<->high
+        swap nums[0] and nums[5]:  [0,0,2,1,1,2]
+    last slot is now correct  ->  high--        (low=0 mid=0 high=4)
+    mid did NOT move: the value that came from the end (0) is UNCHECKED.
+
+Step 2
+    [0,0,2,1,1,2]      low=0  mid=0  high=4
+     L
+     M
+             H
+    nums[mid] = 0  ->  "a 0 belongs at the FRONT"  ->  swap mid<->low
+        swap nums[0] and nums[0]: nothing changes  [0,0,2,1,1,2]
+    this 0 is now in place  ->  low++, mid++       (low=1 mid=1 high=4)
+
+Step 3
+    [0,0,2,1,1,2]      low=1  mid=1  high=4
+       L
+       M
+             H
+    nums[mid] = 0  ->  swap mid<->low (nums[1] with nums[1], no change)
+    low++, mid++                                    (low=2 mid=2 high=4)
+
+Step 4
+    [0,0,2,1,1,2]      low=2  mid=2  high=4
+         L
+         M
+             H
+    nums[mid] = 2  ->  belongs at END  ->  swap mid<->high
+        swap nums[2] and nums[4]:  [0,0,1,1,2,2]
+    high--                                          (low=2 mid=2 high=3)
+    Again mid does NOT move: the value from index 4 (1) is UNCHECKED.
+
+Step 5
+    [0,0,1,1,2,2]      low=2  mid=2  high=3
+         L
+         M
+           H
+    nums[mid] = 1  ->  "a 1 belongs in the MIDDLE"  ->  already there
+    do nothing, mid++                               (low=2 mid=3 high=3)
+
+Step 6
+    [0,0,1,1,2,2]      low=2  mid=3  high=3
+         L
+           M
+           H
+    nums[mid] = 1  ->  already correct  ->  mid++   (low=2 mid=4 high=3)
+    now mid(4) > high(3)  ->  LOOP STOPS.
+
+Final answer: [0,0,1,1,2,2]
+
+Why three pointers?  (what each guarantees)
+    low  -> everything BEFORE low is guaranteed 0:
+                0 0 | 2 1 1 | 2
+                    ^ low
+    high -> everything AFTER high is guaranteed 2:
+                0 0 1 1 | 2 2
+                        ^ high
+    mid  -> scans the Unknown region; as mid advances, Unknown shrinks:
+                0 0 | 1 1 | 2 2
+                      ^ mid
+
+Three workers:
+    low worker  -> keeps building the 0 section
+    mid worker  -> checks every new element
+    high worker -> keeps building the 2 section
+
+    | number | action                         | pointers     |
+    |   0    | put in 0 section (swap w/ low)  | low++, mid++ |
+    |   1    | leave in the middle             | mid++        |
+    |   2    | put in 2 section (swap w/ high) | high-- only  |
+
+One question for you:
+    After Step 4 we swapped [0,0,2,1,1,2] -> [0,0,1,1,2,2] and decreased
+    only high, not mid. Why? (See section 14's SOLUTION: the value pulled
+    in from high came from the Unknown region and is unchecked, so mid
+    must examine it next.)
 
 
 ==================================================

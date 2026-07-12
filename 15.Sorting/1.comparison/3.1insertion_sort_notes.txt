@@ -1,0 +1,326 @@
+==================================================
+INSERTION SORT  —  Build a Sorted Prefix by Inserting
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Sort an integer array in ascending order using Insertion Sort.
+
+Grow a sorted prefix one element at a time: take the next
+element (the "key") and shift larger prefix elements right
+until the key lands in its correct slot.
+
+Example:
+    nums = [5, 2, 8, 1, 9, 3]
+
+    Output = [1, 2, 3, 5, 8, 9]
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def insertionSort(nums):
+
+        for i in range(1, len(nums)):
+            key = nums[i]
+            j = i - 1
+            # shift everything > key one slot right to open a gap
+            while j >= 0 and nums[j] > key:
+                nums[j + 1] = nums[j]
+                j -= 1
+            # drop key into the gap
+            nums[j + 1] = key
+
+        return nums
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5
+    array:  [ 5,  2,  8,  1,  9,  3 ]
+
+    i    = 1        (first key to insert)
+    key  = nums[1]  (the element being placed)
+    j    = i - 1    (last index of the sorted prefix)
+
+    sorted prefix = just [5] at the start
+    everything from index i onward is still unsorted
+
+      sorted |  unsorted
+         v   |     v
+       [ 5 ] | [ 2,  8,  1,  9,  3 ]
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH?
+--------------------------------------------------
+Build a sorted prefix by inserting each new element into place.
+
+The left region [0..i-1] is always kept sorted. We pick the
+next element (the key), then walk backward through that sorted
+region, sliding bigger values one step right to open a gap,
+and drop the key into the gap.
+
+Brute force / repeated scanning is wasteful. Insertion sort
+does almost no work when the data is already close to sorted:
+    nearly sorted  ->  each key barely moves  ->  O(n)
+
+This is why it is a common base case inside quick/merge sort
+and the cutoff used by hybrid sorts like Timsort.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [5,2,8,1,9,3])
+--------------------------------------------------
+
+i = 1   key = 2
+    j=0: nums[0]=5 > 2  ->  shift 5 right
+        [ 5,  5,  8,  1,  9,  3 ]   j -> -1
+    drop key at j+1 = 0
+        [ 2,  5,  8,  1,  9,  3 ]
+    sorted prefix = [2, 5]
+
+i = 2   key = 8
+    j=1: nums[1]=5 > 8 ?  No  ->  no shift
+    drop key at j+1 = 2  (stays put)
+        [ 2,  5,  8,  1,  9,  3 ]
+    sorted prefix = [2, 5, 8]
+
+i = 3   key = 1
+    j=2: nums[2]=8 > 1  ->  shift 8 right
+        [ 2,  5,  8,  8,  9,  3 ]   j -> 1
+    j=1: nums[1]=5 > 1  ->  shift 5 right
+        [ 2,  5,  5,  8,  9,  3 ]   j -> 0
+    j=0: nums[0]=2 > 1  ->  shift 2 right
+        [ 2,  2,  5,  8,  9,  3 ]   j -> -1
+    drop key at j+1 = 0
+        [ 1,  2,  5,  8,  9,  3 ]
+    sorted prefix = [1, 2, 5, 8]
+
+i = 4   key = 9
+    j=3: nums[3]=8 > 9 ?  No  ->  no shift
+    drop key at j+1 = 4  (stays put)
+        [ 1,  2,  5,  8,  9,  3 ]
+    sorted prefix = [1, 2, 5, 8, 9]
+
+i = 5   key = 3
+    j=4: nums[4]=9 > 3  ->  shift 9 right
+        [ 1,  2,  5,  8,  9,  9 ]   j -> 3
+    j=3: nums[3]=8 > 3  ->  shift 8 right
+        [ 1,  2,  5,  8,  8,  9 ]   j -> 2
+    j=2: nums[2]=5 > 3  ->  shift 5 right
+        [ 1,  2,  5,  5,  8,  9 ]   j -> 1
+    j=1: nums[1]=2 > 3 ?  No  ->  stop
+    drop key at j+1 = 2
+        [ 1,  2,  3,  5,  8,  9 ]
+    sorted prefix = [1, 2, 3, 5, 8, 9]
+
+Output: [1, 2, 3, 5, 8, 9]
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (grow a sorted left region)
+--------------------------------------------------
+
+Grow a sorted left region; shift larger elements right to
+make room for the incoming key.
+
+    [ sorted so far ] [ key ] [ still unsorted ]
+                        ^
+                        pull this out, hold it aside
+
+    walk left while prefix value > key:
+        prefix bigger  ->  slide it one slot RIGHT
+        prefix <= key  ->  STOP, gap is ready
+    drop the key into the gap
+
+The key never overtakes an equal value (test is strict > ),
+so equal elements keep their original order  ->  STABLE.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [4, 3, 3, 1])
+--------------------------------------------------
+
+    start                     [ 4,  3,  3,  1 ]
+
+    i=1  key=3   4>3 shift 4   [ 4,  4,  3,  1 ]  drop @0
+                              [ 3,  4,  3,  1 ]
+
+    i=2  key=3   4>3 shift 4   [ 3,  4,  4,  1 ]
+                 3>3? No stop  drop @1
+                              [ 3,  3,  4,  1 ]
+
+    i=3  key=1   4>1 shift 4   [ 3,  3,  4,  4 ]
+                 3>1 shift 3   [ 3,  3,  3,  4 ]
+                 3>1 shift 3   [ 3,  3,  3,  4 ]
+                 drop @0       [ 1,  3,  3,  4 ]
+
+    return [1, 3, 3, 4]
+    (the two 3's kept their original order -> stable)
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Like sorting a hand of playing cards:
+
+    You pick up cards one at a time.
+    Each new card, you slide it left past the bigger cards
+    already in your hand until it sits in the right place.
+
+    hand (sorted)  ->  | 2  5  8 |   new card = 3
+    slide past 8, 5 ...
+    hand (sorted)  ->  | 2  3  5  8 |
+
+    "Take the next card, tuck it where it belongs."
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Case            | Time   | Space |
+    | --------------- | ------ | ----- |
+    | Best (sorted)   | O(n)   | O(1)  |
+    | Average         | O(n^2) | O(1)  |
+    | Worst (reversed)| O(n^2) | O(1)  |
+
+    Stable : Yes  (strict >  keeps equal elements in order)
+    In-place: Yes (O(1) extra space)
+
+Best case O(n): on nearly-sorted data each key barely shifts.
+Great for small or nearly-sorted arrays; common cutoff inside
+hybrid sorts (e.g. Timsort).
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION insertionSort(nums)
+
+        FOR i FROM 1 TO length(nums) - 1
+
+            key <- nums[i]
+            j   <- i - 1
+
+            WHILE j >= 0 AND nums[j] > key
+                nums[j + 1] <- nums[j]
+                j <- j - 1
+            END WHILE
+
+            nums[j + 1] <- key
+
+        END FOR
+
+        RETURN nums
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Repeat for each position i from 1 to the last index
+
+        Save the current element:
+            key = nums[i]
+
+        Look at the slot just left of it:
+            j = i - 1
+
+        While there is a prefix element (j >= 0)
+        AND that element is bigger than key:
+            Copy that element one slot to the right
+                nums[j + 1] = nums[j]
+            Step one slot further left
+                j = j - 1
+
+        Now the gap at j + 1 is where key belongs:
+            nums[j + 1] = key
+
+    END Repeat
+
+    Return the sorted array
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+    +-----------+
+    |   START   |
+    +-----+-----+
+          |
+          v
+    +-------------------+
+    | i = 1             |
+    +--------+----------+
+             |
+             v
+      +--------------+
+      | i < length ? |<--------------------+
+      +------+-------+                      |
+             | Yes                          |
+             v                              |
+    +-----------------------+               |
+    | key = nums[i]         |               |
+    | j   = i - 1           |               |
+    +----------+------------+               |
+               |                            |
+               v                            |
+      +----------------------+              |
+      | j >= 0 AND           |<---------+   |
+      | nums[j] > key ?      |          |   |
+      +------+---------+-----+          |   |
+             | Yes     | No             |   |
+             v         |                |   |
+   +------------------+|                |   |
+   | nums[j+1]=nums[j]||                |   |
+   | j = j - 1        |+----------------+   |
+   +------------------+ (loop back up)      |
+             |                              |
+             | No (exit while)              |
+             v                              |
+    +-------------------+                   |
+    | nums[j+1] = key   |                   |
+    | i = i + 1         |-------------------+
+    +-------------------+  (next element)
+             |
+             | No (i >= length)
+             v
+      +-------------+
+      | RETURN nums |
+      +------+------+
+             |
+             v
+         +-------+
+         |  END  |
+         +-------+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"Insertion sort keeps the left part of the array sorted and
+ grows it one element at a time. I take the next element as a
+ key, then walk backward through the sorted prefix, shifting
+ any bigger elements one slot to the right to open a gap, and
+ drop the key into that gap.
+ - Nearly-sorted input barely shifts, so it's very fast.
+ - The shift test is strict greater-than, so it's stable.
+ - It sorts in place with no extra memory.
+
+ Time:  O(n) best (nearly sorted), O(n^2) average/worst
+ Space: O(1)
+ It's ideal for small or nearly-sorted arrays and is the
+ common cutoff inside hybrid sorts like Timsort."
+
+
+==================================================
+This is the classic sorted-prefix insertion pattern:
+shift larger elements right, then drop the key in.
+==================================================

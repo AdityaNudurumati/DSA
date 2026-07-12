@@ -1,0 +1,317 @@
+==================================================
+BINARY SEARCH  —  Classic Search on a Sorted Array
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given a SORTED (ascending) array of distinct integers and a
+target number, return the INDEX of the target, or -1 if it is
+not present. Must run in O(log n).
+
+Example:
+    nums   = [-1, 0, 3, 5, 9, 12]
+    target = 9
+
+    9 is stored at index 4
+
+    answer = 4
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def search(nums, target):
+
+        lo, hi = 0, len(nums) - 1
+
+        while lo <= hi:
+            mid = (lo + hi) // 2
+
+            if nums[mid] == target:
+                return mid
+            elif nums[mid] < target:
+                lo = mid + 1
+            else:
+                hi = mid - 1
+
+        return -1
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0    1    2   3   4    5
+    array:  [ -1,  0,   3,  5,  9,  12 ]
+
+    lo  = 0
+    hi  = 5
+    mid = (0 + 5) // 2 = 2
+
+      LO        MID           HI
+      v          v             v
+    [ -1,  0,   3,  5,  9,  12 ]
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH?
+--------------------------------------------------
+Because the array is already SORTED.
+
+A linear scan checks every element one by one  ->  O(n):
+    -1  0  3  5  9  12   (up to 6 comparisons)
+
+Binary search looks at the MIDDLE and throws away HALF the
+array every step  ->  O(log n).
+
+    n = 6        ->  ~3 steps
+    n = 1000     ->  ~10 steps
+    n = 1,000,000 -> ~20 steps
+
+Halving beats scanning by a huge margin as n grows.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [-1,0,3,5,9,12], target = 9)
+--------------------------------------------------
+
+Iteration 1
+    lo=0  hi=5
+    mid = (0 + 5) // 2 = 2
+    nums[2] = 3
+    3 < 9  ->  too small  ->  lo = mid + 1   (lo = 3)
+
+      LO        MID           HI
+      v          v             v
+    [ -1,  0,   3,  5,  9,  12 ]
+
+Iteration 2
+    lo=3  hi=5
+    mid = (3 + 5) // 2 = 4
+    nums[4] = 9
+    9 == 9  ->  FOUND
+
+                       LO   MID  HI
+                        v    v    v
+    [ -1,  0,   3,  5,  9,  12 ]
+
+    return mid = 4
+
+Output: 4
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (how to shrink the search space)
+--------------------------------------------------
+
+Compare target to nums[mid], then discard HALF:
+
+nums[mid] == target:
+    FOUND  ->  return mid
+
+nums[mid] < target  (middle too SMALL):
+    target must be on the RIGHT half
+    move  lo = mid + 1
+
+nums[mid] > target  (middle too BIG):
+    target must be on the LEFT half
+    move  hi = mid - 1
+
+The loop uses INCLUSIVE bounds:  while lo <= hi
+    lo == hi still checks one last element.
+    When lo > hi, the range is empty  ->  target not present.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [-1,0,3,5,9,12], target = 2)
+--------------------------------------------------
+This one is NOT in the array -> should return -1.
+
+    lo=0  hi=5   mid=2   nums[2]=3    3 > 2  too big   -> hi = 1
+
+      LO        MID           HI
+      v          v             v
+    [ -1,  0,   3,  5,  9,  12 ]
+
+    lo=0  hi=1   mid=0   nums[0]=-1  -1 < 2  too small -> lo = 1
+
+      LO/MID  HI
+      v       v
+    [ -1,  0,   3,  5,  9,  12 ]
+
+    lo=1  hi=1   mid=1   nums[1]=0    0 < 2  too small -> lo = 2
+
+           LO/MID/HI
+           v
+    [ -1,  0,   3,  5,  9,  12 ]
+
+    lo=2  hi=1   ->  lo > hi  ->  loop ends
+
+    return -1
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Looking up a word in a DICTIONARY (or a phone book):
+
+    You never read page by page from the front.
+    You flip to the MIDDLE, see if your word is
+    before or after, then throw away half the book.
+    Repeat on the half that remains.
+
+    target before middle  ->  keep the LEFT half   (hi = mid - 1)
+    target after  middle  ->  keep the RIGHT half  (lo = mid + 1)
+
+    Each flip halves the pages left to search.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach       | Time     | Space |
+    | -------------- | -------- | ----- |
+    | Linear scan    | O(n)     | O(1)  |
+    | Binary search  | O(log n) | O(1)  |
+
+Each step discards half the elements, so it takes about
+log2(n) steps. Only a few variables are used  ->  O(1) space.
+
+NOTE: the input MUST be SORTED for binary search to work.
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION search(nums, target)
+
+        lo <- 0
+        hi <- length(nums) - 1
+
+        WHILE lo <= hi
+
+            mid <- (lo + hi) / 2      (integer division)
+
+            IF nums[mid] = target
+                RETURN mid
+
+            ELSE IF nums[mid] < target
+                lo <- mid + 1
+
+            ELSE
+                hi <- mid - 1
+
+        END WHILE
+
+        RETURN -1
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set lo = 0
+    Set hi = last index of array (length - 1)
+
+    Repeat while lo is less than or equal to hi
+
+        Find the middle position:
+            mid = (lo + hi) divided by 2, rounded down
+
+        Look at the middle value nums[mid]:
+
+            If nums[mid] equals target
+                Return mid (we found it)
+
+            Otherwise if nums[mid] is less than target
+                The target is to the RIGHT
+                Move lo = mid + 1
+
+            Otherwise (nums[mid] is greater than target)
+                The target is to the LEFT
+                Move hi = mid - 1
+
+    END Repeat
+
+    If we get here, the target was never found
+        Return -1
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+    +-----------+
+    |   START   |
+    +-----+-----+
+          |
+          v
+    +---------------------+
+    | lo = 0              |
+    | hi = n - 1          |
+    +----------+----------+
+               |
+               v
+        +--------------+
+        | lo <= hi ?   |<---------------+
+        +------+-------+                |
+               | Yes                    |
+               v                        |
+    +---------------------------+       |
+    | mid = (lo + hi) // 2      |       |
+    +------------+--------------+       |
+                 v                      |
+         +-----------------+  Yes       |
+         | nums[mid] ==    |----> RETURN mid --> END
+         | target ?        |            |
+         +-------+---------+            |
+                 | No                   |
+                 v                      |
+         +-----------------+  Yes       |
+         | nums[mid] <     |----> lo = mid + 1 -+
+         | target ?        |            |
+         +-------+---------+            |
+                 | No                   |
+                 v                      |
+         +-----------------+            |
+         | hi = mid - 1    |------------+
+         +-----------------+
+               |
+               | (when lo > hi: loop ends)
+               v
+        +--------------+
+        | RETURN -1    |
+        +------+-------+
+               |
+               v
+            +-----+
+            | END |
+            +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"Since the array is sorted, I keep a lo and hi bound and look
+ at the middle element each step.
+ - If nums[mid] equals the target, I return that index.
+ - If nums[mid] is smaller, the target is to the right, so I set
+   lo = mid + 1.
+ - If nums[mid] is larger, the target is to the left, so I set
+   hi = mid - 1.
+ Each step throws away half the remaining range. I use an
+ inclusive lo <= hi loop, and if lo passes hi the target isn't
+ there, so I return -1.
+
+ Time:  O(log n)
+ Space: O(1)
+ It's the classic Binary Search pattern on a sorted array."
+
+
+==================================================
+This is the classic example of the binary search
+technique on a SORTED array.
+==================================================

@@ -1,0 +1,338 @@
+==================================================
+SEARCH INSERT POSITION  —  Binary Search (Lower Bound)
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given a SORTED array of distinct integers and a target,
+return the index if the target is found.
+If not, return the index where it would be inserted to
+keep the array sorted.
+
+Example:
+    nums   = [1, 3, 5, 6]
+
+    target = 5  ->  2   (found at index 2)
+    target = 2  ->  1   (would go between 1 and 3)
+    target = 7  ->  4   (would go at the end)
+    target = 0  ->  0   (would go at the front)
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def searchInsert(nums, target):
+
+        # lower bound: first index with nums[index] >= target
+        lo, hi = 0, len(nums)
+
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if nums[mid] < target:
+                lo = mid + 1
+            else:
+                hi = mid
+
+        return lo
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3
+    array:  [ 1,  3,  5,  6 ]
+
+    lo  = 0
+    hi  = len(nums) = 4     (one PAST the last index)
+
+    This is a HALF-OPEN range  [lo, hi)  ->  lo included, hi excluded.
+
+         LO         MID        HI
+         v          v          v
+       [ 1,  3,  5,  6 ]  (hi)
+                            ^ hi sits here, just off the end
+
+    mid = (lo + hi) // 2 = (0 + 4) // 2 = 2
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH?
+--------------------------------------------------
+Because the array is already SORTED.
+
+Brute force scans left to right until nums[i] >= target  ->  O(n).
+
+Binary search finds the target OR its insertion point
+(the LOWER BOUND) in  ->  O(log n).
+
+Lower bound = the FIRST index whose value is >= target.
+    - If target exists, that first index IS the target.
+    - If it does not, that index is exactly where target
+      belongs to keep the array sorted.
+
+So one search answers BOTH cases at once.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [1,3,5,6])
+--------------------------------------------------
+
+--- CASE A: target = 5  (FOUND) ---
+
+Iteration 1
+    lo=0  hi=4  ->  mid = (0+4)//2 = 2
+    nums[2] = 5   ->   5 < 5 ?  NO   ->   hi = mid = 2
+
+         LO    MID   HI
+         v     v     v
+       [ 1,  3,  5,  6 ]
+
+Iteration 2
+    lo=0  hi=2  ->  mid = (0+2)//2 = 1
+    nums[1] = 3   ->   3 < 5 ?  YES  ->   lo = mid + 1 = 2
+
+         LO/MID   HI
+           v      v
+       [ 1,  3,  5,  6 ]
+
+Loop check
+    lo=2  hi=2   ->   lo < hi ?  NO   ->   STOP
+
+    return lo = 2      (nums[2] == 5, found)
+
+Output: 2
+
+
+--- CASE B: target = 2  (NOT FOUND -> insert index) ---
+
+Iteration 1
+    lo=0  hi=4  ->  mid = 2
+    nums[2] = 5   ->   5 < 2 ?  NO   ->   hi = 2
+
+Iteration 2
+    lo=0  hi=2  ->  mid = 1
+    nums[1] = 3   ->   3 < 2 ?  NO   ->   hi = 1
+
+Iteration 3
+    lo=0  hi=1  ->  mid = 0
+    nums[0] = 1   ->   1 < 2 ?  YES  ->   lo = 1
+
+Loop check
+    lo=1  hi=1   ->   lo < hi ?  NO   ->   STOP
+
+    return lo = 1
+
+    2 is not present. lo landed on index 1, the first slot
+    whose value (3) is >= 2  ->  insert here:
+
+       [ 1, (2), 3,  5,  6 ]
+             ^ inserted at index 1
+
+Output: 1
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+When the target is NOT found, lo does NOT end up "lost".
+
+lo always stops at the FIRST index i where  nums[i] >= target.
+That is EXACTLY the insertion point.
+
+    nums[mid] <  target   ->   too small, skip it
+                              lo = mid + 1   (search RIGHT half)
+
+    nums[mid] >= target   ->   candidate answer, keep it in view
+                              hi = mid        (search LEFT half, mid included)
+
+Because we never throw mid away when it could be the answer
+(hi = mid, not mid - 1), lo converges onto the lower bound.
+
+    Found     ->  nums[lo] == target
+    Not found ->  nums[lo] is the first value greater than target
+                  (or lo == len(nums) if target is bigger than all)
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [1,3,5,6], target = 7)
+--------------------------------------------------
+
+    lo=0 hi=4  mid=2   nums[2]=5   5 < 7 ? YES  -> lo = 3
+
+         LO    MID   HI
+       [ 1,  3,  5,  6 ]
+
+    lo=3 hi=4  mid=3   nums[3]=6   6 < 7 ? YES  -> lo = 4
+
+                  LO   HI
+       [ 1,  3,  5,  6 ]
+
+    lo=4 hi=4  ->  lo < hi ? NO  ->  STOP
+
+    return lo = 4
+
+    7 is larger than every element, so it goes at the very end:
+
+       [ 1,  3,  5,  6, (7) ]
+                         ^ index 4
+
+Output: 4
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Think "SHRINK THE WINDOW toward the first >= target":
+
+    nums[mid] too small   ->   lo = mid + 1   (move floor UP)
+    nums[mid] big enough  ->   hi = mid       (pull ceiling DOWN)
+
+    lo climbs up, hi drops down, until they MEET.
+    Where they meet = the answer index.
+
+    "Less than?  go right.   Otherwise?  keep left."
+
+    Half-open trick:  hi starts at len(nums), not len-1,
+    so an insert-at-the-end still has a valid slot to land on.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach       | Time     | Space |
+    | -------------- | -------- | ----- |
+    | Linear scan    | O(n)     | O(1)  |
+    | Binary search  | O(log n) | O(1)  |
+
+Each step halves the search range, so O(log n) total.
+Only a few variables are used, so O(1) space.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION searchInsert(nums, target)
+
+        lo <- 0
+        hi <- length(nums)
+
+        WHILE lo < hi
+
+            mid <- (lo + hi) / 2      (integer division)
+
+            IF nums[mid] < target
+                lo <- mid + 1
+
+            ELSE
+                hi <- mid
+
+        END WHILE
+
+        RETURN lo
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set lo = 0
+    Set hi = length of array        (one past the last index)
+
+    Repeat while lo is less than hi
+
+        Find the middle:
+            mid = (lo + hi) divided by 2, rounded down
+
+        If nums[mid] is less than target
+            The answer must be to the RIGHT of mid
+            Move floor up:  lo = mid + 1
+
+        Otherwise (nums[mid] is >= target)
+            mid might BE the answer, keep it
+            Pull ceiling down:  hi = mid
+
+    END Repeat
+
+    Now lo equals hi and points at the first value >= target.
+
+    Return lo
+        (if nums[lo] == target it was found,
+         otherwise lo is the insert position)
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+    +-----------+
+    |   START   |
+    +-----+-----+
+          |
+          v
+    +---------------------+
+    | lo = 0              |
+    | hi = len(nums)      |
+    +----------+----------+
+               |
+               v
+        +--------------+
+        |  lo < hi ?   |<---------------+
+        +------+-------+                |
+               | Yes                    |
+               v                        |
+    +-------------------------+         |
+    | mid = (lo + hi) // 2    |         |
+    +-----------+-------------+         |
+                |                       |
+                v                       |
+        +------------------+            |
+        | nums[mid] <      | Yes        |
+        | target ?         +--> lo = mid + 1 ---+
+        +--------+---------+            |        |
+                 | No                   |        |
+                 v                      |        |
+        +------------------+            |        |
+        | hi = mid         +------------+--------+
+        +------------------+            |
+                                        |
+       (when lo == hi: loop ends)       |
+               | No (lo < hi is false)  |
+               +------------------------+
+               |
+               v
+        +--------------+
+        | RETURN lo    |
+        +------+-------+
+               |
+               v
+            +-----+
+            | END |
+            +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"The array is sorted, so I run a binary search for the lower
+ bound - the first index whose value is at least the target.
+ I use a half-open range where hi starts at len(nums).
+ - If nums[mid] is less than target, the answer is to the right,
+   so I set lo = mid + 1.
+ - Otherwise mid could be the answer, so I set hi = mid.
+ When lo meets hi, lo is either the target's index or the exact
+ spot to insert it while keeping the array sorted, so I return lo.
+
+ Time:  O(log n)
+ Space: O(1)
+ It's the classic lower-bound binary search."
+
+
+==================================================
+This is the classic lower-bound binary search:
+one search returns the target OR its insert index.
+==================================================

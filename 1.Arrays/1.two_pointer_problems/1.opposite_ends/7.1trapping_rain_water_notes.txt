@@ -412,19 +412,50 @@ Step 4: The KEY formula
 Step 5: Solve the sample by hand
     [0,1,0,2,1,0,1,3,2,1,2,1]
 
-    idx  height  maxLeft  maxRight  water
-     0     0        0         3       0
-     1     1        1         3       0
-     2     0        1         3       1
-     3     2        2         3       0
-     4     1        2         3       1
-     5     0        2         3       2
-     6     1        2         3       1
-     7     3        3         3       0
-     8     2        3         2       0
-     9     1        3         2       1
-    10     2        3         2       0
-    11     1        3         1       0
+    For each index: water = min(left_max, right_max) - height.
+
+    index | left_max | right_max | min(LM,RM) | height | water = min-height
+    ------+----------+-----------+------------+--------+-------------------
+      0   |    0     |     3     |     0      |   0    |   0 - 0 = 0
+      1   |    1     |     3     |     1      |   1    |   1 - 1 = 0
+      2   |    1     |     3     |     1      |   0    |   1 - 0 = 1
+      3   |    2     |     3     |     2      |   2    |   2 - 2 = 0
+      4   |    2     |     3     |     2      |   1    |   2 - 1 = 1
+      5   |    2     |     3     |     2      |   0    |   2 - 0 = 2
+      6   |    2     |     3     |     2      |   1    |   2 - 1 = 1
+      7   |    3     |     3     |     3      |   3    |   3 - 3 = 0
+      8   |    3     |     2     |     2      |   2    |   2 - 2 = 0
+      9   |    3     |     2     |     2      |   1    |   2 - 1 = 1
+     10   |    3     |     2     |     2      |   2    |   2 - 2 = 0
+     11   |    3     |     1     |     1      |   1    |   1 - 1 = 0
+
+    left_max[i]  = tallest bar from index 0 up to i   (scan ->)
+    right_max[i] = tallest bar from index i to the end (scan <-)
+
+    Example of building them  (height = [0,1,0,2,1,0,1,3,2,1,2,1]):
+
+    left_max  -> scan LEFT to RIGHT, keep the tallest seen so far
+        index :  0  1  2  3  4  5  6  7  8  9 10 11
+        height:  0  1  0  2  1  0  1  3  2  1  2  1
+        running: 0  1  1  2  2  2  2  3  3  3  3  3
+                 |  |  |  |              |
+                 |  |  |  +-- max(2, prev 1) = 2
+                 |  |  +----- max(0, prev 1) = 1   (bar shorter, keep 1)
+                 |  +-------- max(1, prev 0) = 1
+                 +----------- first bar, so left_max = 0
+        e.g. left_max[5] = tallest of height[0..5] = max(0,1,0,2,1,0) = 2
+
+    right_max -> scan RIGHT to LEFT, keep the tallest seen so far
+        index :  0  1  2  3  4  5  6  7  8  9 10 11
+        height:  0  1  0  2  1  0  1  3  2  1  2  1
+        running: 3  3  3  3  3  3  3  3  2  2  2  1
+                                         |        |
+                                         |        +-- last bar, right_max = 1
+                                         +-- max(2, prev 2) = 2
+        e.g. right_max[8] = tallest of height[8..11] = max(2,1,2,1) = 2
+
+    So at index 5:  min(left_max[5]=2, right_max[5]=3) - height[5]=0
+                    = min(2,3) - 0 = 2 - 0 = 2 units of water.
 
     Total = 1 + 1 + 2 + 1 + 1 = 6   ->   Answer: 6
 
@@ -800,6 +831,13 @@ First, the brute force:
     For index 8:  again...
     -> the same left/right scans repeat over and over  ->  O(n^2).
 
+The problem with computing it directly:
+    - Brute force: for each i, scan left and scan right to find both
+      maxes                                            -> O(n^2).
+    - Prefix arrays: precompute left_max[] and right_max[] in two
+      passes -> O(n) time but O(n) extra SPACE (two whole arrays).
+    Two pointers get O(n) time AND O(1) space.
+
 Two-pointer idea:
     Instead of asking "what is maxLeft and maxRight for EVERY index?",
     ask "can I determine the water for ONE side RIGHT NOW?"
@@ -874,6 +912,266 @@ The key realization:
     certainty that the water on the left is already determined, so we
     bank it immediately. That is exactly why this is O(n) instead of
     repeatedly scanning left and right for each position.
+
+Full walk on the sample  [0,1,0,2,1,0,1,3,2,1,2,1]:
+    index : 0 1 2 3 4 5 6 7 8 9 10 11
+    height: 0 1 0 2 1 0 1 3 2 1  2  1
+
+    Start: left=0 right=11  left_max=height[0]=0  right_max=height[11]=1
+           water=0
+    Each step: move the SMALLER-max side, update its max, bank water.
+
+    move  | side  | ptr moves | new max             | add            | water
+    ------+-------+-----------+---------------------+----------------+------
+     1    | L<R   | left  0->1| left_max=max(0,1)=1 | 1-height[1]=0  |  0
+     2    | L>=R  |right11->10| right_max=max(1,2)=2| 2-height[10]=0 |  0
+     3    | L<R   | left  1->2| left_max=max(1,0)=1 | 1-height[2]=1  |  1
+     4    | L<R   | left  2->3| left_max=max(1,2)=2 | 2-height[3]=0  |  1
+     5    | L>=R  | right10->9| right_max=max(2,1)=2| 2-height[9]=1  |  2
+     6    | L>=R  | right 9->8| right_max=max(2,2)=2| 2-height[8]=0  |  2
+     7    | L>=R  | right 8->7| right_max=max(2,3)=3| 3-height[7]=0  |  2
+     8    | L<R   | left  3->4| left_max=max(2,1)=2 | 2-height[4]=1  |  3
+     9    | L<R   | left  4->5| left_max=max(2,0)=2 | 2-height[5]=2  |  5
+    10    | L<R   | left  5->6| left_max=max(2,1)=2 | 2-height[6]=1  |  6
+    11    | L<R   | left  6->7| left_max=max(2,3)=3 | 3-height[7]=0  |  6
+
+    Now left=7 and right=7  ->  left < right is FALSE  ->  STOP.
+    Answer = 6.
+
+    Notice how it self-corrects: for moves 1-4 the LEFT side was
+    smaller (left_max was 0..2 vs right_max 1..2), so we processed the
+    left. On move 5-7 right_max jumped to 3 only after we uncovered the
+    tall bar at index 7, and the loop switched to processing whichever
+    side was currently the shorter wall. We never precomputed a single
+    maxLeft[]/maxRight[] array - both maxes grew on the fly.
+
+The core idea to remember:
+    Don't memorize the code - remember this rule:
+
+        At every step, compare left_max and right_max. The SMALLER one
+        is the bottleneck (the limiting wall). Because the water level
+        can never be higher than that smaller wall, the amount of water
+        on that side is ALREADY determined. So calculate it, move that
+        pointer inward, update its maximum, and repeat.
+
+    Once this clicks, the algorithm feels natural rather than like a
+    trick. The insight is NOT that we somehow avoid maxLeft and
+    maxRight; it's that we only need the exact value for the side whose
+    limiting wall is already known.
+
+
+--------------------------------------------------
+19. HOW & WHY TWO POINTERS  (quick summary)
+--------------------------------------------------
+The core formula
+    Water sitting on top of bar i is:
+        water[i] = min(left_max, right_max) - height[i]
+    So for every bar you need the tallest wall on its LEFT and the
+    tallest on its RIGHT. The SHORTER of the two decides the level
+    (water spills over the shorter wall).
+
+The problem with computing it directly
+    - Brute force: for each i, scan left and scan right to find both
+      maxes                                            -> O(n^2).
+    - Prefix arrays: precompute left_max[] and right_max[] in two
+      passes -> O(n) time but O(n) extra SPACE (two whole arrays).
+    Two pointers get O(n) time AND O(1) space.
+
+How the two pointers work
+    You keep FOUR things, not two arrays:
+        left, right  -> pointers starting at the two ends
+        left_max     -> tallest bar seen so far from the LEFT
+        right_max    -> tallest bar seen so far from the RIGHT
+
+        while left < right:
+            if left_max < right_max:      # left wall is the shorter one
+                left += 1
+                left_max = max(left_max, height[left])
+                water   += left_max - height[left]
+            else:                         # right wall is the shorter one
+                right -= 1
+                right_max = max(right_max, height[right])
+                water    += right_max - height[right]
+
+Why it's correct — the key insight
+    The reason you can decide with only a RUNNING max (instead of the
+    true global max) is this:
+
+        When left_max < right_max, the water level on the left bar is
+        ALREADY fully determined by left_max.
+
+    Why? Because right_max is the running max from the right, and the
+    true maximum on the far right can only be >= right_max. So:
+        min(left_max, true_right_max) = left_max
+    No matter how tall the right side turns out to be, it's already at
+    least right_max, which is already bigger than left_max. The shorter
+    wall - left_max - is the binding constraint, so
+        water = left_max - height[left]
+    is safe to bank RIGHT NOW.
+
+    That's why you always advance the pointer on the SMALLER-max side:
+    that side's answer is locked in, and the unknown far side can only
+    make the OTHER side's wall taller, never lower the current side's
+    level.
+
+The intuition in one line
+    Two people walk inward from both ends. Whoever is standing next to
+    the SHORTER wall moves, because on their side the water level can't
+    change anymore - the opposite (taller) wall guarantees it. Repeat
+    until they meet.
+
+
+--------------------------------------------------
+20. "WHY TWO POINTERS AND NOT JUST ONE?"
+    (if I already store left_max and right_max)
+--------------------------------------------------
+You're thinking:
+    "If I'm already storing leftMax and rightMax, why can't I just use
+     ONE pointer? Why do I need two pointers at all?"
+
+    This is the RIGHT question. The answer: because one pointer cannot
+    keep BOTH leftMax and rightMax correct at the same time. Let's
+    prove it.
+
+Suppose we use only ONE pointer.  Take the example:
+    height = [0,1,0,2,1,0,1,3,2,1,2,1]
+
+        0 1 0 2 1 0 1 3 2 1 2 1
+        ^
+        i
+
+    Let's move LEFT to RIGHT.
+
+    Initially:
+        0 1 0 2 1 0 1 3 2 1 2 1
+        ^
+        leftMax = 0        easy.
+
+    Move to index 1:
+        0 1 0 2 1 0 1 3 2 1 2 1
+          ^
+        leftMax = 1        still easy.
+
+    Now reach index 5:
+        0 1 0 2 1 0 1 3 2 1 2 1
+                  ^
+        You know leftMax = 2.
+        But now I ask you: what is rightMax?
+        Can you answer?  NO.
+        Why? Because you haven't visited the right side yet. You don't
+        know whether later there is ...3... or ...10... or ...100...
+        You haven't seen it.
+        -> A single left-to-right pointer CANNOT know rightMax.
+
+    Okay, then let's go RIGHT to LEFT instead. Start here:
+        0 1 0 2 1 0 1 3 2 1 2 1
+                              ^
+        rightMax = 1.
+        Eventually you reach index 5:
+        0 1 0 2 1 0 1 3 2 1 2 1
+                  ^
+        Now you know rightMax = 3.  Great.
+        Now I ask: what is leftMax?
+        Again... you don't know - you haven't visited the left side yet.
+
+    -> Either single scan knows only ONE of the two maxes at index 5.
+
+This is exactly why PREFIX ARRAYS exist:
+    First pass  ->  leftMax[]  = 0 1 1 2 2 2 2 3 3 3 3 3
+    Second pass ->  rightMax[] = 3 3 3 3 3 3 3 3 2 2 2 1
+    Now every index knows both values. But this costs O(n) SPACE.
+
+So where do two pointers come in?
+    Two pointers are simply a way to build BOTH maximums at the same
+    time. Imagine two people:
+        0 1 0 2 1 0 1 3 2 1 2 1
+        L                     R
+    The LEFT person walks:   L ->      building leftMax
+    The RIGHT person walks:      <- R  building rightMax
+    Now, at every moment, the left person knows leftMax AND the right
+    person knows rightMax. Together they always know BOTH values.
+
+But here's another question:
+    If both people know both maximums, why doesn't BOTH move every time?
+    Because that would skip indices. If both move:
+        0 1 0 2 1 0 1 3 2 1 2 1
+          L                 R
+    then:
+        0 1 0 2 1 0 1 3 2 1 2 1
+            L             R
+    Eventually they'd jump over positions without ever deciding whose
+    water can already be calculated.
+    Instead we ask: "Which side is ALREADY safe to calculate?"
+
+That's why we compare:
+    leftMax = 2, rightMax = 3  ->  min(2,3) = 2  ->  LEFT is the
+        bottleneck  ->  only the LEFT pointer moves.
+    Later leftMax = 4, rightMax = 3  ->  min(4,3) = 3  ->  RIGHT is the
+        bottleneck  ->  only the RIGHT pointer moves.
+
+Think of it like this:
+    The pointers are NOT there to find water. They are there to keep
+    track of information from BOTH ends simultaneously.
+
+        Left Pointer            Right Pointer
+        maintains               maintains
+        leftMax                 rightMax
+
+    Without two pointers:
+        A left-to-right scan only knows leftMax.
+        A right-to-left scan only knows rightMax.
+    With two pointers:
+        You always know BOTH.
+    Then the comparison tells you which pointer is allowed to move
+    safely.
+
+The whole algorithm is just these three steps:
+
+    Step 1
+        Left pointer maintains leftMax.
+        Right pointer maintains rightMax.
+                        |
+                        v
+    Step 2
+        Compare them.
+                        |
+                        v
+    Step 3
+        Move ONLY the pointer whose max is smaller,
+        because only that side's water level is guaranteed.
+
+Think of two engineers inspecting a dam:
+    Left engineer: "the tallest wall I've seen is 2."
+    Right engineer: "the tallest wall I've seen is 3."
+    Compare 2 vs 3 -> left's wall is shorter -> left says:
+        "My wall is the bottleneck, so I already know the water level
+         on my side. I'll bank my position and step inward."
+    Later it might be 4 vs 3 -> now the right engineer steps.
+    They continue until they meet.
+
+The key insight:
+    The pointers are NOT searching for water. They are MAINTAINING the
+    highest wall seen from each side:
+        left_max  = tallest wall seen from the LEFT
+        right_max = tallest wall seen from the RIGHT
+    The smaller of the two is the current bottleneck, and because the
+    bottleneck fixes the water level, the water at that pointer is
+    fully determined - so bank it and move that pointer inward.
+
+The whole algorithm in three steps:
+    1. left pointer maintains left_max; right pointer maintains right_max
+    2. compare them
+    3. move ONLY the pointer whose max is smaller (that side's water
+       level is guaranteed)
+
+A question to test yourself:
+    height = [0,1,0,2,1,0,1,3,2,1,2,1]
+                    L         R
+    left_max = 2,  right_max = 3.
+    If the right wall suddenly became 100 instead of 3, would the water
+    level on the LEFT side become higher than 2?
+    (Answer: No - min(2, 100) is still 2. If you see why, the whole
+     two-pointer idea has clicked.)
 
 
 ==================================================

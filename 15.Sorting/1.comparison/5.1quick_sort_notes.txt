@@ -1,0 +1,348 @@
+==================================================
+QUICK SORT  —  Partition Around a Pivot (Lomuto)
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Sort an integer array in ascending order using Quick Sort
+with the Lomuto partition scheme (pivot = LAST element).
+
+Partition picks a pivot and rearranges a range so every
+value <= pivot sits before it and every value > pivot sits
+after it, then returns the pivot's final index. Quick Sort
+recurses on the two sides, sorting IN PLACE.
+
+Example:
+    nums = [5, 2, 8, 1, 9, 3]
+
+    output = [1, 2, 3, 5, 8, 9]
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def partition(nums, low, high):
+
+        pivot = nums[high]
+        i = low - 1                 # boundary of the "<= pivot" region
+
+        for j in range(low, high):
+            if nums[j] <= pivot:
+                i += 1
+                nums[i], nums[j] = nums[j], nums[i]
+
+        # place pivot just after the "<= pivot" region
+        nums[i + 1], nums[high] = nums[high], nums[i + 1]
+        return i + 1
+
+
+    def quickSort(nums, low=0, high=None):
+
+        if high is None:
+            high = len(nums) - 1
+
+        # ranges of size 0 or 1 are already sorted
+        if low < high:
+            p = partition(nums, low, high)
+            quickSort(nums, low, p - 1)
+            quickSort(nums, p + 1, high)
+
+        return nums
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5
+    array:  [ 5,  2,  8,  1,  9,  3 ]
+
+    low   = 0
+    high  = 5
+    pivot = nums[high] = 3      (LAST element)
+
+    the pivot is the value we partition around:
+
+     low                     high/PIVOT
+      v                         v
+    [ 5,  2,  8,  1,  9, (3) ]
+
+    i = low - 1 = -1            (nothing is "<= pivot" yet)
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Idea: partition around a PIVOT, then recurse on each side.
+
+One partition pass drops the pivot into its FINAL sorted spot
+and splits the rest into two independent groups:
+
+    [ things <= pivot ]  (pivot)  [ things > pivot ]
+
+Neither group ever mixes with the other again, so we just
+Quick Sort each side. Nothing merges at the end -> in place.
+
+Brute force sorting by comparing every pair -> O(n^2).
+Quick Sort with balanced splits -> O(n log n) on average.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [5,2,8,1,9,3])
+--------------------------------------------------
+
+--- CALL quickSort(low=0, high=5) ---
+partition(0, 5):  pivot = nums[5] = 3,  i = -1
+
+    j=0  nums[0]=5 <= 3 ? NO   -> skip
+    j=1  nums[1]=2 <= 3 ? YES  -> i=0, swap nums[0],nums[1]
+             [ 2,  5,  8,  1,  9,  3 ]
+    j=2  nums[2]=8 <= 3 ? NO   -> skip
+    j=3  nums[3]=1 <= 3 ? YES  -> i=1, swap nums[1],nums[3]
+             [ 2,  1,  8,  5,  9,  3 ]
+    j=4  nums[4]=9 <= 3 ? NO   -> skip
+
+    place pivot: swap nums[i+1=2], nums[5]
+             [ 2,  1, (3), 5,  9,  8 ]
+    return 2         <- pivot 3 is now in its FINAL place
+
+    split:   [2, 1]   (3)   [5, 9, 8]
+             idx 0..1        idx 3..5
+
+--- CALL quickSort(low=0, high=1)  on [2,1] ---
+partition(0, 1):  pivot = nums[1] = 1,  i = -1
+    j=0  nums[0]=2 <= 1 ? NO   -> skip
+    place pivot: swap nums[0], nums[1]
+             [ 1,  2,  3,  5,  9,  8 ]
+    return 0         <- pivot 1 final
+    left  quickSort(0,-1) -> low<high false, done
+    right quickSort(1, 1) -> low<high false, done
+
+--- CALL quickSort(low=3, high=5)  on [5,9,8] ---
+partition(3, 5):  pivot = nums[5] = 8,  i = 2
+    j=3  nums[3]=5 <= 8 ? YES  -> i=3, swap nums[3],nums[3] (no move)
+             [ 1,  2,  3,  5,  9,  8 ]
+    j=4  nums[4]=9 <= 8 ? NO   -> skip
+    place pivot: swap nums[i+1=4], nums[5]
+             [ 1,  2,  3,  5,  8,  9 ]
+    return 4         <- pivot 8 final
+    left  quickSort(3,3) -> done
+    right quickSort(5,5) -> done
+
+Output: [1, 2, 3, 5, 8, 9]
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+After ONE partition, the pivot is in its FINAL place:
+
+    [ elements < pivot ]  PIVOT  [ elements >= pivot ]
+                            ^
+                   never moves again
+
+    - i tracks the RIGHT edge of the "<= pivot" region.
+    - every time we see a value <= pivot, we grow that region
+      by one (i += 1) and swap the value into it.
+    - at the end we drop the pivot right after that region.
+
+Because the pivot is locked in, we only recurse on the LEFT
+part (low .. p-1) and the RIGHT part (p+1 .. high). The pivot
+itself is skipped -> the problem strictly shrinks.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [4,1,7,2])
+--------------------------------------------------
+
+partition(0,3): pivot = nums[3] = 2, i = -1
+
+     low            high/PIVOT
+      v                v
+    [ 4,  1,  7, (2) ]
+
+    j=0  4 <= 2 ? NO
+    j=1  1 <= 2 ? YES -> i=0, swap -> [ 1,  4,  7,  2 ]
+    j=2  7 <= 2 ? NO
+    place pivot: swap nums[1],nums[3] -> [ 1, (2), 7,  4 ]
+    return 1
+
+    split:  [1]  (2)  [7,4]
+
+quickSort(0,0)  -> size 1, done
+partition(2,3): pivot = nums[3] = 4, i = 1
+    j=2  7 <= 4 ? NO
+    place pivot: swap nums[2],nums[3] -> [ 1,  2, (4), 7 ]
+    return 2  -> both sides size <= 1
+
+    result = [1, 2, 4, 7]
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+"Pick a pivot, sweep everyone smaller to the LEFT, then the
+ pivot snaps into the gap between small and big."
+
+    small small small | PIVOT | big big
+                        ^ final resting spot
+
+    i  = last small (edge of the <= region)
+    j  = the scanner walking through the range
+    Good pivot -> even split -> shallow recursion -> fast.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Metric | Value                              |
+    | ------ | ---------------------------------- |
+    | Time   | O(n log n) average                 |
+    | Time   | O(n^2) worst (bad pivots)          |
+    | Space  | O(log n) recursion stack (avg)     |
+    | Stable | No (swaps non-adjacent elements)   |
+
+Average: balanced splits give log n depth, each level does
+O(n) partition work -> O(n log n).
+
+Worst: already-sorted (or reverse-sorted) input with a
+last-element pivot splits off just ONE element each time ->
+depth n, work O(n^2).
+
+Good pivots matter: randomized or median-of-three pivot
+choice makes the O(n^2) case astronomically unlikely.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION partition(nums, low, high)
+        pivot <- nums[high]
+        i <- low - 1
+        FOR j FROM low TO high - 1
+            IF nums[j] <= pivot
+                i <- i + 1
+                SWAP nums[i], nums[j]
+        SWAP nums[i + 1], nums[high]
+        RETURN i + 1
+    END FUNCTION
+
+    FUNCTION quickSort(nums, low, high)
+        IF low < high
+            p <- partition(nums, low, high)
+            quickSort(nums, low, p - 1)
+            quickSort(nums, p + 1, high)
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    To PARTITION a range from low to high:
+        Choose pivot = the LAST value (nums[high])
+        Set i = low - 1   (edge of the "small" zone)
+
+        Walk j from low up to high - 1:
+            If nums[j] is <= pivot
+                Move the small-zone edge: i = i + 1
+                Swap nums[i] with nums[j]
+
+        Swap nums[i + 1] with the pivot (nums[high])
+        Now the pivot sits right after the small zone
+        Return i + 1  (the pivot's final index)
+
+    To QUICK SORT a range from low to high:
+        If low is less than high (2 or more elements)
+            p = partition(low, high)
+            Quick sort the LEFT part  (low  .. p - 1)
+            Quick sort the RIGHT part (p + 1 .. high)
+        Otherwise (0 or 1 element) it is already sorted
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+         +-----------+
+         |   START   |
+         +-----+-----+
+               |
+               v
+      +--------------------+
+      | quickSort(low,high)|<-------------------+
+      +--------+-----------+                    |
+               |                                |
+               v                                |
+        +--------------+   No                   |
+        | low < high ? +----------> DONE (sorted)
+        +------+-------+                         |
+               | Yes                             |
+               v                                 |
+      +----------------------+                   |
+      | p = partition(...)   |                   |
+      | (pivot -> final spot)|                   |
+      +----------+-----------+                   |
+                 |                               |
+                 v                               |
+      +----------------------+                   |
+      | recurse left         |                   |
+      | quickSort(low, p-1)  +-------------------+
+      +----------+-----------+                   |
+                 |                               |
+                 v                               |
+      +----------------------+                   |
+      | recurse right        |                   |
+      | quickSort(p+1, high) +-------------------+
+      +----------------------+
+
+    PARTITION detail:
+      +---------------------------+
+      | pivot = nums[high]        |
+      | i = low - 1               |
+      +------------+--------------+
+                   |
+                   v
+      +---------------------------+  loop j = low .. high-1
+      | nums[j] <= pivot ?        |
+      +----+-----------------+----+
+       Yes |                 | No
+           v                 v
+     +-------------+     (skip, next j)
+     | i = i + 1   |
+     | swap i, j   |
+     +------+------+
+            |
+            v
+      +---------------------------+
+      | swap nums[i+1], nums[high]|
+      | return i + 1              |
+      +---------------------------+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"Quick Sort picks a pivot and partitions the array so that
+ everything <= the pivot goes to its left and everything
+ bigger goes to its right. I use Lomuto partition with the
+ last element as the pivot: a pointer i marks the edge of the
+ 'small' region, a scanner j walks the range, and whenever
+ nums[j] <= pivot I grow the region and swap it in. At the end
+ I swap the pivot into place, so it lands at its final index.
+ Then I recurse on the left and right halves. Balanced splits
+ give O(n log n); a sorted input with a bad last-element pivot
+ degrades to O(n^2), which randomized or median-of-three pivots
+ avoid. It sorts in place and is not stable.
+
+ Time:  O(n log n) average, O(n^2) worst
+ Space: O(log n) recursion"
+
+
+==================================================
+Quick Sort: partition around a pivot, lock the pivot
+in place, then recurse on each side. In place, fast,
+not stable.
+==================================================

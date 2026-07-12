@@ -332,6 +332,117 @@ Each element is written exactly once, so O(m + n) total.
  It's the two-pointer merge pattern, run in reverse."
 
 
+--------------------------------------------------
+14. DEEP DIVE  —  WHY MERGE FROM THE BACK?
+--------------------------------------------------
+This is one of the best examples for understanding WHY we use
+pointers. The mistake beginners make is thinking:
+    "Why start from the END? Why not merge from the beginning?"
+Let's build the intuition from scratch.
+
+Step 1: Understand the arrays
+    nums1 = [1, 2, 3, 0, 0, 0]
+             \-real-/  \empty/
+    nums2 = [2, 5, 6]
+    Goal:   [1, 2, 2, 3, 5, 6]
+
+Step 2: Why can't we merge from the FRONT?
+    Start at index 0 of nums1:
+        [1, 2, 3, 0, 0, 0]
+         ^
+    Compare 1 and 2 -> 1 smaller, move on. Compare 2 and 2, fine.
+    Eventually you must insert nums2's 2 BEFORE the 3:
+        [1, 2, 3, 0, 0, 0]
+               ^
+    If you place 2 here, the 3 gets OVERWRITTEN - you lose it.
+    To save it you'd first shift every element right:
+        before:  1 2 3 0 0 0
+        after:   1 2 _ 3 0 0
+    Every insertion may shift many elements  ->  inefficient.
+
+Step 3: The trick
+    The BACK of nums1 is empty:
+        1 2 3 0 0 0
+              \empty/
+    Nobody is using those slots. So fill from the BACK instead of the
+    front - then we never overwrite a value we still need to read.
+
+Step 4: Why THREE pointers?  (three different jobs)
+    i  ->  last REAL element of nums1     i = m-1 = 2
+            1 2 3 0 0 0
+                ^
+                i
+    j  ->  last element of nums2          j = n-1 = 2
+            2 5 6
+                ^
+                j
+    k  ->  where we WRITE next            k = m+n-1 = 5
+            1 2 3 0 0 0
+                      ^
+                      k
+
+Step 5: What are we comparing, and why?
+    Compare nums1[i] vs nums2[j] - because in two SORTED arrays those
+    are the two LARGEST remaining numbers. The larger of them is the
+    largest number overall, so it belongs at the back (position k).
+        nums1: 1 2 [3]   largest = 3
+        nums2: 2 5 [6]   largest = 6
+
+Step 6-9: Walk it  (i, j, k shown under the arrays)
+    Start
+        nums1: 1 2 3 0 0 0        nums2: 2 5 6
+                   i     k                    j
+
+    Compare 3 vs 6 -> 6 larger -> write 6 at k; j--, k--
+        nums1: 1 2 3 0 0 6        nums2: 2 5 6
+                   i   k                  j
+
+    Compare 3 vs 5 -> 5 larger -> write 5 at k; j--, k--
+        nums1: 1 2 3 0 5 6        nums2: 2 5 6
+                   i k                j
+
+    Compare 3 vs 2 -> 3 larger -> write 3 at k; i--, k--
+        (that's just the 3 copied into its final slot)
+        nums1: 1 2 3 3 5 6        nums2: 2
+                 i k                  j
+
+    Compare 2 vs 2 -> equal -> else branch copies nums2's 2; j--, k--
+        nums1: 1 2 2 3 5 6        nums2 exhausted (j = -1)
+
+    Final: [1, 2, 2, 3, 5, 6]   done.
+
+Why do we only loop while j >= 0?
+    If nums2 empties first, whatever remains in nums1 is ALREADY in
+    place - no work needed:
+        nums1 = 1 2 3 (+empty),  nums2 = 2  ->  the leading 1 2 already
+        sit correctly, so we can stop once nums2 is done.
+    But the opposite matters:
+        nums1 = 4 5 6,  nums2 = 1 2 3  ->  if nums1's reals finish
+        first, we STILL must copy nums2's 1 2 3 down. So the loop runs
+        until nums2 (j) is empty.
+
+Why call i, j, k "pointers"?
+    They are just indexes that MOVE and "point" to a current position:
+        i -> current spot in nums1's real values
+        j -> current spot in nums2
+        k -> current spot in nums1's empty tail
+
+The most important intuition:
+    Think of nums1 as TWO regions:
+        +---------+-----------+
+        | 1 2 3   | 0 0 0     |
+        +---------+-----------+
+          real       empty
+    The empty region is where the LARGEST elements land first. Each
+    step asks: "which is larger - the last unused element of nums1 or
+    of nums2?" The larger one belongs at the end, so copy it to k and
+    move that array's pointer.
+
+    Classic multi-pointer technique: two pointers (i, j) track the next
+    candidate from each sorted source, while a third (k) tracks the
+    next position to fill in the destination.
+
+
 ==================================================
 Merge from the BACK with three pointers (i, j, k)
 so you never overwrite an unread value.

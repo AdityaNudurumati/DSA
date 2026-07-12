@@ -89,8 +89,8 @@ Iteration 1
     answer = 8
     height[left]=1 < height[right]=7  ->  move left++  (left=1)
 
-     L                                       R
-     v                                       v
+     L                               R
+     v                               v
    [ 1,  8,  6,  2,  5,  4,  8,  3,  7 ]
 
 Iteration 2
@@ -99,8 +99,8 @@ Iteration 2
     answer = max(8, 49) = 49
     height[left]=8 >= height[right]=7  ->  move right-- (right=7)
 
-         L                                   R
-         v                                   v
+         L                           R
+         v                           v
    [ 1,  8,  6,  2,  5,  4,  8,  3,  7 ]
 
 Iteration 3

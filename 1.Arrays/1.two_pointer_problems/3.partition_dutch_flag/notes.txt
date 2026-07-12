@@ -36,3 +36,61 @@ Problems  (☐ = todo, ☑ = done)
 ☑ Partition Around Pivot             -> 4.partition_around_pivot.py
 ☑ Segregate Even and Odd             -> 5.segregate_even_odd.py
 ☑ Move Negatives to One Side         -> 6.move_negatives.py
+
+--------------------------------------------------
+IS DUTCH NATIONAL FLAG A SORTING ALGORITHM?
+--------------------------------------------------
+Short answer: NO. It is not a general-purpose sort like Merge Sort or
+Quick Sort. It is a SPECIALIZED PARTITIONING algorithm that uses the
+multi-pointer technique to solve one specific shape of array problem.
+
+Why not just call nums.sort()?
+    Given [2,0,2,1,1,0] you COULD write nums.sort() (or Merge/Quick
+    Sort) and it would work. LeetCode asks for something else because
+    the problem adds constraints:
+        1. in-place        2. one pass        3. no counting sort
+    Those constraints rule out the standard solutions.
+
+    | Method          | Time       | Space | One pass? |
+    | --------------- | ---------- | ----- | --------- |
+    | Merge Sort      | O(n log n) | O(n)  | no        |
+    | Quick Sort      | O(n log n)*| O(logn)| no       |  (*O(n^2) worst)
+    | Counting Sort   | O(n)       | O(1)  | no (2 passes: count+rewrite) |
+    | Dutch Nat. Flag | O(n)       | O(1)  | YES       |
+    Only Dutch National Flag matches "O(n), O(1), one pass".
+
+Is it a sorting algorithm?  Not really.
+    A real sort can order  5 3 7 9 2 8 4.  DNF cannot - it only knows
+    THREE categories (0/1/2, or small/medium/large, or <pivot / =pivot /
+    >pivot). It CANNOT sort arbitrary numbers. It PARTITIONS:
+        red first, white next, blue last - grouping, not full ordering.
+
+Why is it taught under Two Pointers, not Sorting?
+    Because the work is done by MOVING POINTERS (low, mid, high) that
+    advance by rules - not by comparing every element with every other.
+    As the pointers move, the array evolves:
+        Unknown
+        -> 0's | Unknown | 2's
+        -> 0's | 1's | Unknown | 2's
+        -> 0's | 1's | 2's
+
+Interview mental model:
+    - "Sort ARBITRARY numbers / kth smallest / merge"        -> SORTING.
+    - "Rearrange into GROUPS (0/1/2, neg/pos, around a pivot)"-> PARTITION
+      technique (Dutch National Flag / two-pointer partition).
+
+    Books analogy: 3 colors of books -> just make 3 piles (DNF). Books
+    with arbitrary numbers on them -> you need a real sort (Merge/Quick/
+    Heap).
+
+Where it sits in the DSA map:
+    Arrays
+    +-- Two Pointers
+    |     +-- Move Zeroes
+    |     +-- Sort Colors   <- Dutch National Flag
+    |     +-- Trapping Rain Water
+    |     +-- Container With Most Water
+    +-- Partitioning
+    Sorting Algorithms  (separate family)
+    +-- Bubble / Selection / Insertion / Merge / Quick / Heap / Radix
+    (see ../../../15.Sorting/)

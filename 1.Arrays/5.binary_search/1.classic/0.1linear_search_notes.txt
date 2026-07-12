@@ -1,0 +1,300 @@
+==================================================
+LINEAR SEARCH  —  Sequential Scan (O(n) Baseline)
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an array (sorted OR unsorted) and a target number,
+return the index of the FIRST occurrence of target,
+or -1 if it is not present.
+
+Example:
+    nums   = [4, 2, 7, 1, 9, 3]
+    target = 9
+
+    9 is sitting at index 4  ->  answer = 4
+
+This is the baseline O(n) search that binary search
+improves upon when the array is sorted.
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def linearSearch(nums, target):
+
+        # walk every element left to right; return the first match
+        for i in range(len(nums)):
+            if nums[i] == target:
+                return i
+
+        return -1
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5
+    array:  [ 4,  2,  7,  1,  9,  3 ]
+
+    i = 0   (start scanning from the left)
+
+         i
+         v
+       [ 4,  2,  7,  1,  9,  3 ]
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH?
+--------------------------------------------------
+Because it works on ANY array — sorted or not.
+
+No assumptions are needed. We simply look at every
+element one by one until we find the target.
+
+    check 4? no    check 2? no    check 7? no ...
+
+Each element is visited at most once  ->  O(n).
+It is the honest baseline: if you know nothing about the
+data, you cannot do better than checking every slot.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [4,2,7,1,9,3], target = 9)
+--------------------------------------------------
+
+Iteration 1
+    i=0    nums[0] = 4
+    4 == 9 ?  no  ->  move on   (i = 1)
+
+         i
+         v
+       [ 4,  2,  7,  1,  9,  3 ]
+
+Iteration 2
+    i=1    nums[1] = 2
+    2 == 9 ?  no  ->  move on   (i = 2)
+
+             i
+             v
+       [ 4,  2,  7,  1,  9,  3 ]
+
+Iteration 3
+    i=2    nums[2] = 7
+    7 == 9 ?  no  ->  move on   (i = 3)
+
+                 i
+                 v
+       [ 4,  2,  7,  1,  9,  3 ]
+
+Iteration 4
+    i=3    nums[3] = 1
+    1 == 9 ?  no  ->  move on   (i = 4)
+
+                     i
+                     v
+       [ 4,  2,  7,  1,  9,  3 ]
+
+Iteration 5
+    i=4    nums[4] = 9
+    9 == 9 ?  YES  ->  FOUND
+
+                         i
+                         v
+       [ 4,  2,  7,  1,  9,  3 ]
+
+    return i = 4
+
+Output: 4
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (check each element, return first match)
+--------------------------------------------------
+
+Walk from LEFT to RIGHT, one index at a time:
+
+    for each i:
+        if nums[i] == target  ->  return i immediately
+
+The very first element that matches wins. We stop as
+soon as we find it — no need to scan the rest.
+
+    [ 4,  2,  7,  1,  9,  3 ]
+      ->  ->  ->  ->  X (stop here, return 4)
+
+If we reach the end without a match  ->  return -1.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [4,2,7,1,9,3], target = 5)
+--------------------------------------------------
+
+    i                             4 == 5 ?  no  -> i++
+    v
+  [ 4,  2,  7,  1,  9,  3 ]
+
+        i                         2 == 5 ?  no  -> i++
+        v
+  [ 4,  2,  7,  1,  9,  3 ]
+
+            i                     7 == 5 ?  no  -> i++
+            v
+  [ 4,  2,  7,  1,  9,  3 ]
+
+                i                 1 == 5 ?  no  -> i++
+                v
+  [ 4,  2,  7,  1,  9,  3 ]
+
+                    i             9 == 5 ?  no  -> i++
+                    v
+  [ 4,  2,  7,  1,  9,  3 ]
+
+                        i         3 == 5 ?  no  -> i++
+                        v
+  [ 4,  2,  7,  1,  9,  3 ]
+
+    loop ends, no match found
+
+    return -1
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Looking for a friend by walking down a line of people,
+checking faces ONE BY ONE from the front:
+
+    front ------------------------------> back
+      i moves this way, one step at a time
+
+    face matches ?  ->  stop, that's the spot
+    reached the end ?  ->  friend not here (-1)
+
+"Just look at everyone until you find them."
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach              | Time              | Space |
+    | --------------------- | ----------------- | ----- |
+    | Linear search (best)  | O(1)              | O(1)  |
+    | Linear search (worst) | O(n)              | O(1)  |
+    | Linear search (avg)   | O(n)              | O(1)  |
+    | Binary search*        | O(log n)          | O(1)  |
+
+    * Binary search needs a SORTED array. On sorted data
+      it is far faster; on unsorted data it does not apply.
+
+Best case O(1): target is the very first element.
+Worst/avg O(n): target is last or absent — every slot checked.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION linearSearch(nums, target)
+
+        FOR i FROM 0 TO length(nums) - 1
+
+            IF nums[i] = target
+                RETURN i
+
+        END FOR
+
+        RETURN -1
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set i = 0
+
+    Repeat while i is less than the length of the array
+
+        Look at the element at position i:
+            value = nums[i]
+
+        If value equals target
+            Return the position i  (match found)
+
+        Otherwise
+            Move one step to the right
+            i = i + 1
+
+    END Repeat
+
+    If the loop finishes with no match
+        Return -1  (target not present)
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+    +-----------+
+    |   START   |
+    +-----+-----+
+          |
+          v
+    +-----------+
+    |   i = 0   |
+    +-----+-----+
+          |
+          v
+    +--------------------+
+    | i < length(nums) ? |<-------------+
+    +---------+----------+              |
+              |                         |
+        Yes   |         No              |
+     +--------+---------+               |
+     |                  |               |
+     v                  v               |
+    +----------------+  +-----------+   |
+    | nums[i] ==     |  | RETURN -1 |   |
+    | target ?       |  +-----+-----+   |
+    +------+---------+        |         |
+       |   |                  v         |
+   Yes |   | No             +-----+     |
+       |   |                | END |     |
+       v   |                +-----+     |
+    +-----------+           ^           |
+    | RETURN i  |-----------+           |
+    +-----------+                       |
+           (No branch below)            |
+              |                         |
+              v                         |
+        +-----------+                   |
+        | i = i + 1 |-------------------+
+        +-----------+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"Linear search just scans the array from left to right,
+ comparing each element with the target.
+ - The moment an element equals the target, I return its index.
+ - If I reach the end without a match, I return -1.
+ It works on ANY array because it makes no assumptions
+ about order. If the array is SORTED, binary search is
+ faster at O(log n), but linear search is the fallback
+ that always works.
+
+ Time:  O(n)   (O(1) best case if it's the first element)
+ Space: O(1)
+ It's the O(n) baseline that binary search improves upon."
+
+
+==================================================
+This is the simplest search: scan every element
+left to right and return the first match. Works on
+unsorted data; O(n) baseline for binary search.
+==================================================

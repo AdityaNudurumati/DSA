@@ -1,0 +1,363 @@
+==================================================
+FIND FIRST & LAST POSITION  —  Two Boundary
+Binary Searches on a Sorted Array
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given a SORTED array (with possible DUPLICATES) and a target,
+return the FIRST and LAST index of target as [first, last].
+If the target is absent, return [-1, -1]. Must run in O(log n).
+
+Example:
+    nums   = [5, 7, 7, 8, 8, 10]
+    target = 8
+
+    8 appears at index 3 and index 4
+        first 8 -> index 3
+        last  8 -> index 4
+
+    answer = [3, 4]   (0-based indexing)
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def searchRange(nums, target):
+
+        def lower_bound(t):
+            # first index with nums[index] >= t
+            lo, hi = 0, len(nums)
+            while lo < hi:
+                mid = (lo + hi) // 2
+                if nums[mid] < t:
+                    lo = mid + 1
+                else:
+                    hi = mid
+            return lo
+
+        first = lower_bound(target)
+
+        if first == len(nums) or nums[first] != target:
+            return [-1, -1]
+
+        # last occurrence = (first index > target) - 1
+        last = lower_bound(target + 1) - 1
+        return [first, last]
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5
+    array:  [ 5,  7,  7,  8,  8, 10 ]
+                        ^^^^^^^^  target 8 lives here (duplicates)
+
+    lower_bound(t):
+        lo = 0
+        hi = len(nums) = 6     (hi starts PAST the last index)
+
+     LO           MID          HI
+     v            v            v
+   [ 5,  7,  7,  8,  8, 10 ]  |
+     0   1   2   3   4   5    (6 = hi, one past the end)
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+A plain binary search finds SOME index of the target, but with
+duplicates you cannot tell if it is the first or the last one.
+
+So we run TWO binary searches, both using one lower_bound helper:
+
+    LEFTMOST occurrence:
+        first = lower_bound(target)
+        (first index whose value is >= target)
+
+    RIGHTMOST occurrence:
+        last  = lower_bound(target + 1) - 1
+        (first index whose value is > target, minus one)
+
+Brute force scanning both edges is O(n).
+Two binary searches stay O(log n) even with many duplicates.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [5,7,7,8,8,10], target = 8)
+--------------------------------------------------
+
+===== PASS 1: find FIRST index -> lower_bound(8) =====
+
+Iteration 1
+    lo=0  hi=6
+    mid = (0+6)//2 = 3
+    nums[3] = 8    8 < 8 ? NO  ->  hi = mid = 3
+
+     LO       MID/HI
+     v        v
+   [ 5,  7,  7,  8,  8, 10 ]
+
+Iteration 2
+    lo=0  hi=3
+    mid = (0+3)//2 = 1
+    nums[1] = 7    7 < 8 ? YES ->  lo = mid + 1 = 2
+
+         LO   HI
+         v    v
+   [ 5,  7,  7,  8,  8, 10 ]
+
+Iteration 3
+    lo=2  hi=3
+    mid = (2+3)//2 = 2
+    nums[2] = 7    7 < 8 ? YES ->  lo = mid + 1 = 3
+
+             LO/HI
+             v
+   [ 5,  7,  7,  8,  8, 10 ]
+
+    lo == hi == 3  ->  loop ends
+    lower_bound(8) = 3       ->  first = 3
+
+    Check: first(3) != len(6) AND nums[3]=8 == target  ->  valid, keep going
+
+
+===== PASS 2: find LAST index -> lower_bound(9) - 1 =====
+
+Iteration 1
+    lo=0  hi=6
+    mid = 3
+    nums[3] = 8    8 < 9 ? YES ->  lo = mid + 1 = 4
+
+Iteration 2
+    lo=4  hi=6
+    mid = 5
+    nums[5] = 10   10 < 9 ? NO ->  hi = mid = 5
+
+Iteration 3
+    lo=4  hi=5
+    mid = 4
+    nums[4] = 8    8 < 9 ? YES ->  lo = mid + 1 = 5
+
+    lo == hi == 5  ->  loop ends
+    lower_bound(9) = 5
+    last = 5 - 1 = 4
+
+Output: [first, last] = [3, 4]
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+
+Do NOT return the moment nums[mid] equals target.
+Instead, keep shrinking the window to squeeze onto a boundary.
+
+Bias LEFT (find FIRST occurrence):
+    when nums[mid] >= target  ->  move hi = mid
+    (a match is not good enough; a match to the LEFT might be better)
+
+Bias RIGHT (find LAST occurrence):
+    search for target + 1 to land just PAST the block of targets,
+    then step back one:  last = lower_bound(target + 1) - 1
+
+One helper, two calls:
+    first = lower_bound(target)        (>= target)
+    last  = lower_bound(target + 1) - 1 (> target, then -1)
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (target NOT present)
+--------------------------------------------------
+
+    nums = [5, 7, 7, 8, 8, 10], target = 6
+
+    lower_bound(6):
+        lo=0 hi=6  mid=3  nums[3]=8  8<6? NO  -> hi=3
+        lo=0 hi=3  mid=1  nums[1]=7  7<6? NO  -> hi=1
+        lo=0 hi=1  mid=0  nums[0]=5  5<6? YES -> lo=1
+        lo==hi==1  ->  first = 1
+
+    Check: first(1) != len(6), but nums[1] = 7 != 6
+           target is MISSING  ->  return [-1, -1]
+
+    Output: [-1, -1]
+
+    (Same guard also catches first == len(nums), e.g. an empty
+     array [] returns [-1, -1] immediately.)
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Think of a wall of identical target values:
+
+    ... 7 | 8  8  8 | 10 ...
+          ^          ^
+        FIRST       just past LAST
+
+    first = lower_bound(target)        -> left edge of the wall
+    last  = lower_bound(target+1) - 1  -> right edge of the wall
+
+"Find the door BEFORE the 8's, and the door AFTER the 8's,
+ then step one back."
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach            | Time     | Space |
+    | ------------------- | -------- | ----- |
+    | Linear scan edges   | O(n)     | O(1)  |
+    | Two binary searches | O(log n) | O(1)  |
+
+Two lower_bound passes, each O(log n)  ->  O(log n) total.
+Only a few variables used  ->  O(1) space.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION lowerBound(nums, t)
+        lo <- 0
+        hi <- length(nums)
+        WHILE lo < hi
+            mid <- (lo + hi) / 2      (integer division)
+            IF nums[mid] < t
+                lo <- mid + 1
+            ELSE
+                hi <- mid
+        END WHILE
+        RETURN lo
+    END FUNCTION
+
+    FUNCTION searchRange(nums, target)
+        first <- lowerBound(nums, target)
+        IF first = length(nums) OR nums[first] != target
+            RETURN [-1, -1]
+        last <- lowerBound(nums, target + 1) - 1
+        RETURN [first, last]
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Helper lowerBound(t):
+        Set lo = 0
+        Set hi = length of array   (one past the last index)
+        Repeat while lo is less than hi
+            Find the middle:
+                mid = (lo + hi) / 2
+            If value at mid is smaller than t
+                The answer is to the RIGHT
+                lo = mid + 1
+            Otherwise
+                The answer is at mid or to the LEFT
+                hi = mid
+        End Repeat
+        Return lo    (first index whose value is >= t)
+
+    Main searchRange(nums, target):
+        first = lowerBound(target)
+
+        If first fell off the end of the array
+        OR the value at first is NOT the target
+            The target does not exist
+            Return (-1, -1)
+
+        Find one index past the last target:
+            last = lowerBound(target + 1) - 1
+
+        Return positions (first, last)
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+    +-----------+
+    |   START   |
+    +-----+-----+
+          |
+          v
+    +----------------------------+
+    | first = lowerBound(target) |
+    +-------------+--------------+
+                  |
+                  v
+        +-------------------------+
+        | first == len(nums)      |  Yes
+        | OR nums[first]!=target? +------> RETURN [-1,-1] --> END
+        +-----------+-------------+
+                    | No
+                    v
+    +-----------------------------------+
+    | last = lowerBound(target+1) - 1   |
+    +-----------------+-----------------+
+                      |
+                      v
+              +---------------+
+              | RETURN        |
+              | [first, last] +--> END
+              +---------------+
+
+    lowerBound(t) subroutine:
+
+    +---------------------+
+    | lo = 0              |
+    | hi = len(nums)      |
+    +----------+----------+
+               |
+               v
+        +--------------+
+        |  lo < hi ?   |<---------------+
+        +------+-------+                |
+               | Yes                    |
+               v                        |
+        +------------------+            |
+        | mid = (lo+hi)//2 |            |
+        +--------+---------+            |
+                 v                      |
+        +------------------+  Yes       |
+        | nums[mid] < t ?  +--> lo=mid+1 -+
+        +--------+---------+            |
+                 | No                   |
+                 v                      |
+           +-----------+                |
+           | hi = mid  +----------------+
+           +-----------+
+               |
+               | (lo >= hi: loop ends)
+               v
+           +-----------+
+           | RETURN lo |
+           +-----------+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"The array is sorted, so I use a lower_bound helper that returns
+ the first index whose value is >= t. I call it twice.
+ - first = lower_bound(target) gives the leftmost target.
+ - If that index is off the end or its value isn't the target,
+   the target is missing, so I return [-1, -1].
+ - last = lower_bound(target + 1) - 1 lands just past the block
+   of targets, then I step back one to get the rightmost target.
+ The trick is I never return on a match; I keep biasing the search
+ toward the boundary so duplicates are handled correctly.
+
+ Time:  O(log n)  (two binary searches)
+ Space: O(1)
+ It's the two-boundary binary-search pattern."
+
+
+==================================================
+This is the classic LC34 pattern: find both edges
+of a duplicated target with two lower-bound searches.
+==================================================

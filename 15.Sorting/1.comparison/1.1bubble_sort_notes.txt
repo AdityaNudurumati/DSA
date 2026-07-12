@@ -1,0 +1,341 @@
+==================================================
+BUBBLE SORT  —  Adjacent Swaps with Early Exit
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Sort an integer array in ascending order using Bubble Sort.
+
+Repeatedly walk the array swapping adjacent out-of-order
+pairs. After pass k the largest k elements have "bubbled"
+to the end. Track whether any swap happened in a pass; if
+none did, the array is already sorted and we stop early.
+
+Example:
+    nums = [5, 2, 8, 1, 9, 3]
+
+    Output = [1, 2, 3, 5, 8, 9]
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def bubbleSort(nums):
+
+        n = len(nums)
+
+        # each pass fixes the largest remaining element at position n-1-i
+        for i in range(n - 1):
+            swapped = False
+            # last i elements are already in place, so stop at n-1-i
+            for j in range(n - 1 - i):
+                if nums[j] > nums[j + 1]:
+                    nums[j], nums[j + 1] = nums[j + 1], nums[j]
+                    swapped = True
+            # no swaps in a full pass => already sorted, early exit
+            if not swapped:
+                break
+
+        return nums
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5
+    array:  [ 5,  2,  8,  1,  9,  3 ]
+
+    n = 6
+    i = pass number   (0 .. n-2)
+    j = compare index (nums[j] vs nums[j+1])
+
+    compare adjacent pairs, left to right:
+
+        j  j+1
+        v   v
+      [ 5,  2,  8,  1,  9,  3 ]
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Bubble sort compares NEIGHBOURS only.
+
+Walk the array from left to right. Whenever a pair is out of
+order (left bigger than right), swap them. The biggest value
+keeps getting pushed right until it reaches the end.
+
+    5, 2  ->  wrong order  ->  swap  ->  2, 5
+
+After one full pass the LARGEST element is parked at the end.
+Do it again for the rest, and again, shrinking the range.
+
+When is it useful?
+    - Teaching / understanding sorting (very intuitive).
+    - Tiny arrays.
+    - Nearly-sorted data: the swapped flag ends it in ONE
+      O(n) pass instead of O(n^2).
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [5,2,8,1,9,3])
+--------------------------------------------------
+
+PASS 1  (i=0, j goes 0..4)   swapped = False
+    j=0: 5 > 2 ?  YES  -> swap   [2, 5, 8, 1, 9, 3]  swapped=True
+    j=1: 5 > 8 ?  no
+    j=2: 8 > 1 ?  YES  -> swap   [2, 5, 1, 8, 9, 3]  swapped=True
+    j=3: 8 > 9 ?  no
+    j=4: 9 > 3 ?  YES  -> swap   [2, 5, 1, 8, 3, 9]  swapped=True
+
+    after pass 1:  [2, 5, 1, 8, 3, 9]
+                                     ^ 9 fixed (largest at end)
+
+PASS 2  (i=1, j goes 0..3)   swapped = False
+    j=0: 2 > 5 ?  no
+    j=1: 5 > 1 ?  YES  -> swap   [2, 1, 5, 8, 3, 9]  swapped=True
+    j=2: 5 > 8 ?  no
+    j=3: 8 > 3 ?  YES  -> swap   [2, 1, 5, 3, 8, 9]  swapped=True
+
+    after pass 2:  [2, 1, 5, 3, 8, 9]
+                                  ^ 8 fixed
+
+PASS 3  (i=2, j goes 0..2)   swapped = False
+    j=0: 2 > 1 ?  YES  -> swap   [1, 2, 5, 3, 8, 9]  swapped=True
+    j=1: 2 > 5 ?  no
+    j=2: 5 > 3 ?  YES  -> swap   [1, 2, 3, 5, 8, 9]  swapped=True
+
+    after pass 3:  [1, 2, 3, 5, 8, 9]
+                               ^ 5 fixed (array now sorted)
+
+PASS 4  (i=3, j goes 0..1)   swapped = False
+    j=0: 1 > 2 ?  no
+    j=1: 2 > 3 ?  no
+
+    NO swaps happened  ->  swapped stays False  ->  BREAK
+    (early exit: array is already sorted)
+
+Output: [1, 2, 3, 5, 8, 9]
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+
+(1) The "bubble":
+    Each pass drags the largest REMAINING value to its final
+    slot at the end, like a bubble rising to the surface.
+
+        pass 1 fixes -> position n-1
+        pass 2 fixes -> position n-2
+        pass 3 fixes -> position n-3
+        ...
+
+    That is why the inner loop stops early at  n-1-i  :
+    the last i slots are already sorted, no need to touch them.
+
+(2) The swapped flag (early exit):
+    If a whole pass makes ZERO swaps, everything is already in
+    order. Set swapped=False at the start of each pass; if it is
+    still False at the end, break out.
+
+        already sorted input  ->  1 clean pass  ->  O(n)
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [3, 3, 1])
+--------------------------------------------------
+
+PASS 1  (i=0, j goes 0..1)   swapped = False
+    j=0: 3 > 3 ?  no    (strict >, so EQUAL values never swap -> STABLE)
+    j=1: 3 > 1 ?  YES  -> swap   [3, 1, 3]  swapped=True
+
+    after pass 1:  [3, 1, 3]
+                         ^ last 3 fixed
+
+PASS 2  (i=1, j goes 0..0)   swapped = False
+    j=0: 3 > 1 ?  YES  -> swap   [1, 3, 3]  swapped=True
+
+    after pass 2:  [1, 3, 3]
+
+Loop ends (i only runs 0..n-2 = 0..1).
+
+Output: [1, 3, 3]
+    The two 3s kept their original relative order -> STABLE.
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Think of soda bubbles rising:
+
+    the BIGGEST number floats to the TOP (the end) each pass.
+
+    [ ~ ~ ~ ~ BIG ]  ->  BIG rises to the right wall
+                         then forget it and repeat for the rest
+
+    "Compare neighbours, swap if left > right,
+     biggest bubbles to the end."
+
+    And: no swap in a pass  ->  already sorted  ->  STOP.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Metric | Value                             |
+    | ------ | --------------------------------- |
+    | Time   | best  O(n)   (already sorted)     |
+    | Time   | avg   O(n^2)                      |
+    | Time   | worst O(n^2)  (reverse sorted)    |
+    | Space  | O(1)  in-place                    |
+    | Stable | Yes  (swaps only on strict >)     |
+
+Best case O(n): a single pass with no swaps triggers the
+early exit. Otherwise ~n passes of ~n comparisons -> O(n^2).
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION bubbleSort(nums)
+
+        n <- length(nums)
+
+        FOR i FROM 0 TO n - 2
+            swapped <- False
+
+            FOR j FROM 0 TO n - 2 - i
+                IF nums[j] > nums[j + 1]
+                    SWAP nums[j], nums[j + 1]
+                    swapped <- True
+
+            IF swapped = False
+                BREAK
+
+        RETURN nums
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Let n = number of elements in the array
+
+    Repeat passes, i from 0 up to n - 2:
+
+        At the start of this pass, set swapped = False
+        (this means "no swap yet in this pass")
+
+        Look at each adjacent pair, j from 0 up to n - 2 - i:
+        (we stop earlier each pass because the tail is sorted)
+
+            Compare nums[j] with the next one nums[j + 1]
+
+            If the left one is bigger than the right one
+                Swap the two values
+                Set swapped = True (we did move something)
+
+        After finishing the pass:
+            If swapped is still False
+                Nothing moved, the array is already sorted
+                Stop early (break)
+
+    Return the sorted array
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +---------------------+
+    | n = len(nums)       |
+    | i = 0               |
+    +----------+----------+
+               |
+               v
+       +----------------+
+       | i <= n - 2 ?   |<-------------------+
+       +----+-----------+                    |
+            | Yes                            |
+            v                                |
+    +---------------------+                  |
+    | swapped = False     |                  |
+    | j = 0               |                  |
+    +----------+----------+                  |
+               |                             |
+               v                             |
+       +------------------+                  |
+       | j <= n-2-i ?     |<----------+      |
+       +----+-------------+           |      |
+            | Yes                     |      |
+            v                         |      |
+    +---------------------+           |      |
+    | nums[j] > nums[j+1]?|           |      |
+    +----+-----------+----+           |      |
+     Yes |           | No             |      |
+         v           |                |      |
+    +----------+     |                |      |
+    | swap;    |     |                |      |
+    | swapped  |     |                |      |
+    | = True   |     |                |      |
+    +----+-----+     |                |      |
+         |           |                |      |
+         v           v                |      |
+       +------------------+           |      |
+       | j = j + 1        |-----------+      |
+       +------------------+                  |
+       (inner loop done when j > n-2-i)      |
+            |                                |
+            | No (inner loop finished)       |
+            v                                |
+       +----------------+                    |
+       | swapped ==     | No (some swap)     |
+       | False ?        |-----> i = i + 1 ---+
+       +----+-----------+
+            | Yes (no swap)
+            v
+       +----------+       +-------+
+       |  BREAK   |-----> |  END  |
+       +----------+       +---+---+
+                              ^
+                              |
+    (i > n-2: loop ends) -----+
+                              |
+                        RETURN nums
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"Bubble sort repeatedly walks the array comparing adjacent
+ pairs and swapping any that are out of order.
+ - After each full pass, the largest remaining value has
+   'bubbled' to its correct spot at the end, so I shrink the
+   range I scan each time.
+ - I keep a 'swapped' flag per pass; if a pass makes no swaps
+   the array is already sorted and I break out early.
+ That early exit gives O(n) on an already-sorted array.
+ It's in-place and stable because I only swap on a strict
+ greater-than, so equal elements keep their order.
+
+ Time:  O(n) best, O(n^2) average and worst
+ Space: O(1)
+ It's the simplest comparison sort, best for tiny or
+ nearly-sorted inputs."
+
+
+==================================================
+Bubble Sort: compare neighbours, swap if out of
+order, biggest bubbles to the end each pass.
+==================================================

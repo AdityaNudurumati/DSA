@@ -1,0 +1,353 @@
+==================================================
+SELECTION SORT  —  Pick the Minimum, Swap It Forward
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Sort an integer array in ascending order using Selection Sort.
+
+Repeatedly select the MINIMUM of the unsorted suffix and swap it
+into the next position of the sorted prefix. After i passes the
+first i elements are final (sorted and in place).
+
+Example:
+    nums = [5, 2, 8, 1, 9, 3]
+
+    Output = [1, 2, 3, 5, 8, 9]
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def selectionSort(nums):
+
+        n = len(nums)
+
+        for i in range(n - 1):
+            # find index of the minimum in nums[i..n-1]
+            min_idx = i
+            for j in range(i + 1, n):
+                if nums[j] < nums[min_idx]:
+                    min_idx = j
+            # swap it into the sorted-prefix boundary
+            if min_idx != i:
+                nums[i], nums[min_idx] = nums[min_idx], nums[i]
+
+        return nums
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5
+    array:  [ 5,  2,  8,  1,  9,  3 ]
+
+    i       = 0        (boundary of the sorted prefix)
+    min_idx = 0        (best-so-far index for this pass)
+
+         i
+         v
+       [ 5,  2,  8,  1,  9,  3 ]
+       |____________________________|
+              all unsorted
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH?
+--------------------------------------------------
+The array splits into two regions:
+
+    [ sorted prefix | unsorted suffix ]
+
+Each pass scans the unsorted suffix, finds the SMALLEST value,
+and swaps it to the front of the suffix. That value is now the
+next-smallest overall, so the sorted prefix grows by one.
+
+Why bother when it is always O(n^2)?
+    Selection sort makes at most n-1 SWAPS (one per pass).
+    So when a WRITE is far more expensive than a READ
+    (e.g. flash memory, EEPROM), it beats sorts that shuffle
+    elements many times.
+
+    Comparisons: always ~n^2/2   (no early exit)
+    Swaps:       at most n-1      (the real selling point)
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [5,2,8,1,9,3])
+--------------------------------------------------
+
+Pass i=0   scan indices 1..5 for the min
+    min in [5,2,8,1,9,3] is 1 at index 3
+    3 != 0  ->  swap nums[0], nums[3]
+
+         i           min
+         v           v
+       [ 5,  2,  8,  1,  9,  3 ]   ->   [ 1,  2,  8,  5,  9,  3 ]
+                                          ^ sorted
+
+Pass i=1   scan indices 2..5 for the min
+    min in [2,8,5,9,3] is 2 at index 1
+    1 == 1  ->  no swap needed
+
+             i
+             v
+       [ 1,  2,  8,  5,  9,  3 ]   ->   [ 1,  2,  8,  5,  9,  3 ]
+         ^^^^^ sorted
+
+Pass i=2   scan indices 3..5 for the min
+    min in [8,5,9,3] is 3 at index 5
+    5 != 2  ->  swap nums[2], nums[5]
+
+                 i               min
+                 v               v
+       [ 1,  2,  8,  5,  9,  3 ]   ->   [ 1,  2,  3,  5,  9,  8 ]
+         ^^^^^^^^^ sorted
+
+Pass i=3   scan indices 4..5 for the min
+    min in [5,9,8] is 5 at index 3
+    3 == 3  ->  no swap needed
+
+                     i
+                     v
+       [ 1,  2,  3,  5,  9,  8 ]   ->   [ 1,  2,  3,  5,  9,  8 ]
+         ^^^^^^^^^^^^^ sorted
+
+Pass i=4   scan index 5 for the min
+    min in [9,8] is 8 at index 5
+    5 != 4  ->  swap nums[4], nums[5]
+
+                         i       min
+                         v       v
+       [ 1,  2,  3,  5,  9,  8 ]   ->   [ 1,  2,  3,  5,  8,  9 ]
+         ^^^^^^^^^^^^^^^^^ sorted
+
+Loop stops (i only runs 0..n-2). Last element is already correct.
+
+Output: [1, 2, 3, 5, 8, 9]
+
+
+--------------------------------------------------
+6. THE KEY IDEA  (find min, swap to the boundary)
+--------------------------------------------------
+
+Boundary i marks where the sorted prefix ends:
+
+    [ sorted | ? ? ? ? ? ]
+              ^ i = start of the unsorted suffix
+
+Step 1 - assume the boundary holds the min:
+    min_idx = i
+
+Step 2 - walk the rest, remember any smaller value:
+    for j in i+1 .. n-1:
+        if nums[j] < nums[min_idx]:  min_idx = j
+
+Step 3 - drop the min at the boundary, then push i forward:
+    swap nums[i] with nums[min_idx]
+
+The one swap per pass is why selection sort is swap-cheap.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [64, 25, 12, 22, 11])
+--------------------------------------------------
+
+    i=0   min of [64,25,12,22,11] = 11 (idx 4)   swap 0,4
+        [ 64, 25, 12, 22, 11 ]  ->  [ 11, 25, 12, 22, 64 ]
+
+    i=1   min of [25,12,22,64]   = 12 (idx 2)   swap 1,2
+        [ 11, 25, 12, 22, 64 ]  ->  [ 11, 12, 25, 22, 64 ]
+
+    i=2   min of [25,22,64]      = 22 (idx 3)   swap 2,3
+        [ 11, 12, 25, 22, 64 ]  ->  [ 11, 12, 22, 25, 64 ]
+
+    i=3   min of [25,64]         = 25 (idx 3)   no swap
+        [ 11, 12, 22, 25, 64 ]  ->  [ 11, 12, 22, 25, 64 ]
+
+    result = [11, 12, 22, 25, 64]
+
+Instability shown with equal keys  (nums = [3a, 3b, 1]):
+    i=0   min = 1 (idx 2)   swap 0,2
+        [ 3a, 3b, 1 ]  ->  [ 1, 3b, 3a ]
+    The long-range swap jumped 3a PAST 3b, so their original
+    order flipped. That is why selection sort is NOT stable.
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+"SELECT the smallest, bring it to the FRONT."
+
+    Picking teams: each round you scan everyone left,
+    grab the best remaining player, and line them up next.
+
+    | sorted so far | scan the rest -> pick MIN -> swap in |
+
+    Each round locks in exactly ONE element, with ONE swap.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Case         | Time   | Space |
+    | ------------ | ------ | ----- |
+    | Best         | O(n^2) | O(1)  |
+    | Average      | O(n^2) | O(1)  |
+    | Worst        | O(n^2) | O(1)  |
+
+    Stable? NO  (classic swap version reorders equal keys)
+    In-place? YES
+
+Why O(n^2) in ALL cases:
+    the inner scan always runs (n-1)+(n-2)+...+1 = n(n-1)/2
+    comparisons no matter how the input is arranged. There is
+    no early exit, so even an already-sorted array is O(n^2).
+
+Swaps: at most n-1 (one per pass) -> fewest writes of the
+simple sorts.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION selectionSort(nums)
+
+        n <- length(nums)
+
+        FOR i FROM 0 TO n - 2
+
+            min_idx <- i
+
+            FOR j FROM i + 1 TO n - 1
+                IF nums[j] < nums[min_idx]
+                    min_idx <- j
+
+            IF min_idx != i
+                SWAP nums[i], nums[min_idx]
+
+        END FOR
+
+        RETURN nums
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set n = length of array
+
+    Repeat with i going from 0 up to n - 2
+        (i is where the sorted part ends)
+
+        Assume the smallest is at position i
+            min_idx = i
+
+        Look at every position j after i
+            If nums[j] is smaller than nums[min_idx]
+                Remember it: min_idx = j
+
+        If the smallest was NOT already at position i
+            Swap nums[i] with nums[min_idx]
+
+        Now positions 0..i are sorted and final
+
+    END Repeat
+
+    Return the array
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +-----------+
+     |   START   |
+     +-----+-----+
+           |
+           v
+    +------------------+
+    | n = length(nums) |
+    | i = 0            |
+    +--------+---------+
+             |
+             v
+      +--------------+   No
+      |  i <= n - 2  |----------> +-----------+
+      +------+-------+            | RETURN    |
+             | Yes                | nums      |
+             v                    +-----+-----+
+    +------------------+                |
+    | min_idx = i      |                v
+    | j = i + 1        |             +-----+
+    +--------+---------+             | END |
+             |                       +-----+
+             v
+      +--------------+   No
+      |  j <= n - 1  |----+
+      +------+-------+    |
+             | Yes        |
+             v            |
+    +------------------+  |
+    | nums[j] <        |  |
+    | nums[min_idx] ?  |  |
+    +--------+---------+  |
+       Yes |  | No        |
+           v  |           |
+    +----------+          |
+    | min_idx=j|          |
+    +----+-----+          |
+         |                |
+         v                |
+    +----------+          |
+    | j = j + 1|<---------+
+    +----+-----+
+         |  (loop back to  j <= n - 1)
+         |
+         v  (inner loop done)
+    +------------------+
+    | min_idx != i ?   |
+    +--------+---------+
+       Yes |  | No
+           v  |
+    +--------------------+
+    | swap nums[i],      |
+    |      nums[min_idx] |
+    +--------+-----------+
+             |
+             v
+        +----------+
+        | i = i + 1|
+        +----+-----+
+             |  (loop back to  i <= n - 2)
+             v
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"Selection sort keeps a sorted prefix and an unsorted suffix.
+ On each pass I scan the unsorted part to find the minimum
+ element, then swap it into the boundary between the two
+ regions, growing the sorted prefix by one.
+ - It always does about n^2/2 comparisons, so every case is
+   O(n^2), even an already-sorted array.
+ - But it does at most n-1 swaps, the fewest writes of the
+   simple sorts, which helps when writes are costly.
+ - The classic swap version is NOT stable, since a long-range
+   swap can move an equal element past its twin.
+
+ Time:  O(n^2)  (all cases)
+ Space: O(1)    (in-place)
+ It's a simple, swap-minimizing comparison sort."
+
+
+==================================================
+Selection Sort: fewest swaps, but always O(n^2)
+comparisons — pick the min, drop it at the front.
+==================================================

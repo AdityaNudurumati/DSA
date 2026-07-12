@@ -17,6 +17,9 @@ Compare both ends → Think Opposite Pointers.
 Need triplets/pairs in sorted data → Sort + Two Pointers.
 Partition/group elements → Dutch National Flag / Partition pattern.
 
+Why do we use two pointers?
+We use two pointers when the answer depends on information from both ends of an array.
+
 
 Two Pointers
 │
