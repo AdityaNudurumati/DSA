@@ -307,6 +307,82 @@ Each pointer moves at most n times, so O(n) total, in-place.
  It's the Opposite-Ends Partition (two-pointer) pattern."
 
 
+--------------------------------------------------
+14. DEEP DIVE  —  TWO TEACHERS WALKING INWARD
+--------------------------------------------------
+This is a Two Pointers problem. The idea: keep one pointer on the
+LEFT and one on the RIGHT, move them toward each other, and swap
+elements that are on the WRONG side.
+
+Goal: all even numbers to the FRONT, all odd numbers to the BACK.
+    Input:  [12, 34, 45, 9, 8, 90, 3]
+    Output: [12, 34, 90, 8, 9, 45, 3]   (any arrangement with evens
+                                          first is valid - order within
+                                          a group does not matter)
+
+How the two pointers work:
+    left  starts at index 0        (L)
+    right starts at the last index (R)
+        index:  0   1   2  3  4   5  6
+        nums : [12, 34, 45, 9, 8, 90, 3]
+                L                      R
+
+Step-by-step dry run:
+    Step 1  left=0 right=6
+        nums[left]=12 -> EVEN, already on correct side -> left++
+    Step 2  left=1 right=6
+        nums[left]=34 -> EVEN, correct side -> left++
+    Step 3  left=2 right=6
+        nums[left]=45 -> ODD (wrong side)
+        nums[right]=3 -> ODD (already correct for right) -> right--
+    Step 4  left=2 right=5
+        nums[left]=45 -> ODD  (wrong side)  X
+        nums[right]=90 -> EVEN (wrong side) X
+        exactly the pair to SWAP:
+            [12,34,45,9,8,90,3] -> [12,34,90,9,8,45,3]
+        move both:  left++, right--     (left=3 right=4)
+    Step 5  left=3 right=4
+        nums[left]=9 -> ODD (wrong side) X
+        nums[right]=8 -> EVEN (wrong side) X
+        swap:  [12,34,90,9,8,45,3] -> [12,34,90,8,9,45,3]
+        move both:  left++, right--     (left=4 right=3)
+    Stop: left (4) > right (3) -> loop ends.
+
+    Final: [12, 34, 90, 8, 9, 45, 3]   evens first, odds after.  OK
+
+What exactly are the two pointers doing?
+    left  -> searches from the FRONT for an ODD that should move right
+    right -> searches from the END  for an EVEN that should move left
+    When BOTH find a misplaced element, swap them.
+
+Visual intuition:
+    left found an odd that should NOT be in front.
+    right found an even that should NOT be in back.
+        [ .. 45 ......... 90 .. ]
+             L            R
+    Swap them, then continue inward.
+
+Why is it efficient?
+    Each pointer moves only ONE direction: left goes 0 -> n-1, right
+    goes n-1 -> 0. Every element is examined at most once.
+        Time:  O(n)
+        Space: O(1)
+
+Kid-friendly summary:
+    Children stand in a line; you want all boys on the left and all
+    girls on the right. Put one teacher at each end. The left teacher
+    looks for a child on the wrong side; the right teacher does too.
+    When both find one, they SWAP those two children and keep walking
+    inward. That is exactly what the two pointers do with even/odd.
+
+One-line rule to remember:
+    "Left searches for an ODD, right searches for an EVEN, then swap
+     and move inward."
+
+Once this feels comfortable, notice the SAME opposite-ends pattern in
+Move Zeroes, Container With Most Water, and Two Sum II.
+
+
 ==================================================
 This is the Opposite-Ends Partition technique:
 evens to the left, odds to the right, in a single pass.

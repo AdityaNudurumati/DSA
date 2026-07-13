@@ -10,7 +10,7 @@ Input:
 nums = [-1,2,-3,4,5,6,-7,8,9]
 
 Output:
-[-1,-3,-7,4,5,6,2,8,9]   (any arrangement with negatives first is valid)
+[-1, -7, -3, 4, 5, 6, 2, 8, 9]   (any arrangement with negatives first is valid)
 '''
 
 def moveNegatives(nums):
