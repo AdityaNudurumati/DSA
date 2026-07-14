@@ -1,0 +1,366 @@
+==================================================
+LONGEST REPEATING CHARACTER REPLACEMENT  —  Variable Sliding Window
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given a string s (uppercase letters) and an integer k, you may
+replace AT MOST k characters with any uppercase letter. Return
+the length of the LONGEST substring made of the SAME letter
+after doing those replacements.
+
+Example:
+    s = "AABABBA"   k = 1
+
+    Take the window "ABBA" (indices 1..4):
+        it has 3 B's ... no, 2 A's and 2 B's.
+    Take "ABBB" style window instead -> "BABB" (indices 3..6? )
+
+    Simplest read: the best window has length 4.
+    e.g. "AABA" -> replace the one B -> "AAAA"  (length 4)
+    or   "ABBB" chunk -> replace one letter -> four equal.
+
+    Output = 4
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def characterReplacement(s, k):
+
+        count = {}
+        left = 0
+        max_freq = 0          # highest single-letter count seen in the window
+        best = 0
+
+        for right in range(len(s)):
+
+            count[s[right]] = count.get(s[right], 0) + 1
+            max_freq = max(max_freq, count[s[right]])
+
+            # chars to replace = window_size - most frequent letter's count
+            # if that exceeds k, the window is invalid -> shrink from the left
+            while (right - left + 1) - max_freq > k:
+                count[s[left]] -= 1
+                left += 1
+
+            best = max(best, right - left + 1)
+
+        return best
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:   0  1  2  3  4  5  6
+    s:     [ A  A  B  A  B  B  A ]   k = 1
+
+    count    = {}       (letter -> how many in current window)
+    left     = 0        (left edge of the window)
+    max_freq = 0        (biggest single-letter count seen so far)
+    best     = 0        (longest valid window length found)
+
+    The window is s[left .. right]. It is VALID when the
+    letters that are NOT the majority can all be replaced
+    within the budget k:
+
+        (window_length - max_freq) <= k
+          ^ letters we would need to replace
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Brute force  ->  O(n*n) (or worse):
+    Try every substring, count its letters, check if it can be
+    made uniform with <= k replacements. Re-counting every
+    substring repeats huge amounts of work.
+
+Variable sliding window  ->  O(n):
+    Grow the window by moving 'right' one step at a time.
+    Keep the frequency of each letter in a small map.
+    The cost to make the window uniform is:
+
+        window_length - max_freq     (the non-majority letters)
+
+    While that cost > k the window is invalid, so SHRINK from
+    the left until it is valid again. Record the largest valid
+    window. Each end moves forward only, never backward -> O(n).
+
+        [A A B] cost = 3 - 2 = 1 <= 1  ok, keep growing
+              \--- add B --->
+        [A A B A B] cost = 5 - 3 = 2 > 1  shrink from left
+
+
+--------------------------------------------------
+5. DRY RUN  (s = "AABABBA", k = 1)
+--------------------------------------------------
+Start: count={}  left=0  max_freq=0  best=0
+
+right=0  s[0]=A  count={A:1}  max_freq=max(0,1)=1
+    window=[A] len=1  cost=1-1=0  0>1? no
+    best=max(0,1)=1
+
+right=1  s[1]=A  count={A:2}  max_freq=max(1,2)=2
+    window=[A,A] len=2  cost=2-2=0  0>1? no
+    best=max(1,2)=2
+
+right=2  s[2]=B  count={A:2,B:1}  max_freq=max(2,1)=2
+    window=[A,A,B] len=3  cost=3-2=1  1>1? no
+    best=max(2,3)=3
+
+right=3  s[3]=A  count={A:3,B:1}  max_freq=max(2,3)=3
+    window=[A,A,B,A] len=4  cost=4-3=1  1>1? no
+    best=max(3,4)=4
+
+right=4  s[4]=B  count={A:3,B:2}  max_freq=max(3,2)=3
+    window len=5  cost=5-3=2  2>1? YES -> SHRINK
+        drop s[left=0]=A -> count={A:2,B:2}  left=1
+        window len=4  cost=4-3=1  1>1? no -> stop
+    best=max(4,4)=4
+
+right=5  s[5]=B  count={A:2,B:3}  max_freq=max(3,3)=3
+    window len=5  cost=5-3=2  2>1? YES -> SHRINK
+        drop s[left=1]=A -> count={A:1,B:3}  left=2
+        window len=4  cost=4-3=1  1>1? no -> stop
+    best=max(4,4)=4
+
+right=6  s[6]=A  count={A:2,B:3}  max_freq=max(3,2)=3
+    window len=5  cost=5-3=2  2>1? YES -> SHRINK
+        drop s[left=2]=B -> count={A:2,B:2}  left=3
+        window len=4  cost=4-3=1  1>1? no -> stop
+    best=max(4,4)=4
+
+Output: 4
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+For any window, the cheapest way to make it uniform is to KEEP
+the most frequent letter and REPLACE everyone else:
+
+    replacements needed = window_length - max_freq
+
+The window is valid while that stays <= k.
+
+    add s[right] to count, update max_freq
+    while (right - left + 1) - max_freq > k:   # too many to replace
+        count[s[left]] -= 1                    # let the left edge go
+        left += 1
+    best = max(best, right - left + 1)
+
+WHY max_freq IS NOT DECREASED WHEN WE SHRINK:
+    When we drop a left character, the true max_freq inside the
+    window may actually fall. We deliberately do NOT recompute /
+    lower it. That looks wrong but is safe:
+
+      * 'best' only ever improves when we find a window LONGER
+        than the current best.
+      * A longer window can only become valid if some letter
+        reaches a NEW, HIGHER count than max_freq has ever been.
+      * A stale (too-high) max_freq can only make 'cost' look
+        SMALLER, so it never causes us to shrink too little in a
+        way that grows 'best' incorrectly - the window size is
+        effectively "frozen" and can only expand again once a
+        genuinely higher max_freq appears.
+
+    So max_freq behaves like a high-water mark. Keeping it lets
+    the window never shrink below its best length, and every
+    recorded 'best' corresponds to a window that WAS valid at the
+    moment its max_freq was set. Result stays correct and O(n).
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (s = "ABAB", k = 2)
+--------------------------------------------------
+    We may replace up to 2 letters.
+
+    right=0  A  count={A:1}       max_freq=1  len=1 cost=0  best=1
+    right=1  B  count={A:1,B:1}   max_freq=1  len=2 cost=1  best=2
+    right=2  A  count={A:2,B:1}   max_freq=2  len=3 cost=1  best=3
+    right=3  B  count={A:2,B:2}   max_freq=2  len=4 cost=2  best=4
+        cost 2 > 2? no -> whole string is valid
+
+    Whole string "ABAB": keep the 2 A's, replace the 2 B's
+    (budget is 2) -> "AAAA".
+
+    Output = 4
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+A stretchy window with a "replacement budget":
+
+    keep the crowd favourite letter (max_freq),
+    everyone else is a stranger you must PAY to replace.
+
+    cost = window_length - max_freq
+    while cost > k:  the window is "over budget" -> drop the left
+
+    "Grow while you can afford it, shrink when you can't."
+    max_freq is a high-water mark - it only ever climbs, and
+    that is exactly why the answer only ever grows.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach              | Time    | Space         |
+    | --------------------- | ------- | ------------- |
+    | Brute force           | O(n*n)  | O(1)          |
+    | Variable slide window | O(n)    | O(1) <=26 keys|
+
+Each character is visited by 'right' once and by 'left' once,
+so O(n) total. The count map holds at most 26 uppercase
+letters, so O(1) space.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION characterReplacement(s, k)
+
+        count    <- empty map
+        left     <- 0
+        max_freq <- 0
+        best     <- 0
+
+        FOR right FROM 0 TO length(s) - 1
+
+            count[s[right]] <- count[s[right]] + 1
+            max_freq <- max(max_freq, count[s[right]])
+
+            WHILE (right - left + 1) - max_freq > k
+                count[s[left]] <- count[s[left]] - 1
+                left <- left + 1
+
+            best <- max(best, right - left + 1)
+
+        END FOR
+
+        RETURN best
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Make an empty count map (letter -> how many in window)
+    Set left = 0
+    Set max_freq = 0
+    Set best = 0
+
+    Repeat right from 0 to end of string
+
+        Add the new right-edge letter into the window
+            count[s[right]] = count[s[right]] + 1
+
+        Remember the biggest single-letter count ever seen
+            max_freq = max(max_freq, count[s[right]])
+
+        While too many letters would need replacing:
+        (window length minus max_freq is more than k)
+
+            Remove the left-edge letter from the window
+                count[s[left]] = count[s[left]] - 1
+            Move the left edge one step right
+                left = left + 1
+
+        Record the longest valid window so far
+            best = max(best, right - left + 1)
+
+    END Repeat
+
+    Return best
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +-----------------------+
+    | count = {}            |
+    | left = 0              |
+    | max_freq = 0          |
+    | best = 0              |
+    | right = 0             |
+    +-----------+-----------+
+                |
+                v
+         +--------------+
+         | right < n ?  |<-------------------------+
+         +------+-------+                           |
+                | Yes                               |
+                v                                   |
+     +-------------------------------+              |
+     | count[s[right]] += 1          |              |
+     | max_freq = max(max_freq, ...) |              |
+     +---------------+---------------+              |
+                     |                              |
+                     v                              |
+      +-----------------------------------+         |
+      | (right-left+1) - max_freq > k ?   |         |
+      +----+-------------------------+----+         |
+           | Yes                     | No           |
+           v                         |              |
+    +--------------------+           |              |
+    | count[s[left]] -= 1|           |              |
+    | left += 1          |           |              |
+    +----------+---------+           |              |
+               |                     |              |
+               +--> back to while    |              |
+                                     v              |
+                    +-----------------------------+ |
+                    | best = max(best,            | |
+                    |            right-left+1)    | |
+                    +--------------+--------------+ |
+                                   |                |
+                                   +--> right++ ----+
+                (when right >= n)
+                                   |
+                                   v
+                            +-------------+
+                            | RETURN best |
+                            +------+------+
+                                   v
+                                +-----+
+                                | END |
+                                +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I use a variable sliding window. For any window, the cheapest
+ way to make it uniform is to keep the most frequent letter and
+ replace the rest, so the replacements needed are window_length
+ minus max_freq. I grow the window with the right pointer, and
+ whenever that cost exceeds k I shrink from the left until it's
+ valid again, tracking the longest valid window. I never lower
+ max_freq on a shrink - it's a high-water mark, and the answer
+ can only grow when some letter hits a new, higher count, so a
+ stale max_freq never inflates the result. Each pointer moves
+ forward only.
+
+ Time:  O(n)
+ Space: O(1)  (at most 26 letters)
+ It's the classic VARIABLE-SIZE sliding window pattern."
+
+
+==================================================
+Variable window with a replace budget: cost is
+window_length - max_freq; shrink while cost > k,
+keep max_freq as a high-water mark, record the best.
+==================================================

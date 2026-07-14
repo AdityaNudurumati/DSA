@@ -1,0 +1,301 @@
+==================================================
+AVERAGE OF SUBARRAYS OF SIZE K  —  Fixed Sliding Window
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an integer array nums and an integer k, return a
+LIST of the AVERAGES of every CONTIGUOUS subarray of
+size EXACTLY k.
+
+Each average = (sum of the k elements) / k.
+
+Example:
+    nums = [1, 3, 2, 6, -1, 4, 1, 8, 2]   k = 5
+
+    windows of size 5:
+        [1, 3, 2, 6, -1] = 11 / 5 = 2.2
+        [3, 2, 6, -1, 4] = 14 / 5 = 2.8
+        [2, 6, -1, 4, 1] = 12 / 5 = 2.4
+        [6, -1, 4, 1, 8] = 18 / 5 = 3.6
+        [-1, 4, 1, 8, 2] = 14 / 5 = 2.8
+
+    Output = [2.2, 2.8, 2.4, 3.6, 2.8]
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def findAverages(nums, k):
+
+        result = []
+        window_sum = 0
+
+        for right in range(len(nums)):
+
+            window_sum += nums[right]
+
+            if right >= k - 1:
+                result.append(window_sum / k)
+                window_sum -= nums[right - k + 1]   # drop leftmost
+
+        return result
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0  1  2  3   4  5  6  7  8
+    nums:  [  1, 3, 2, 6, -1, 4, 1, 8, 2 ]   k = 5
+
+    result     = []       (collects one average per window)
+    window_sum = 0        (running sum of the current window)
+
+    The window is the last k elements ending at 'right'.
+    It starts to "count" only once right reaches index k-1 = 4:
+
+         [ 1, 3, 2, 6, -1 ] 4  1  8  2
+           ^^^^^^^^^^^^^^^
+           first full window
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Brute force  ->  O(n*k):
+    For every start index, add up k elements from scratch,
+    then divide. Re-summing overlapping windows repeats
+    most of the work.
+
+Fixed sliding window  ->  O(n):
+    Neighbouring windows share k-1 elements. So instead of
+    re-summing, SLIDE the window one step:
+        add the new element entering on the RIGHT
+        subtract the element leaving on the LEFT
+    Divide the maintained sum by k to get the average.
+    That is O(1) per step  ->  O(n) overall.
+
+        [1,3,2,6,-1] = 11  -> avg 2.2
+           \--- slide --->
+          [3,2,6,-1,4] = 11 - 1 + 4 = 14  -> avg 2.8   (drop 1, add 4)
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [1,3,2,6,-1,4,1,8,2], k = 5)
+--------------------------------------------------
+Start: result=[]  window_sum=0
+
+right=0  add nums[0]=1   -> window_sum=1
+    0 >= 4 ?  no  (window not full yet)
+
+right=1  add nums[1]=3   -> window_sum=4
+    1 >= 4 ?  no
+
+right=2  add nums[2]=2   -> window_sum=6
+    2 >= 4 ?  no
+
+right=3  add nums[3]=6   -> window_sum=12
+    3 >= 4 ?  no
+
+right=4  add nums[4]=-1  -> window_sum=11     window = [1,3,2,6,-1]
+    4 >= 4 ?  yes -> result.append(11/5=2.2)   result=[2.2]
+    drop nums[right-k+1]=nums[0]=1 -> window_sum=10
+
+right=5  add nums[5]=4   -> window_sum=14     window = [3,2,6,-1,4]
+    result.append(14/5=2.8)   result=[2.2,2.8]
+    drop nums[1]=3 -> window_sum=11
+
+right=6  add nums[6]=1   -> window_sum=12     window = [2,6,-1,4,1]
+    result.append(12/5=2.4)   result=[2.2,2.8,2.4]
+    drop nums[2]=2 -> window_sum=10
+
+right=7  add nums[7]=8   -> window_sum=18     window = [6,-1,4,1,8]
+    result.append(18/5=3.6)   result=[2.2,2.8,2.4,3.6]
+    drop nums[3]=6 -> window_sum=12
+
+right=8  add nums[8]=2   -> window_sum=14     window = [-1,4,1,8,2]
+    result.append(14/5=2.8)   result=[2.2,2.8,2.4,3.6,2.8]
+    drop nums[4]=-1 -> window_sum=15
+
+Output: [2.2, 2.8, 2.4, 3.6, 2.8]
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+Maintain a running window_sum for the current k-length window.
+Each new index 'right':
+
+    window_sum += nums[right]          # element ENTERS on the right
+
+    once the window is full (right >= k-1):
+        result.append(window_sum / k)  # record this window's average
+        window_sum -= nums[right-k+1]  # element LEAVES on the left
+
+The left index is always  right - k + 1  (k-1 behind right).
+No inner loop, no re-summing.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [1,2,3,4], k = 2)
+--------------------------------------------------
+    windows of size 2:
+        [1,2] = 3 -> avg 1.5
+        [2,3] = 5 -> avg 2.5
+        [3,4] = 7 -> avg 3.5
+
+    right=0  sum=1                          (0>=1? no)
+    right=1  sum=3  window [1,2]  avg 1.5   drop 1 -> sum=2
+    right=2  sum=5  window [2,3]  avg 2.5   drop 2 -> sum=3
+    right=3  sum=7  window [3,4]  avg 3.5   drop 3 -> sum=4
+
+    Output = [1.5, 2.5, 3.5]
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+A window of fixed width k sliding along the array:
+
+    [ _ _ _ ] _ _        add the one coming IN on the right,
+      _ [ _ _ _ ] _       subtract the one going OUT on the left.
+      _ _ [ _ _ _ ]
+
+    "One in, one out" - the width never changes, so the sum
+    updates in O(1). Divide by k and append the average
+    after each slide.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach        | Time    | Space |
+    | --------------- | ------- | ----- |
+    | Brute force     | O(n*k)  | O(1)  |
+    | Sliding window  | O(n)    | O(1)  |
+
+Each element is added once and removed once, so O(n) total.
+Only a couple of scalars are stored, so O(1) space
+(excluding the output list of averages).
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION findAverages(nums, k)
+
+        result     <- empty list
+        window_sum <- 0
+
+        FOR right FROM 0 TO length(nums) - 1
+
+            window_sum <- window_sum + nums[right]
+
+            IF right >= k - 1
+                append (window_sum / k) to result
+                window_sum <- window_sum - nums[right - k + 1]
+
+        END FOR
+
+        RETURN result
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Make an empty list called result
+    Set window_sum = 0
+
+    Repeat right from 0 to end of array
+
+        Add the current element to the window
+            window_sum = window_sum + nums[right]
+
+        If the window now holds k elements (right >= k - 1)
+
+            Compute this window's average and store it
+                result.append(window_sum / k)
+
+            Remove the leftmost element so the window can slide
+                window_sum = window_sum - nums[right - k + 1]
+
+    END Repeat
+
+    Return result
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +-----------------------+
+    | result = []           |
+    | window_sum = 0        |
+    | right = 0             |
+    +-----------+-----------+
+                |
+                v
+         +--------------+
+         | right < n ?  |<-------------------+
+         +------+-------+                     |
+                | Yes                         |
+                v                             |
+      +-------------------------+             |
+      | window_sum += nums[right]|            |
+      +------------+------------+             |
+                   |                          |
+                   v                          |
+          +------------------+                |
+          | right >= k - 1 ? | No             |
+          +----+--------+----+---> right++ ----+
+               | Yes    |                      |
+               v        |                      |
+    +-------------------------------+          |
+    | result.append(window_sum / k) |          |
+    | window_sum -= nums[right-k+1] |          |
+    +---------------+---------------+          |
+                    |                          |
+                    +----> right++ ------------+
+                (when right >= n)
+                    |
+                    v
+            +---------------+
+            | RETURN result |
+            +------+--------+
+                   v
+                +-----+
+                | END |
+                +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"Neighbouring windows of size k overlap in k-1 elements, so I
+ don't re-sum them. I keep a running window_sum: as the right
+ edge moves I add the new element, and once the window is full
+ I divide the sum by k to get the average, push it into the
+ result list, then subtract the element leaving on the left.
+ The left index is always right-k+1. Every element is added
+ once and removed once.
+
+ Time:  O(n)
+ Space: O(1)  (excluding the output list)
+ It's the classic FIXED-SIZE sliding window pattern."
+
+
+==================================================
+Fixed window of width k: add the entering element,
+drop the leaving one, append sum/k each slide.
+==================================================

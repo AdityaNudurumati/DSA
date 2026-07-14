@@ -1,0 +1,391 @@
+==================================================
+FIRST NEGATIVE IN EVERY WINDOW OF SIZE K
+Fixed Sliding Window + Deque of negative indices
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an integer array nums and an integer k, for EACH
+contiguous window of size k report the FIRST negative
+number in that window. If a window has NO negative
+number, report 0.
+
+Example:
+    nums = [12,-1,-7,8,-15,30,16,28]   k = 3
+
+    windows of size 3:
+        [12,-1,-7]  -> -1
+        [-1,-7, 8]  -> -1
+        [-7, 8,-15] -> -7
+        [ 8,-15,30] -> -15
+        [-15,30,16] -> -15
+        [30,16,28]  ->  0   (no negative)
+
+    Output = [-1, -1, -7, -15, -15, 0]
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    from collections import deque
+
+    def firstNegativeInWindow(nums, k):
+
+        result = []
+        dq = deque()          # indices of negative numbers, in order
+
+        for i in range(len(nums)):
+
+            # drop the front index if it has slid out of the window
+            if dq and dq[0] <= i - k:
+                dq.popleft()
+
+            # record the current index only if it is negative
+            if nums[i] < 0:
+                dq.append(i)
+
+            # once the first full window is formed, front is the answer
+            if i >= k - 1:
+                result.append(nums[dq[0]] if dq else 0)
+
+        return result
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2  3   4   5   6   7
+    nums:  [ 12, -1, -7, 8,-15, 30, 16, 28 ]   k = 3
+
+    result = []           (one answer per full window)
+    dq     = empty        (a QUEUE of INDICES of negatives only)
+
+    The window is the last k elements ending at index i.
+    It becomes a full window only once i reaches k-1 = 2:
+
+         [ 12, -1, -7 ] 8 -15 30 16 28
+           ^^^^^^^^^^^^
+           first full window
+
+    dq holds INDICES (not values) of the negative numbers
+    currently inside the window, in left-to-right order.
+    Its FRONT dq[0] is always the first negative still in
+    the window.
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Brute force  ->  O(n*k):
+    For every window, scan all k elements left-to-right
+    until you hit the first negative. Each window rescans
+    from scratch, repeating work the neighbour already did.
+
+Deque of negative indices  ->  O(n):
+    Neighbouring windows overlap in k-1 elements, so the set
+    of negatives barely changes as we slide. Keep the negative
+    INDICES in a FIFO queue:
+        - the FRONT is the first negative still in the window
+        - append a new index at the BACK when nums[i] < 0
+        - pop the FRONT when that index slides out of the window
+    Reading the answer is just dq[0] -> O(1) per window.
+
+        [12,-1,-7]  dq indices = [1, 2]   front=1 -> nums[1]=-1
+            \--- slide --->
+         [-1,-7, 8]  dq indices = [1, 2]   front=1 -> nums[1]=-1
+
+    Each index is appended once and popped once -> O(n) total.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [12,-1,-7,8,-15,30,16,28], k = 3)
+--------------------------------------------------
+Start: result=[]  dq=[]     (dq stores INDICES of negatives)
+
+i=0  nums[0]=12
+    front pop? dq empty -> no
+    12 < 0 ? no
+    dq = []
+    i >= 2 ? no  (window not full yet)
+
+i=1  nums[1]=-1
+    front pop? dq empty -> no
+    -1 < 0 ? yes -> append 1   dq = [1]
+    i >= 2 ? no
+
+i=2  nums[2]=-7           window = [12,-1,-7]
+    front pop? dq[0]=1 <= 2-3=-1 ? no
+    -7 < 0 ? yes -> append 2   dq = [1, 2]
+    i >= 2 ? yes -> dq not empty -> nums[dq[0]]=nums[1]=-1
+    result = [-1]
+
+i=3  nums[3]=8            window = [-1,-7,8]
+    front pop? dq[0]=1 <= 3-3=0 ? no
+    8 < 0 ? no
+    dq = [1, 2]
+    record -> nums[dq[0]]=nums[1]=-1
+    result = [-1, -1]
+
+i=4  nums[4]=-15          window = [-7,8,-15]
+    front pop? dq[0]=1 <= 4-3=1 ? yes -> popleft   dq = [2]
+    -15 < 0 ? yes -> append 4   dq = [2, 4]
+    record -> nums[dq[0]]=nums[2]=-7
+    result = [-1, -1, -7]
+
+i=5  nums[5]=30           window = [8,-15,30]
+    front pop? dq[0]=2 <= 5-3=2 ? yes -> popleft   dq = [4]
+    30 < 0 ? no
+    dq = [4]
+    record -> nums[dq[0]]=nums[4]=-15
+    result = [-1, -1, -7, -15]
+
+i=6  nums[6]=16           window = [-15,30,16]
+    front pop? dq[0]=4 <= 6-3=3 ? no
+    16 < 0 ? no
+    dq = [4]
+    record -> nums[dq[0]]=nums[4]=-15
+    result = [-1, -1, -7, -15, -15]
+
+i=7  nums[7]=28           window = [30,16,28]
+    front pop? dq[0]=4 <= 7-3=4 ? yes -> popleft   dq = []
+    28 < 0 ? no
+    dq = []
+    record -> dq empty -> 0
+    result = [-1, -1, -7, -15, -15, 0]
+
+Output: [-1, -1, -7, -15, -15, 0]
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+Keep a FIFO queue of the INDICES of negative numbers that
+lie inside the current window, in left-to-right order.
+For each new index i:
+
+    if dq and dq[0] <= i - k:   # front index left the window
+        dq.popleft()            # remove it from the FRONT
+
+    if nums[i] < 0:             # a new negative enters
+        dq.append(i)            # add its index at the BACK
+
+    if i >= k - 1:              # window is full
+        answer = nums[dq[0]] if dq else 0   # FRONT is first neg
+
+The front dq[0] is ALWAYS the earliest negative still in the
+window, so the answer is read in O(1). Store indices (not
+values) so we can test "has this negative slid out?" using
+dq[0] <= i - k.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [4, 2, -3, 5, 7, 9], k = 3)
+--------------------------------------------------
+    windows of size 3:
+        [4, 2,-3]  -> -3
+        [2,-3, 5]  -> -3
+        [-3,5, 7]  -> -3
+        [5, 7, 9]  ->  0   (all positive -> report 0)
+
+    i=0  4       front pop? no   4<0? no    dq=[]      (0>=2? no)
+    i=1  2       front pop? no   2<0? no    dq=[]      (1>=2? no)
+    i=2  -3      front pop? no   -3<0? yes->append 2  dq=[2]
+                 record nums[2]=-3            result=[-3]
+    i=3  5       dq[0]=2 <= 0? no   5<0? no  dq=[2]
+                 record nums[2]=-3            result=[-3,-3]
+    i=4  7       dq[0]=2 <= 1? no   7<0? no  dq=[2]
+                 record nums[2]=-3            result=[-3,-3,-3]
+    i=5  9       dq[0]=2 <= 2? yes->popleft  dq=[]
+                 9<0? no   dq empty -> record 0
+                                              result=[-3,-3,-3,0]
+
+    Output = [-3, -3, -3, 0]
+    (the last window is all positive, so it reports 0)
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Think of a queue standing in line, holding only the SEATS
+(indices) of the negative people inside the window:
+
+    front ->[ i1 , i2 , i3 ]<- back
+              ^                ^
+        first negative     newest negative
+        still in window    just entered
+
+    "First negative = front of the line."
+    - new negative joins at the BACK (append)
+    - whoever walked past the left edge leaves the FRONT (popleft)
+    - empty line -> nobody negative -> answer is 0
+
+    One in at the back, expired one out at the front.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach            | Time    | Space |
+    | ------------------- | ------- | ----- |
+    | Brute force         | O(n*k)  | O(1)  |
+    | Deque of negatives  | O(n)    | O(k)  |
+
+Each index is appended once and popped once, so O(n) total.
+The deque holds at most k indices at a time, so O(k) space.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION firstNegativeInWindow(nums, k)
+
+        result <- empty list
+        dq     <- empty deque        # indices of negatives
+
+        FOR i FROM 0 TO length(nums) - 1
+
+            IF dq not empty AND dq.front <= i - k
+                dq.popFront()
+
+            IF nums[i] < 0
+                dq.pushBack(i)
+
+            IF i >= k - 1
+                IF dq not empty
+                    result.append(nums[dq.front])
+                ELSE
+                    result.append(0)
+
+        END FOR
+
+        RETURN result
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Make an empty list called result
+    Make an empty queue called dq (it will hold INDICES of
+        negative numbers, oldest at the front)
+
+    Repeat i from 0 to end of array
+
+        Step 1: throw away a stale negative
+            If dq has something AND its front index dq[0]
+            is k or more steps behind i (dq[0] <= i - k),
+            that negative has left the window, so remove it
+            from the FRONT of the queue.
+
+        Step 2: remember a new negative
+            If the current number nums[i] is negative,
+            add its INDEX i to the BACK of the queue.
+
+        Step 3: record the answer for this window
+            If the window is full (i >= k - 1):
+                If the queue has something, the first
+                negative is at the front, so add
+                nums[dq[0]] to result.
+                Otherwise the window had no negative,
+                so add 0 to result.
+
+    END Repeat
+
+    Return result
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +-----------------------+
+    | result = []           |
+    | dq = empty deque       |
+    | i = 0                  |
+    +-----------+-----------+
+                |
+                v
+         +--------------+
+         |   i < n ?    |<-----------------------+
+         +------+-------+                         |
+                | Yes                             |
+                v                                 |
+      +------------------------------+            |
+      | dq and dq[0] <= i - k ?      |            |
+      +------+----------------+------+            |
+             | Yes            | No                |
+             v                |                   |
+      +--------------+        |                   |
+      | dq.popleft() |        |                   |
+      +------+-------+        |                   |
+             |                |                   |
+             +------->--------+                   |
+                      |                           |
+                      v                           |
+             +------------------+                 |
+             |  nums[i] < 0 ?   | No              |
+             +----+--------+----+----+            |
+                  | Yes    |         |            |
+                  v        |         |            |
+           +-------------+ |         |            |
+           | dq.append(i)| |         |            |
+           +------+------+ |         |            |
+                  |        |         |            |
+                  +--->----+         |            |
+                       |             |            |
+                       v             |            |
+              +------------------+   |            |
+              |  i >= k - 1 ?    | No|            |
+              +----+--------+----+---+--> i++ ----+
+                   | Yes    |            (No path) |
+                   v        |                      |
+    +----------------------------------+           |
+    | dq ? -> result.append(nums[dq[0]])|          |
+    |    else -> result.append(0)       |          |
+    +----------------+-----------------+           |
+                     |                             |
+                     +--------> i++ ---------------+
+                 (when i >= n)
+                     |
+                     v
+             +---------------+
+             | RETURN result |
+             +-------+-------+
+                     v
+                  +-----+
+                  | END |
+                  +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I keep a FIFO queue of the INDICES of the negative numbers
+ inside the current window, in order. As the right edge moves
+ I first pop the front index if it has slid out of the window
+ (dq[0] <= i - k), then push the current index if the value is
+ negative. Once the window is full, the front of the queue is
+ the first negative still inside, so I record nums[dq[0]], or 0
+ if the queue is empty. I store indices, not values, so I can
+ tell when a negative expires. Each index is pushed and popped
+ at most once.
+
+ Time:  O(n)
+ Space: O(k)
+ It's the fixed-size sliding window with a deque of negatives."
+
+
+==================================================
+Queue the INDICES of negatives; the front is the
+first negative in the window; empty front means 0.
+==================================================

@@ -1,0 +1,328 @@
+==================================================
+LONGEST SUBSTRING WITH AT MOST K DISTINCT CHARS
+—  Variable Sliding Window  (LeetCode 340)
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given a string s and an integer k, return the LENGTH of the
+LONGEST substring that contains AT MOST k DISTINCT characters.
+
+Example:
+    s = "eceba"   k = 2
+
+    substrings with <= 2 distinct chars:
+        "e"    -> 1 distinct, len 1
+        "ec"   -> 2 distinct, len 2
+        "ece"  -> 2 distinct, len 3   <- longest
+        "eceb" -> 3 distinct  (too many)
+
+    Output = 3   ("ece")
+
+Note: "Fruits Into Baskets" is just this problem with k = 2
+      (two basket types = at most 2 distinct fruit types).
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def lengthOfLongestSubstringKDistinct(s, k):
+
+        if k == 0:
+            return 0
+
+        count = {}          # char -> count in window
+        left = 0
+        best = 0
+
+        for right, ch in enumerate(s):
+
+            count[ch] = count.get(ch, 0) + 1
+
+            while len(count) > k:
+                count[s[left]] -= 1
+                if count[s[left]] == 0:
+                    del count[s[left]]
+                left += 1
+
+            best = max(best, right - left + 1)
+
+        return best
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:   0  1  2  3  4
+    s:     [ e  c  e  b  a ]   k = 2
+
+    count = {}     (char -> how many times it is in the window)
+    left  = 0      (left edge of the window)
+    best  = 0      (longest valid window length seen so far)
+
+    The window is s[left .. right]. Its WIDTH can grow and shrink
+    (variable size). It is VALID while len(count) <= k, i.e. the
+    number of DISTINCT characters inside it is at most k.
+
+    Guard: if k == 0 no character is allowed, so answer is 0.
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Brute force  ->  O(n^2) (or worse):
+    Try every start, extend to every end, recount distinct
+    characters for each substring. Lots of repeated counting.
+
+Variable sliding window  ->  O(n):
+    Keep a window that is always valid (<= k distinct).
+    - GROW on the right: pull in s[right], bump its count.
+    - If distinct count now exceeds k, SHRINK from the left:
+      remove s[left] until we are back to <= k distinct.
+    The window never re-scans; each char enters once and
+    leaves at most once  ->  O(n) overall.
+
+    We use a hash map (count) so "how many distinct chars are in
+    the window" is simply len(count) in O(1).
+
+
+--------------------------------------------------
+5. DRY RUN  (s = "eceba", k = 2)
+--------------------------------------------------
+Start: count={}  left=0  best=0
+
+right=0  ch='e'  count={e:1}
+    distinct=1 <= 2  -> no shrink
+    window "e"    (left=0)  len=0-0+1=1  best=max(0,1)=1
+
+right=1  ch='c'  count={e:1, c:1}
+    distinct=2 <= 2  -> no shrink
+    window "ec"   (left=0)  len=1-0+1=2  best=max(1,2)=2
+
+right=2  ch='e'  count={e:2, c:1}
+    distinct=2 <= 2  -> no shrink
+    window "ece"  (left=0)  len=2-0+1=3  best=max(2,3)=3
+
+right=3  ch='b'  count={e:2, c:1, b:1}
+    distinct=3 > 2  -> SHRINK:
+        drop s[0]='e' -> count={e:1, c:1, b:1}  left=1  (distinct 3, still >2)
+        drop s[1]='c' -> count={e:1, b:1}       left=2  (distinct 2, ok)
+    window "eb"   (left=2)  len=3-2+1=2  best=max(3,2)=3
+
+right=4  ch='a'  count={e:1, b:1, a:1}
+    distinct=3 > 2  -> SHRINK:
+        drop s[2]='e' -> count={b:1, a:1}        left=3  (distinct 2, ok)
+    window "ba"   (left=3)  len=4-3+1=2  best=max(3,2)=3
+
+Output: 3
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+Maintain a window s[left..right] and a map of char -> count.
+For each new right:
+
+    count[ch] += 1                       # char ENTERS on the right
+
+    while len(count) > k:                # too many distinct?
+        count[s[left]] -= 1              # char LEAVES on the left
+        if count[s[left]] == 0:
+            del count[s[left]]           # gone entirely -> drop key
+        left += 1
+
+    best = max(best, right - left + 1)   # record valid width
+
+len(count) IS the distinct-character count. We only shrink when
+it exceeds k, and we delete a key the moment its count hits 0 so
+the map size stays exactly equal to the distinct count.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (s = "aa", k = 1)
+--------------------------------------------------
+    right=0  ch='a'  count={a:1}  distinct 1 <= 1  window "a"  best=1
+    right=1  ch='a'  count={a:2}  distinct 1 <= 1  window "aa" best=2
+
+    Output = 2
+
+    (Only one distinct char is ever present, so the window never
+     needs to shrink; it just keeps growing.)
+
+    Fruits Into Baskets check (k = 2):
+    s = "abcadcacacaca", k = 3 -> longest window with <= 3
+    distinct chars is "cadcacacaca" of length 11.
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Think of a stretchy window that must stay "legal":
+
+    grow ->      [ e c e ] b a
+    illegal!     [ e c e b ] a     (3 distinct, k=2)
+    shrink <-      [ e b ] a       (drop from left until legal)
+
+    "Grow right, and while there are too many distinct chars,
+     shrink left." The map counts each char so len(map) = distinct.
+     Record the widest legal window as you go.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach          | Time     | Space |
+    | ----------------- | -------- | ----- |
+    | Brute force       | O(n^2)   | O(k)  |
+    | Sliding window    | O(n)     | O(k)  |
+
+Each character is added once and removed once -> O(n) time.
+The map holds at most k+1 keys at any moment -> O(k) space.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION longestKDistinct(s, k)
+
+        IF k == 0
+            RETURN 0
+
+        count <- empty map
+        left  <- 0
+        best  <- 0
+
+        FOR right FROM 0 TO length(s) - 1
+
+            ch <- s[right]
+            count[ch] <- count[ch] + 1        (0 if absent)
+
+            WHILE size(count) > k
+                count[s[left]] <- count[s[left]] - 1
+                IF count[s[left]] == 0
+                    REMOVE key s[left] FROM count
+                left <- left + 1
+
+            best <- max(best, right - left + 1)
+
+        END FOR
+
+        RETURN best
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    If k is 0, no characters are allowed -> return 0
+
+    Set count = empty dictionary (char -> how many in window)
+    Set left = 0
+    Set best = 0
+
+    Repeat right from 0 to end of string
+
+        Take the character at position right
+            Add it to the window: count[ch] = count[ch] + 1
+
+        While the window holds MORE than k distinct characters
+            Remove one copy of the leftmost character
+                count[s[left]] = count[s[left]] - 1
+            If that character's count dropped to 0
+                Delete it from the dictionary
+            Move the left edge one step right
+                left = left + 1
+
+        The window is now valid. Its length is right - left + 1.
+            Update best with the larger of best and this length
+
+    END Repeat
+
+    Return best
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +-----------------------+
+    | k == 0 ? -> RETURN 0  |
+    | count = {}            |
+    | left = 0  best = 0    |
+    | right = 0             |
+    +-----------+-----------+
+                |
+                v
+         +--------------+
+         | right < n ?  |<-----------------------+
+         +------+-------+                         |
+                | Yes                             |
+                v                                 |
+     +--------------------------+                 |
+     | count[s[right]] += 1     |                 |
+     +------------+-------------+                 |
+                  |                               |
+                  v                               |
+         +------------------+  Yes                |
+         | len(count) > k ? |------+              |
+         +----+-------------+      |              |
+              | No                 v              |
+              |         +-------------------------+
+              |         | count[s[left]] -= 1     |
+              |         | if 0 del key            |
+              |         | left += 1               |
+              |         +-----------+-------------+
+              |                     |             |
+              |                     +--- (loop) --+ back to
+              |                          len>k check
+              v
+    +-------------------------------+
+    | best = max(best,              |
+    |            right-left+1)      |
+    +---------------+---------------+
+                    |
+                    +----> right++ ------------+ (top loop)
+                (when right >= n)
+                    |
+                    v
+             +-------------+
+             | RETURN best |
+             +------+------+
+                    v
+                 +-----+
+                 | END |
+                 +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I use a variable-size sliding window with a hash map counting
+ each character inside it. I extend the right edge and increment
+ the new character's count. Whenever the number of distinct
+ characters, which is just the map's size, exceeds k, I shrink
+ from the left: I decrement s[left]'s count, delete the key if it
+ hits zero, and move left forward until the window is valid again.
+ After each step I record the window width right-left+1 as a
+ candidate answer. Every character enters and leaves at most once.
+ Fruits Into Baskets is the same problem with k = 2.
+
+ Time:  O(n)
+ Space: O(k)
+ It's the classic VARIABLE-SIZE 'at most K distinct' window."
+
+
+==================================================
+Grow right, shrink left while distinct > k, and
+track the widest valid window. Map size = distinct.
+==================================================

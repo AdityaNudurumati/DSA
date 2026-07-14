@@ -1,0 +1,376 @@
+==================================================
+JUMP GAME VI  —  DP + Monotonic Deque (LC 1696)
+Windowed max of dp[] via a decreasing deque
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+You start at index 0 of an integer array nums. From
+index i you may jump to any index in [i+1, i+k]. Your
+score is the SUM of nums at every index you land on
+(index 0 and the last index included). Return the
+MAXIMUM score to reach the last index.
+
+Example:
+    nums = [1, -1, -2, 4, -7, 3]   k = 2
+
+    Path 0 -> 1 -> 3 -> 5
+        collects 1 + (-1) + 4 + 3 = 7   (best possible)
+
+    Output = 7
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    from collections import deque
+
+    def maxResult(nums, k):
+
+        n = len(nums)
+        dp = [0] * n            # dp[i] = best score to reach index i
+        dp[0] = nums[0]
+
+        dq = deque([0])         # indices, kept with DECREASING dp values
+
+        for i in range(1, n):
+
+            # front index must be within the reach window [i-k, i-1]
+            while dq and dq[0] < i - k:
+                dq.popleft()
+
+            # best previous score in reach is at the front of the deque
+            dp[i] = nums[i] + dp[dq[0]]
+
+            # drop back indices whose dp is <= dp[i] (they can never win later)
+            while dq and dp[dq[-1]] <= dp[i]:
+                dq.pop()
+
+            dq.append(i)
+
+        return dp[n - 1]
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2   3   4   5
+    nums:  [  1, -1, -2,  4, -7,  3 ]   k = 2
+
+    dp = [1, 0, 0, 0, 0, 0]   dp[0] = nums[0] = 1
+    dq = [0]                  indices with DECREASING dp values
+
+    dp[i] = best total score to arrive AT index i.
+    You can only reach i from one of the previous k
+    indices [i-k, i-1], so:
+
+        dp[i] = nums[i] + max( dp[i-k .. i-1] )
+
+    The deque stores candidate predecessor indices; its
+    FRONT always holds the one with the largest dp still
+    inside the reach window.
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+The transition is pure DP:
+
+    dp[i] = nums[i] + max( dp[j] )   for j in [i-k, i-1]
+
+Naive  ->  O(n*k):
+    For every i, scan the previous k dp values to find
+    their max. Overlapping windows re-scan the same
+    values again and again.
+
+Notice the inner "max over the last k dp values" is
+exactly a SLIDING-WINDOW MAXIMUM problem over dp[].
+So reuse the monotonic-deque trick:
+
+    Keep a deque of indices whose dp values are DECREASING
+    front -> back. Then:
+        front  = index of the biggest dp in the window
+        dp[i]  = nums[i] + dp[front]           # O(1)
+
+    Maintain it in O(1) amortized:
+        pop FRONT  when it falls out of [i-k, i-1]
+        pop BACK   while dp[back] <= dp[i]      (dominated)
+
+Each index is pushed and popped from the deque at most
+once  ->  O(n) overall, beating the O(n*k) scan.
+
+This is the same engine as:
+    ../3.monotonic_window/1  Sliding Window Maximum
+        (windowed max of the RAW array)
+    ../3.monotonic_window/2  Constrained Subsequence Sum
+        (windowed max of a dp[] where negatives are dropped)
+Here we take the windowed max of dp[] with NO dropping,
+because every landing index must be summed in.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [1,-1,-2,4,-7,3], k = 2)
+--------------------------------------------------
+Start: dp = [1, 0, 0, 0, 0, 0]   dq = [0]
+(deque holds indices; recall dp[0]=1)
+
+i=1  (window of predecessors = [i-k, i-1] = [-1, 0])
+    front? dq[0]=0 < 1-2=-1 ? no
+    dp[1] = nums[1] + dp[dq[0]] = -1 + dp[0]=1  =  0
+    back?  dp[dq[-1]]=dp[0]=1 <= dp[1]=0 ? no
+    append 1        -> dq = [0, 1]     dp = [1,0,0,0,0,0]
+
+i=2  (window = [0, 1])
+    front? dq[0]=0 < 2-2=0 ? no
+    dp[2] = nums[2] + dp[dq[0]] = -2 + dp[0]=1  =  -1
+    back?  dp[dq[-1]]=dp[1]=0 <= dp[2]=-1 ? no
+    append 2        -> dq = [0, 1, 2]  dp = [1,0,-1,0,0,0]
+
+i=3  (window = [1, 2])
+    front? dq[0]=0 < 3-2=1 ? yes -> popleft   dq = [1, 2]
+           dq[0]=1 < 1 ? no
+    dp[3] = nums[3] + dp[dq[0]] = 4 + dp[1]=0  =  4
+    back?  dp[dq[-1]]=dp[2]=-1 <= 4 ? yes -> pop   dq = [1]
+           dp[dq[-1]]=dp[1]=0  <= 4 ? yes -> pop   dq = []
+    append 3        -> dq = [3]        dp = [1,0,-1,4,0,0]
+
+i=4  (window = [2, 3])
+    front? dq[0]=3 < 4-2=2 ? no
+    dp[4] = nums[4] + dp[dq[0]] = -7 + dp[3]=4  =  -3
+    back?  dp[dq[-1]]=dp[3]=4 <= -3 ? no
+    append 4        -> dq = [3, 4]     dp = [1,0,-1,4,-3,0]
+
+i=5  (window = [3, 4])
+    front? dq[0]=3 < 5-2=3 ? no
+    dp[5] = nums[5] + dp[dq[0]] = 3 + dp[3]=4  =  7
+    back?  dp[dq[-1]]=dp[4]=-3 <= 7 ? yes -> pop   dq = [3]
+           dp[dq[-1]]=dp[3]=4  <= 7 ? yes -> pop   dq = []
+    append 5        -> dq = [5]        dp = [1,0,-1,4,-3,7]
+
+Return dp[n-1] = dp[5] = 7
+
+Output: 7
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+dp[i] = nums[i] + (best dp among the last k indices).
+
+The "best dp among the last k indices" is a sliding-
+window maximum over dp[]. A DECREASING deque of INDICES
+answers it in O(1):
+
+    front-pop:  discard indices that slid out of reach
+                    while dq[0] < i - k:  popleft
+    read:       dp[i] = nums[i] + dp[dq[0]]     # front = best
+    back-pop:   discard weaker tails that this i beats
+                    while dp[dq[-1]] <= dp[i]:  pop
+    push:       append i as a fresh candidate
+
+Store INDICES (not values) so the window test dq[0] < i-k
+is possible. The front is always the strongest predecessor
+still legally reachable.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [10,-5,-2,4,0,3], k = 3)
+--------------------------------------------------
+    dp[0] = 10                dq = [10 -> 0]
+
+    i=1 win[-2,0] front ok  dp[1]=-5+dp[0]=5    dq=[0,1]
+    i=2 win[-1,0] front ok  dp[2]=-2+dp[0]=8
+        back dp[1]=5<=8 pop                     dq=[0,2]
+    i=3 win[0,2]  front ok  dp[3]=4+dp[0]=14
+        back dp[2]=8<=14 pop, dp[0]=10<=14 pop  dq=[3]
+    i=4 win[1,3]  front ok  dp[4]=0+dp[3]=14
+        back dp[3]=14<=14 pop                   dq=[4]
+    i=5 win[2,4]  front ok  dp[5]=3+dp[4]=14+3=17
+
+    dp = [10, 5, 8, 14, 14, 17]
+    Output = 17
+    (path 0 -> 3 -> 5 collects 10 + 4 + 3 = 17)
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+"Reachable-best line-up."
+
+    dp[i] = nums[i] + (tallest of the last k dp's)
+
+Keep a queue of predecessors sorted TALLEST at the front:
+
+        front  ~~~~~~~~~~~~~~~~~~  back
+        [ tall,  medium,  short ]
+          ^                    ^
+          best reachable       just arrived
+
+    - When the front walks past its k-step reach, kick it out.
+    - When a newcomer is taller than the tail, the tail is
+      useless forever (newer AND bigger) -> pop it.
+
+Front is your springboard; add nums[i] and jump in.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach            | Time    | Space |
+    | ------------------- | ------- | ----- |
+    | DP + inner-max scan | O(n*k)  | O(n)  |
+    | DP + monotonic deque| O(n)    | O(n)  |
+
+Each index enters and leaves the deque at most once, so
+the deque work is O(n) amortized. dp[] of size n gives
+O(n) space (the deque also holds at most n indices).
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION maxResult(nums, k)
+
+        n  <- length(nums)
+        dp <- array of n zeros
+        dp[0] <- nums[0]
+
+        dq <- deque containing index 0   # decreasing dp
+
+        FOR i FROM 1 TO n - 1
+
+            WHILE dq not empty AND dq.front < i - k
+                dq.popFront()
+
+            dp[i] <- nums[i] + dp[dq.front]
+
+            WHILE dq not empty AND dp[dq.back] <= dp[i]
+                dq.popBack()
+
+            dq.pushBack(i)
+
+        END FOR
+
+        RETURN dp[n - 1]
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    n = number of elements in nums
+    Make dp = list of n zeros
+    dp[0] = nums[0]                 (score to stand on start)
+
+    Make dq = a deque, put index 0 in it
+        (dq holds candidate indices we might jump FROM,
+         arranged so their dp values shrink front -> back)
+
+    Repeat i from 1 to n - 1
+
+        Throw away stale front indices
+            While dq is not empty and dq.front < i - k
+                remove the front (too far back to jump from)
+
+        Land on index i from the best reachable spot
+            dp[i] = nums[i] + dp[ dq.front ]
+            (dq.front is the index with the biggest dp
+             still within k steps behind i)
+
+        Clean the back so the deque stays decreasing
+            While dq is not empty and dp[dq.back] <= dp[i]
+                remove the back
+                (that index is older AND not better, so
+                 index i beats it every future round)
+
+        Add i to the back as a new candidate
+            dq.pushBack(i)
+
+    END Repeat
+
+    Return dp[n - 1]              (best score at the last index)
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +-----------------------+
+    | dp[0] = nums[0]       |
+    | dq = [0]              |
+    | i = 1                 |
+    +-----------+-----------+
+                |
+                v
+         +--------------+
+         |  i < n ?     |<------------------------+
+         +------+-------+                         |
+                | Yes                             |
+                v                                 |
+      +--------------------------+                |
+      | while dq[0] < i - k :    |                |
+      |     popleft (out of reach)|               |
+      +------------+-------------+                |
+                   |                              |
+                   v                              |
+      +--------------------------+                |
+      | dp[i] = nums[i]+dp[dq[0]] |                |
+      +------------+-------------+                |
+                   |                              |
+                   v                              |
+      +--------------------------+                |
+      | while dp[dq[-1]] <= dp[i]:|               |
+      |     pop (dominated tail)  |               |
+      +------------+-------------+                |
+                   |                              |
+                   v                              |
+      +--------------------------+                |
+      | dq.append(i)             |                |
+      +------------+-------------+                |
+                   |                              |
+                   +-----> i++ ------------------+
+                (when i >= n)
+                   |
+                   v
+            +----------------+
+            | RETURN dp[n-1] |
+            +-------+--------+
+                    v
+                 +-----+
+                 | END |
+                 +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"Let dp[i] be the best score to reach index i. Since I can
+ only jump from the previous k indices, dp[i] = nums[i] plus
+ the maximum dp among [i-k, i-1]. That inner max over the
+ last k dp values is a sliding-window maximum, so I keep a
+ monotonic DECREASING deque of indices: its front is always
+ the strongest reachable predecessor, giving dp[i] in O(1).
+ I pop the front when it leaves the k-window, and pop the
+ back while its dp is not greater than the new dp. Each index
+ is pushed and popped once, so it's linear instead of the
+ O(n*k) scan.
+
+ Time:  O(n)
+ Space: O(n)
+ It's the Sliding Window Maximum trick applied inside a DP."
+
+
+==================================================
+dp[i] = nums[i] + max(dp[i-k..i-1]); a decreasing
+deque of indices serves that windowed max in O(1).
+==================================================

@@ -24,5 +24,5 @@ Problems  (☐ = todo, ☑ = done)
 --------------------------------------------------
 ☑ Maximum Sum Subarray of Size K  -> 1.max_sum_subarray_k.py
 ☑ Average of Subarrays of Size K  -> 2.average_subarrays_k.py
-☐ First Negative in Every Window of Size K
-☐ Count Occurrences of Anagrams
+☑ First Negative in Every Window of Size K  -> 3.first_negative_in_window.py
+☑ Count Occurrences of Anagrams             -> 4.count_occurrences_of_anagrams.py

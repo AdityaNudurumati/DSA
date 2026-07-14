@@ -1,0 +1,383 @@
+==================================================
+MINIMUM WINDOW SUBSTRING  —  Variable Sliding Window
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given strings s and t, return the SMALLEST substring of s
+that contains EVERY character of t, INCLUDING duplicates.
+If no such window exists, return "".
+
+Example:
+    s = "ADOBECODEBANC"   t = "ABC"
+
+    valid windows (each contains one A, one B, one C):
+        "ADOBEC"          (indices 0..5)   len 6
+        "ADOBECODEBANC"   (whole string)   len 13
+        "CODEBA"?          no -> missing C
+        "BANC"            (indices 9..12)  len 4   <- smallest
+
+    Output = "BANC"
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    from collections import Counter
+
+    def minWindow(s, t):
+
+        if not s or not t:
+            return ""
+
+        need = Counter(t)
+        missing = len(t)        # total chars still required (with multiplicity)
+
+        left = 0
+        best_start, best_len = 0, float("inf")
+
+        for right, ch in enumerate(s):
+
+            if need[ch] > 0:
+                missing -= 1
+            need[ch] -= 1
+
+            # window now valid -> shrink from the left as much as possible
+            while missing == 0:
+
+                if right - left + 1 < best_len:
+                    best_start, best_len = left, right - left + 1
+
+                need[s[left]] += 1
+                if need[s[left]] > 0:       # removed a character we actually need
+                    missing += 1
+                left += 1
+
+        return "" if best_len == float("inf") else s[best_start:best_start + best_len]
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:  0  1  2  3  4  5  6  7  8  9 10 11 12
+    s:      A  D  O  B  E  C  O  D  E  B  A  N  C
+    t = "ABC"
+
+    need    = {A:1, B:1, C:1}   (how many of each char the window still owes)
+    missing = 3                 (total owed chars, counting duplicates = len(t))
+    left    = 0                 (left edge of the window)
+    best_len = +inf             (length of best valid window found so far)
+    best_start = 0
+
+    Two moving edges: 'right' expands the window, 'left' shrinks it.
+    need[ch] can go NEGATIVE -> that char is a surplus (more than t needs).
+    The window is VALID exactly when missing == 0.
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Brute force  ->  O(n^2 * m):
+    Try every (start, end) substring, and for each check whether it
+    contains all of t. Enormous repeated work.
+
+Variable sliding window  ->  O(|s| + |t|):
+    Grow the window on the RIGHT until it becomes valid (covers all
+    of t), then greedily shrink on the LEFT while it stays valid,
+    recording the smallest valid width seen. Each pointer only ever
+    moves forward, so total work is linear.
+
+    The trick is the 'missing' counter: instead of re-scanning the
+    window to test validity, we keep one integer that tells us in
+    O(1) whether every required char is present.
+
+        expand right ----> window becomes valid (missing == 0)
+        shrink left  ----> keep it valid, minimise its length
+
+
+--------------------------------------------------
+5. DRY RUN  (s = "ADOBECODEBANC", t = "ABC")
+--------------------------------------------------
+Start: need={A:1,B:1,C:1}  missing=3  left=0  best_len=inf
+
+right=0  ch=A  need[A]=1>0 -> missing=2   need[A]=0
+    missing!=0  (window "A", not valid)
+
+right=1  ch=D  need[D]=0 not>0            need[D]=-1   missing=2
+
+right=2  ch=O  need[O]=0 not>0            need[O]=-1   missing=2
+
+right=3  ch=B  need[B]=1>0 -> missing=1   need[B]=0
+
+right=4  ch=E  need[E]=0 not>0            need[E]=-1   missing=1
+
+right=5  ch=C  need[C]=1>0 -> missing=0   need[C]=0
+    VALID -> shrink:
+      win = 5-0+1 = 6 < inf -> best=(start 0, len 6)  "ADOBEC"
+      remove s[0]=A: need[A]=1 (>0) -> missing=1  left=1
+    missing!=0, stop shrinking
+
+right=6  ch=O  need[O]=-1 not>0           need[O]=-2   missing=1
+right=7  ch=D  need[D]=-1 not>0           need[D]=-2   missing=1
+right=8  ch=E  need[E]=-1 not>0           need[E]=-2   missing=1
+right=9  ch=B  need[B]=0 not>0            need[B]=-1   missing=1
+
+right=10 ch=A  need[A]=1>0 -> missing=0   need[A]=0
+    VALID -> shrink (left=1):
+      win=10-1+1=10  not<6
+      remove s[1]=D: need[D]=-1 (not>0)  left=2
+      win=9   not<6
+      remove s[2]=O: need[O]=-1 (not>0)  left=3
+      win=8   not<6
+      remove s[3]=B: need[B]=0 (not>0)   left=4
+      win=7   not<6
+      remove s[4]=E: need[E]=-1 (not>0)  left=5
+      win=6   not<6  (not strictly smaller)
+      remove s[5]=C: need[C]=1 (>0) -> missing=1  left=6
+    stop
+
+right=11 ch=N  need[N]=0 not>0            need[N]=-1   missing=1
+
+right=12 ch=C  need[C]=1>0 -> missing=0   need[C]=0
+    VALID -> shrink (left=6):
+      win=12-6+1=7  not<6
+      remove s[6]=O: need[O]=0 (not>0)   left=7
+      win=6   not<6
+      remove s[7]=D: need[D]=0 (not>0)   left=8
+      win=5 < 6 -> best=(start 8, len 5)  "EBANC"
+      remove s[8]=E: need[E]=0 (not>0)   left=9
+      win=4 < 5 -> best=(start 9, len 4)  "BANC"
+      remove s[9]=B: need[B]=1 (>0) -> missing=1  left=10
+    stop
+
+end of string.
+Output: s[9:9+4] = "BANC"
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+Keep a 'need' count for each char of t and one 'missing' total.
+
+    Adding s[right] to the window:
+        if need[ch] > 0:  that add satisfied a real requirement
+            missing -= 1
+        need[ch] -= 1                 # may go negative = surplus char
+
+    When missing == 0 the window is VALID (owes nothing). Now shrink:
+        record the window if it is the smallest so far
+        need[s[left]] += 1            # give the left char back
+        if need[s[left]] > 0:         # we just broke a requirement
+            missing += 1
+        left += 1
+
+The elegance: need[ch] > 0 fires ONLY for chars t truly still needs.
+Surplus chars sit at 0 or below, so removing them never raises
+'missing'. That is what lets 'left' race forward safely.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (s = "ABAC", t = "AB")
+--------------------------------------------------
+    need={A:1,B:1}  missing=2  left=0  best_len=inf
+    index:  0  1  2  3
+    s:      A  B  A  C
+
+    right=0 A  need[A]>0 -> missing=1   need[A]=0
+    right=1 B  need[B]>0 -> missing=0   need[B]=0
+        VALID: win=2<inf -> best=(0,2) "AB"
+               remove A: need[A]=1(>0) -> missing=1  left=1
+    right=2 A  need[A]>0 -> missing=0   need[A]=0
+        VALID: win=2-1+1=2  not<2
+               remove s[1]=B: need[B]=1(>0) -> missing=1  left=2
+    right=3 C  need[C]=0 not>0          need[C]=-1  missing=1
+
+    Output = "AB"
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Think of an accordion (a window that stretches and squeezes):
+
+    ~~~~[ grow right ]~~~~   until it COVERS all of t   (missing = 0)
+    [ squeeze left ]~~~~~    while it still covers t     (minimise)
+
+    "Grow till it fits, squeeze till it hurts."
+
+    'missing' is a debt counter:
+        missing == 0  -> the window has paid off every char of t.
+        removing a NEEDED char pushes need back above 0 -> debt returns.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach          | Time            | Space   |
+    | ----------------- | --------------- | ------- |
+    | Brute force       | O(n^2 * m)      | O(m)    |
+    | Sliding window    | O(|s| + |t|)    | O(|t|)  |
+
+Right advances once per char, left advances at most once per char,
+so each pointer does O(|s|) work -> linear time. The need map holds
+at most |t| distinct keys -> O(|t|) space.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION minWindow(s, t)
+
+        IF s empty OR t empty
+            RETURN ""
+
+        need    <- count of each char in t
+        missing <- length(t)
+        left    <- 0
+        best_len <- +infinity ;  best_start <- 0
+
+        FOR right FROM 0 TO length(s) - 1
+            ch <- s[right]
+            IF need[ch] > 0
+                missing <- missing - 1
+            need[ch] <- need[ch] - 1
+
+            WHILE missing == 0
+                IF right - left + 1 < best_len
+                    best_len   <- right - left + 1
+                    best_start <- left
+                need[s[left]] <- need[s[left]] + 1
+                IF need[s[left]] > 0
+                    missing <- missing + 1
+                left <- left + 1
+
+        IF best_len == +infinity
+            RETURN ""
+        RETURN s[best_start .. best_start + best_len)
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    If s or t is empty, return "" (no window possible)
+
+    Build need = how many of each character t requires
+    Set missing = total characters still owed = length of t
+    Set left = 0
+    Set best_len = infinity, best_start = 0
+
+    Repeat right from 0 to end of s
+        Let ch = s[right]
+
+        Pull ch into the window:
+            If need[ch] is still positive, this ch was genuinely needed
+                missing = missing - 1
+            need[ch] = need[ch] - 1   (may become negative = extra copy)
+
+        While the window is valid (missing == 0):
+
+            If this window is shorter than the best so far
+                Save it: best_len = right - left + 1, best_start = left
+
+            Try to drop the leftmost char to shrink:
+                need[s[left]] = need[s[left]] + 1   (give it back)
+                If need[s[left]] is now positive
+                    we just removed a character we truly need
+                    missing = missing + 1  (window no longer valid)
+                Move left forward by 1
+
+    END Repeat
+
+    If best_len is still infinity, no valid window -> return ""
+    Otherwise return the substring of length best_len at best_start
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +-----------------------------+
+    | need = count(t)             |
+    | missing = len(t)            |
+    | left = 0                    |
+    | best_len = +inf ; right = 0 |
+    +--------------+--------------+
+                   |
+                   v
+           +---------------+
+           | right < n ?   |<----------------------+
+           +------+--------+                        |
+                  | Yes                             |
+                  v                                 |
+        +---------------------------+               |
+        | ch = s[right]             |               |
+        | if need[ch]>0: missing--  |               |
+        | need[ch] -= 1             |               |
+        +------------+--------------+               |
+                     |                              |
+                     v                              |
+             +----------------+  No                 |
+             | missing == 0 ? |----> right++ -------+
+             +-------+--------+                      |
+                     | Yes                           |
+                     v                               |
+      +-------------------------------------+        |
+      | if win < best_len: save (left,win)  |        |
+      | need[s[left]] += 1                  |        |
+      | if need[s[left]]>0: missing++       |        |
+      | left++                              |        |
+      +------------------+------------------+        |
+                         |                           |
+                         +----> (back to missing==0?)+
+                    (when right >= n)
+                         |
+                         v
+              +---------------------+
+              | best_len == +inf ?  |
+              +----+-----------+----+
+                Yes|           |No
+                   v           v
+            +---------+  +-------------------+
+            | RETURN""|  | RETURN substring  |
+            +----+----+  +---------+---------+
+                 |                 |
+                 +--------+--------+
+                          v
+                       +-----+
+                       | END |
+                       +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I use a variable-size sliding window. A 'need' hashmap holds how
+ many of each character of t the window still owes, and a single
+ 'missing' counter tracks the total still owed. I expand the right
+ edge, decrementing missing only when I consume a char that's truly
+ needed. The moment missing hits zero the window is valid, so I
+ shrink from the left as far as I can while it stays valid, and I
+ record the smallest valid window. Giving back a char raises missing
+ again only when it was genuinely required, so surplus chars fall
+ off for free. Both pointers move forward only.
+
+ Time:  O(|s| + |t|)
+ Space: O(|t|)
+ It's the classic VARIABLE-SIZE sliding window with a need-count map."
+
+
+==================================================
+Grow right until the window covers all of t, then
+squeeze left to the smallest window that still does.
+==================================================

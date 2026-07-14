@@ -27,6 +27,6 @@ Problems  (☐ = todo, ☑ = done)
 ☑ Minimum Window Substring                       -> 2.minimum_window_substring.py
 ☑ Fruits Into Baskets (at most 2 distinct)       -> 3.fruits_into_baskets.py
 ☑ Longest Substring with At Most K Distinct      -> 4.longest_substring_k_distinct.py
-☐ Longest Repeating Character Replacement
-☐ Permutation in String
-☐ Subarray Product Less Than K
+☑ Longest Repeating Character Replacement        -> 5.longest_repeating_char_replacement.py
+☑ Permutation in String                          -> 6.permutation_in_string.py
+☑ Subarray Product Less Than K                    -> 7.subarray_product_less_than_k.py

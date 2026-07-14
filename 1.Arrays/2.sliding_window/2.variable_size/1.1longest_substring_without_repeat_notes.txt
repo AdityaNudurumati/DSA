@@ -1,0 +1,322 @@
+==================================================
+LONGEST SUBSTRING WITHOUT REPEATING CHARACTERS
+Variable Sliding Window (last-seen index map)
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given a string s, find the LENGTH of the longest
+substring that contains NO repeating characters.
+
+Example:
+    s = "abcabcbb"
+
+    substrings without repeats:
+        "abc"  -> length 3   <- longest
+        "bca"  -> length 3
+        "cab"  -> length 3
+        "b"    -> length 1
+
+    Output = 3   (the answer is "abc")
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def lengthOfLongestSubstring(s):
+
+        last_seen = {}      # char -> most recent index
+        left = 0
+        best = 0
+
+        for right, ch in enumerate(s):
+
+            # if ch repeats inside the current window, jump left past it
+            if ch in last_seen and last_seen[ch] >= left:
+                left = last_seen[ch] + 1
+
+            last_seen[ch] = right
+            best = max(best, right - left + 1)
+
+        return best
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0  1  2  3  4  5  6  7
+    s:      [ a  b  c  a  b  c  b  b ]
+
+    last_seen = {}     (char -> most recent index it appeared)
+    left      = 0      (left edge of the current window)
+    best      = 0      (longest valid length seen so far)
+
+    The window is s[left .. right]. Unlike the fixed window,
+    its WIDTH is not constant - it grows as 'right' moves and
+    shrinks (left jumps forward) whenever a repeat sneaks in.
+
+         a  b  c  a  b  c  b  b
+         ^L       ^R
+         current window = "abc..."  keep it repeat-free
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Brute force  ->  O(n^2) or worse:
+    Check every substring, and for each one test whether all
+    characters are distinct. Tons of overlapping re-checking.
+
+Variable sliding window  ->  O(n):
+    Keep a window that is ALWAYS repeat-free.
+        - GROW on the right: move 'right' forward one char.
+        - SHRINK on the left: if the new char already sits
+          inside the window, jump 'left' just past its last
+          occurrence so the duplicate is excluded again.
+    The window width = right - left + 1. Track the max width.
+
+        window "abc"  then read 'a' again:
+            a  b  c  a ...
+            ^L    dup ^R
+            jump left past the OLD 'a'  ->  window "bca"
+            (still repeat-free, no re-scan needed)
+
+
+--------------------------------------------------
+5. DRY RUN  (s = "abcabcbb")
+--------------------------------------------------
+Start: last_seen={}  left=0  best=0
+
+right=0 ch='a'  'a' in map? no
+    last_seen={a:0}   len=0-0+1=1  best=max(0,1)=1   window "a"
+
+right=1 ch='b'  'b' in map? no
+    last_seen={a:0,b:1}  len=1-0+1=2  best=max(1,2)=2  window "ab"
+
+right=2 ch='c'  'c' in map? no
+    last_seen={a:0,b:1,c:2}  len=2-0+1=3 best=max(2,3)=3 window "abc"
+
+right=3 ch='a'  'a' in map, last_seen[a]=0 >= left 0? yes
+    jump left = 0+1 = 1
+    last_seen={a:3,b:1,c:2}  len=3-1+1=3  best=max(3,3)=3  window "bca"
+
+right=4 ch='b'  'b' in map, last_seen[b]=1 >= left 1? yes
+    jump left = 1+1 = 2
+    last_seen={a:3,b:4,c:2}  len=4-2+1=3  best=max(3,3)=3  window "cab"
+
+right=5 ch='c'  'c' in map, last_seen[c]=2 >= left 2? yes
+    jump left = 2+1 = 3
+    last_seen={a:3,b:4,c:5}  len=5-3+1=3  best=max(3,3)=3  window "abc"
+
+right=6 ch='b'  'b' in map, last_seen[b]=4 >= left 3? yes
+    jump left = 4+1 = 5
+    last_seen={a:3,b:6,c:5}  len=6-5+1=2  best=max(3,2)=3  window "cb"
+
+right=7 ch='b'  'b' in map, last_seen[b]=6 >= left 5? yes
+    jump left = 6+1 = 7
+    last_seen={a:3,b:7,c:5}  len=7-7+1=1  best=max(3,1)=3  window "b"
+
+Output: 3
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+Keep last_seen[ch] = the most recent index of every char.
+For each new index 'right' with character ch:
+
+    if ch in last_seen and last_seen[ch] >= left:
+        left = last_seen[ch] + 1        # duplicate INSIDE window
+                                        # -> shrink from the left
+
+    last_seen[ch] = right               # record newest position
+    best = max(best, right - left + 1)  # window width so far
+
+The guard  last_seen[ch] >= left  is crucial: it only reacts to
+a repeat that lies INSIDE the current window. An old occurrence
+that is already left-of-'left' is stale and must be ignored, so
+'left' never moves BACKWARD - it only jumps forward.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (s = "pwwkew")
+--------------------------------------------------
+    index:  0 1 2 3 4 5
+    s:      p w w k e w
+
+    right=0 'p'  new             left=0  len=1  best=1  "p"
+    right=1 'w'  new             left=0  len=2  best=2  "pw"
+    right=2 'w'  dup, seen@1>=0  left=2  len=1  best=2  "w"
+    right=3 'k'  new             left=2  len=2  best=2  "wk"
+    right=4 'e'  new             left=2  len=3  best=3  "wke"
+    right=5 'w'  dup, seen@2>=2  left=3  len=3  best=3  "kew"
+
+    Output = 3   (either "wke" or "kew")
+
+    Note "bbbbb" -> every step the dup is inside, left chases
+    right, len stays 1  ->  Output = 1.
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+An elastic window crawling along the string:
+
+    p [ w ] w k e w      right pushes the RIGHT edge out,
+    p   w [ w ] ...       a repeat yanks the LEFT edge forward
+    ...   [ w k e ] w     just past the old copy.
+
+    "Stretch right, snap left." The map remembers where each
+    letter last appeared, so 'left' teleports in O(1) instead
+    of scanning. Record the widest stretch every step.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach            | Time    | Space              |
+    | ------------------- | ------- | ------------------ |
+    | Brute force         | O(n^2)  | O(min(n,charset))  |
+    | Sliding window + map| O(n)    | O(min(n,charset))  |
+
+Each character is visited at most twice (enters when 'right'
+reaches it, leaves when 'left' passes it), so O(n) total.
+The map holds at most one entry per distinct char, so space
+is O(min(n, size of the alphabet)).
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION lengthOfLongestSubstring(s)
+
+        last_seen <- empty map
+        left      <- 0
+        best      <- 0
+
+        FOR right FROM 0 TO length(s) - 1
+            ch <- s[right]
+
+            IF ch in last_seen AND last_seen[ch] >= left
+                left <- last_seen[ch] + 1
+
+            last_seen[ch] <- right
+            best <- max(best, right - left + 1)
+
+        END FOR
+
+        RETURN best
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Create an empty map last_seen (char -> last index)
+    Set left = 0
+    Set best = 0
+
+    Repeat right from 0 to end of string
+        Let ch be the character at position right
+
+        Check if ch already appeared INSIDE the window
+            If ch is in last_seen AND its stored index >= left
+                Move left to just after that old copy
+                    left = last_seen[ch] + 1
+
+        Record where we just saw ch
+            last_seen[ch] = right
+
+        Measure the current window and keep the best
+            best = max(best, right - left + 1)
+
+    END Repeat
+
+    Return best
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +-----------------------+
+    | last_seen = {}        |
+    | left = 0              |
+    | best = 0              |
+    | right = 0             |
+    +-----------+-----------+
+                |
+                v
+         +--------------+
+         | right < n ?  |<---------------------+
+         +------+-------+                       |
+                | Yes                           |
+                v                               |
+        +-----------------+                     |
+        | ch = s[right]   |                     |
+        +--------+--------+                     |
+                 |                              |
+                 v                              |
+      +-----------------------------+           |
+      | ch in map AND               | No        |
+      | last_seen[ch] >= left ?     |----+      |
+      +--------------+--------------+    |      |
+                     | Yes               |      |
+                     v                   |      |
+        +---------------------------+    |      |
+        | left = last_seen[ch] + 1  |    |      |
+        +-------------+-------------+    |      |
+                      |                  |      |
+                      v<-----------------+      |
+        +-------------------------------+       |
+        | last_seen[ch] = right         |       |
+        | best = max(best,              |       |
+        |            right - left + 1)  |       |
+        +---------------+---------------+       |
+                        |                       |
+                        +----> right++ ---------+
+                    (when right >= n)
+                        |
+                        v
+                 +-------------+
+                 | RETURN best |
+                 +------+------+
+                        v
+                     +-----+
+                     | END |
+                     +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I slide a variable-width window that stays repeat-free. As the
+ right edge reads each character, I check a hashmap of last-seen
+ indices: if the character already appears inside the window, I
+ jump the left edge to just past its previous position, which
+ drops the duplicate. Then I update the map and record the
+ window width right-left+1 as a candidate answer. The 'last_seen
+ >= left' guard makes sure I only react to duplicates still
+ inside the window, so left never moves backward. Each character
+ is entered and left at most once.
+
+ Time:  O(n)
+ Space: O(min(n, charset))
+ It's the classic VARIABLE-SIZE sliding window pattern."
+
+
+==================================================
+Elastic window: stretch right for each char, snap
+left past any repeat, track the widest repeat-free
+stretch using a map of last-seen indices.
+==================================================

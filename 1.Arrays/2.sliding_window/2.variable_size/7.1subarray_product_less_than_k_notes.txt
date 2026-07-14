@@ -1,0 +1,335 @@
+==================================================
+SUBARRAY PRODUCT LESS THAN K  —  Variable Sliding Window
+(LeetCode 713)
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an array of POSITIVE integers nums and an integer k,
+return the NUMBER of contiguous subarrays whose product of
+all elements is STRICTLY LESS THAN k.
+
+Example:
+    nums = [10, 5, 2, 6]   k = 100
+
+    valid subarrays (product < 100):
+        [10]  [5]  [2]  [6]           (the 4 singles)
+        [10,5]=50  [5,2]=10  [2,6]=12
+        [5,2,6]=60
+
+    Output = 8
+
+    (note: [10,5,2]=100 is NOT < 100, so it is excluded)
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    def numSubarrayProductLessThanK(nums, k):
+
+        if k <= 1:                 # no positive-integer product can be < 1
+            return 0
+
+        prod = 1
+        left = 0
+        count = 0
+
+        for right in range(len(nums)):
+
+            prod *= nums[right]                 # extend window on the right
+
+            while prod >= k:                    # shrink until product < k again
+                prod //= nums[left]
+                left += 1
+
+            # every subarray ENDING at 'right' inside [left..right] is valid;
+            # there are (right - left + 1) of them
+            count += right - left + 1
+
+        return count
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1  2  3
+    nums:  [ 10,  5, 2, 6 ]   k = 100
+
+    prod  = 1        (running product of the current window)
+    left  = 0        (left edge of the window)
+    count = 0        (total valid subarrays found so far)
+
+    The window is [left .. right]. 'right' expands the window by
+    one each step; 'left' is pushed rightwards only when the
+    product grows too big (>= k).
+
+         [ 10, 5, 2, 6 ]
+           ^          ^
+          left      right   (window covers the whole span here)
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Brute force  ->  O(n^2) (or worse):
+    Try every start/end pair and multiply out the product.
+    Recomputing overlapping products repeats most of the work.
+
+Variable sliding window  ->  O(n):
+    ALL values are POSITIVE. That is the whole trick:
+        multiplying in a new element can only GROW the product,
+        dividing one out can only SHRINK it.
+    So the product is MONOTONIC as the window changes. That means
+    if [left..right] is too big, sliding 'left' forward is the only
+    way to fix it - we never have to reconsider it. Each pointer
+    marches forward at most n times.
+
+    If positivity did NOT hold (say a value was 0 or negative),
+    shrinking the left edge would not reliably reduce the product,
+    so this monotonic window logic would break.
+
+    Guard k <= 1:
+        products of positive integers are >= 1, so none can be
+        strictly less than 1. Return 0 immediately.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [10,5,2,6], k = 100)
+--------------------------------------------------
+Start: prod=1  left=0  count=0     (k=100 > 1, so we proceed)
+
+right=0  prod *= 10 -> prod=10          window [10]
+    10 >= 100 ?  no  (no shrink)
+    count += right-left+1 = 0-0+1 = 1   -> count=1
+
+right=1  prod *= 5  -> prod=50          window [10,5]
+    50 >= 100 ?  no
+    count += 1-0+1 = 2                  -> count=3
+
+right=2  prod *= 2  -> prod=100         window [10,5,2]
+    100 >= 100 ? yes -> shrink:
+        prod //= nums[left]=nums[0]=10 -> prod=10,  left=1
+    10 >= 100 ?  no  (stop shrinking)   window now [5,2]
+    count += 2-1+1 = 2                  -> count=5
+
+right=3  prod *= 6  -> prod=60          window [5,2,6]
+    60 >= 100 ?  no
+    count += 3-1+1 = 3                  -> count=8
+
+Output: 8
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+After the while-loop, the window [left..right] is the LONGEST
+window ending at 'right' whose product is still < k.
+
+Every subarray that ENDS at 'right' and starts anywhere from
+'left' up to 'right' is therefore also valid (its product only
+shrinks as it gets shorter). Those subarrays are:
+
+    [left..right], [left+1..right], ... , [right..right]
+
+That is exactly (right - left + 1) subarrays. So each step we do:
+
+    count += right - left + 1
+
+This counts ONLY the NEW subarrays ending at 'right'. Summed over
+all 'right', every valid subarray is counted once (by its right
+endpoint), with no double counting.
+
+    window [5,2,6]  (right=3, left=1)  contributes 3 new ones:
+        [5,2,6]   [2,6]   [6]
+        \_________________/
+          all end at index 3
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [1,1,1], k = 2)
+--------------------------------------------------
+    every subarray has product 1, which is < 2, so ALL are valid.
+    total subarrays of length 3 = 3 + 2 + 1 = 6.
+
+    Start: prod=1 left=0 count=0     (k=2 > 1)
+
+    right=0  prod=1  (1>=2? no)  count += 0-0+1 = 1  -> count=1
+    right=1  prod=1  (1>=2? no)  count += 1-0+1 = 2  -> count=3
+    right=2  prod=1  (1>=2? no)  count += 2-0+1 = 3  -> count=6
+
+    Output = 6
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+A stretchy window that must stay "cheap enough" (product < k):
+
+    grow on the RIGHT  ->  prod *= nums[right]
+    too expensive?     ->  shrink LEFT until prod < k
+    then bank the wins ->  count += (right - left + 1)
+
+    "Multiply in, divide out, then add the width."
+
+    The width (right-left+1) IS the number of fresh subarrays
+    ending at the right edge - because positives make the product
+    monotonic, a shorter suffix is always safe.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach        | Time     | Space |
+    | --------------- | -------- | ----- |
+    | Brute force     | O(n^2)   | O(1)  |
+    | Sliding window  | O(n)     | O(1)  |
+
+'left' and 'right' each move forward at most n times total, so
+the work is O(n). Only a few scalars are stored, so O(1) space.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION numSubarrayProductLessThanK(nums, k)
+
+        IF k <= 1
+            RETURN 0
+
+        prod  <- 1
+        left  <- 0
+        count <- 0
+
+        FOR right FROM 0 TO length(nums) - 1
+
+            prod <- prod * nums[right]
+
+            WHILE prod >= k
+                prod <- prod / nums[left]
+                left <- left + 1
+
+            count <- count + (right - left + 1)
+
+        END FOR
+
+        RETURN count
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    If k is 1 or less, no product can be smaller, so return 0
+
+    Set prod = 1        (product of the current window)
+    Set left = 0        (left edge of the window)
+    Set count = 0       (answer so far)
+
+    Repeat right from 0 to end of array
+
+        Grow the window by multiplying in the new element
+            prod = prod * nums[right]
+
+        While the product is too big (prod >= k)
+            Remove the leftmost element from the product
+                prod = prod / nums[left]
+            Move the left edge one step right
+                left = left + 1
+
+        Now [left..right] is valid. Add the number of subarrays
+        that end at 'right' (that is right - left + 1 of them)
+            count = count + (right - left + 1)
+
+    END Repeat
+
+    Return count
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+     +-------------+
+     | k <= 1 ?    |--- Yes ---> +-----------+
+     +------+------+             | RETURN 0  |
+            | No                 +-----------+
+            v
+    +-----------------------+
+    | prod = 1              |
+    | left = 0              |
+    | count = 0             |
+    | right = 0             |
+    +-----------+-----------+
+                |
+                v
+         +--------------+
+         | right < n ?  |<-----------------------+
+         +------+-------+                         |
+                | Yes                             |
+                v                                 |
+      +------------------------+                  |
+      | prod *= nums[right]    |                  |
+      +-----------+------------+                  |
+                  |                               |
+                  v                               |
+          +----------------+   Yes                |
+          | prod >= k ?    |----+                 |
+          +----+-----------+    |                 |
+               | No             v                 |
+               |        +---------------------+   |
+               |        | prod //= nums[left] |   |
+               |        | left += 1           |   |
+               |        +----------+----------+   |
+               |                   |              |
+               |<------------------+              |
+               v                                  |
+    +-------------------------------+             |
+    | count += right - left + 1     |             |
+    +---------------+---------------+             |
+                    |                             |
+                    +----> right++ ---------------+
+                (when right >= n)
+                    |
+                    v
+             +--------------+
+             | RETURN count |
+             +------+-------+
+                    v
+                 +-----+
+                 | END |
+                 +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"Because every value is positive, the product is monotonic:
+ extending the window can only grow it and shrinking can only
+ shrink it, so a sliding window works. I multiply each new
+ element into 'prod', and while 'prod' is >= k I divide out the
+ left element and advance 'left'. Once the window [left..right]
+ is valid, every subarray ending at 'right' is also valid, and
+ there are (right-left+1) of them, so I add that to the count.
+ I guard k <= 1 since no positive product can be below 1. Each
+ pointer moves forward at most n times.
+
+ Time:  O(n)
+ Space: O(1)
+ It's the VARIABLE-SIZE sliding window counting pattern."
+
+
+==================================================
+Variable window of positives: multiply in on the right,
+divide out on the left while prod >= k, then add
+(right-left+1) - the count of subarrays ending at right.
+==================================================

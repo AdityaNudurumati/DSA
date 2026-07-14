@@ -1,0 +1,379 @@
+==================================================
+CONSTRAINED SUBSEQUENCE SUM  —  DP + Monotonic Deque
+(LeetCode 1425, Hard)
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an integer array nums and an integer k, return the
+MAXIMUM SUM of a NON-EMPTY subsequence such that for every
+two consecutive chosen indices i < j the gap satisfies
+    j - i <= k
+(you may never skip more than k-1 elements between picks).
+
+Example:
+    nums = [10, 2, -10, 5, 20]   k = 2
+
+    Pick 10, 2, 5, 20:
+        10 -> 2   gap 1 <= 2   ok
+         2 -> 5   gap 2 <= 2   ok   (index 1 -> index 3)
+         5 -> 20  gap 1 <= 2   ok
+        sum = 10 + 2 + 5 + 20 = 37
+
+    Output = 37
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    from collections import deque
+
+    def constrainedSubsetSum(nums, k):
+
+        n = len(nums)
+        dp = [0] * n        # dp[i] = best sum of a valid subsequence ENDING at i
+        dq = deque()        # indices with decreasing dp values, within the last k
+        best = float("-inf")
+
+        for i in range(n):
+
+            # drop indices that are now further than k behind i
+            while dq and dq[0] < i - k:
+                dq.popleft()
+
+            prev_best = dp[dq[0]] if dq else 0
+            dp[i] = nums[i] + max(0, prev_best)   # extend best window, or start fresh
+            best = max(best, dp[i])
+
+            # maintain decreasing dp values in the deque
+            while dq and dp[dq[-1]] <= dp[i]:
+                dq.pop()
+            dq.append(i)
+
+        return best
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2    3   4
+    nums:  [ 10,  2, -10,  5, 20 ]   k = 2
+
+    dp   = [0, 0, 0, 0, 0]   dp[i] = best subseq sum ENDING at i
+    dq   = []                indices, dp values DECREASING front->back
+    best = -inf              global answer (any i can be the end)
+
+    dp[i] must INCLUDE nums[i] (the subsequence ends at i).
+    The predecessor, if any, sits at some j in [i-k, i-1].
+    So dp[i] = nums[i] + (best dp among the last k), or just
+    nums[i] alone if adding a predecessor would only hurt.
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+The recurrence is pure DP:
+
+    dp[i] = nums[i] + max( 0, max( dp[j] for i-k <= j < i ) )
+
+    - the outer nums[i] is forced (subsequence ends at i)
+    - the inner max picks the best reachable predecessor within
+      the last k positions
+    - the max(0, ...) means: if every reachable dp[j] is negative,
+      DON'T attach a predecessor -> START FRESH with just nums[i].
+
+Naive DP  ->  O(n*k):
+    For each i, scan the k previous dp values to find their max.
+    That inner scan repeats overlapping ranges again and again.
+
+DP + Monotonic Deque  ->  O(n):
+    "max of dp over the last k indices" is a SLIDING-WINDOW MAXIMUM.
+    Keep a deque of indices whose dp values are DECREASING:
+        - front (dq[0]) is always the current window maximum
+        - before pushing i, pop from the BACK every index whose dp
+          is <= dp[i] (they can never beat i while i is in window)
+        - pop from the FRONT any index that fell out of the window
+          (dq[0] < i - k)
+    Each index enters and leaves the deque once  ->  O(1) amortized
+    per step  ->  O(n) overall.
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [10,2,-10,5,20], k = 2)
+--------------------------------------------------
+Start: dp=[0,0,0,0,0]  dq=[]  best=-inf
+
+i=0  nums[0]=10
+    evict front? dq empty -> no
+    prev_best = 0            (dq empty -> treat as 0)
+    dp[0] = 10 + max(0, 0) = 10
+    best  = max(-inf, 10) = 10
+    push: dq empty -> append 0
+    dp = [10, 0, 0, 0, 0]    dq = [0]
+
+i=1  nums[1]=2
+    evict front? dq[0]=0 < 1-2=-1 ? no
+    prev_best = dp[dq[0]] = dp[0] = 10
+    dp[1] = 2 + max(0, 10) = 12
+    best  = max(10, 12) = 12
+    push: dp[dq[-1]]=dp[0]=10 <= 12 ? yes -> pop 0 ; dq empty -> append 1
+    dp = [10, 12, 0, 0, 0]   dq = [1]
+
+i=2  nums[2]=-10
+    evict front? dq[0]=1 < 2-2=0 ? no
+    prev_best = dp[dq[0]] = dp[1] = 12
+    dp[2] = -10 + max(0, 12) = 2
+    best  = max(12, 2) = 12
+    push: dp[dq[-1]]=dp[1]=12 <= 2 ? no -> append 2
+    dp = [10, 12, 2, 0, 0]   dq = [1, 2]
+
+i=3  nums[3]=5
+    evict front? dq[0]=1 < 3-2=1 ? no  (1 < 1 is false)
+    prev_best = dp[dq[0]] = dp[1] = 12
+    dp[3] = 5 + max(0, 12) = 17
+    best  = max(12, 17) = 17
+    push: dp[dq[-1]]=dp[2]=2  <= 17 ? yes -> pop 2 ; dq=[1]
+          dp[dq[-1]]=dp[1]=12 <= 17 ? yes -> pop 1 ; dq empty -> append 3
+    dp = [10, 12, 2, 17, 0]  dq = [3]
+
+i=4  nums[4]=20
+    evict front? dq[0]=3 < 4-2=2 ? no
+    prev_best = dp[dq[0]] = dp[3] = 17
+    dp[4] = 20 + max(0, 17) = 37
+    best  = max(17, 37) = 37
+    push: dp[dq[-1]]=dp[3]=17 <= 37 ? yes -> pop 3 ; dq empty -> append 4
+    dp = [10, 12, 2, 17, 37] dq = [4]
+
+Output: 37
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+dp[i] ends the subsequence at i, so nums[i] is mandatory. The
+only choice is which (if any) predecessor to attach:
+
+    dp[i] = nums[i] + max( 0, best dp in the last k positions )
+
+    max(0, ...)  ->  if the best reachable dp is NEGATIVE, adding
+                     it would shrink the sum, so drop it and START
+                     FRESH: dp[i] = nums[i] alone.
+
+The deque delivers "best dp in the last k positions" in O(1):
+
+    front  = window maximum (read it first)
+    pop FRONT  while dq[0] < i - k     (index too old, out of window)
+    pop BACK   while dp[dq[-1]] <= dp[i]  (dominated by i, useless)
+    then append i
+
+The answer is max over ALL dp[i], not just dp[n-1], because the
+subsequence may end anywhere.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [10,-2,-10,-5,20], k = 2)
+--------------------------------------------------
+    index:  0    1    2    3   4
+    nums: [ 10, -2, -10, -5, 20 ]   k = 2
+
+    i=0  prev=0            dp[0]=10 + max(0,0)  = 10   best=10  dq=[0]
+    i=1  prev=dp[0]=10     dp[1]=-2 + max(0,10) = 8    best=10  dq=[0,1]
+    i=2  front 0<0? no
+         prev=dp[0]=10     dp[2]=-10+max(0,10)  = 0    best=10  dq=[0,1,2]
+    i=3  front 0<1? yes pop0
+         prev=dp[1]=8      dp[3]=-5 + max(0,8)  = 3    best=10  dq=[1,3]
+                                 (pop 2 since dp[2]=0<=3, keep 1)
+    i=4  front 1<2? yes pop1
+         prev=dp[3]=3      dp[4]=20 + max(0,3)  = 23   best=23  dq=[4]
+
+    Output = 23
+    (best chain: 10 ... -5, 20; the -5 bridge beats starting fresh
+     at 20 alone since 3 + 20 = 23 > 20.)
+
+    Edge case, all negative, nums=[-1,-2,-3], k=1:
+        every max(0,prev) picks 0, so dp = nums itself,
+        best = -1  (the single largest element).
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+    "BEST-SO-FAR within reach, or start over."
+
+    dp[i] = nums[i] + max(0, windowMax)
+
+        max(0, ..) = the "reset switch": a negative past never
+                     drags you down; you can always begin anew.
+
+    The deque is a "leaderboard of the last k dp values":
+        front = current champion (biggest dp still in window)
+        kick out the champion when it ages out (front, out of window)
+        kick out anyone the newcomer beats (back, dominated)
+
+    Monotonic DECREASING deque  ->  front is the max, always O(1).
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach            | Time    | Space |
+    | ------------------- | ------- | ----- |
+    | Naive DP (inner scan)| O(n*k) | O(n)  |
+    | DP + monotonic deque| O(n)    | O(n)  |
+
+Each index is pushed to and popped from the deque at most once,
+so the deque work is O(n) amortized. dp[] uses O(n) space;
+the deque holds at most k indices, also O(n) in the worst case.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION constrainedSubsetSum(nums, k)
+
+        n    <- length(nums)
+        dp   <- array of n zeros
+        dq   <- empty deque of indices
+        best <- -infinity
+
+        FOR i FROM 0 TO n - 1
+
+            WHILE dq not empty AND dq.front < i - k
+                dq.popFront()
+
+            prev_best <- (dq not empty) ? dp[dq.front] : 0
+            dp[i]     <- nums[i] + max(0, prev_best)
+            best      <- max(best, dp[i])
+
+            WHILE dq not empty AND dp[dq.back] <= dp[i]
+                dq.popBack()
+            dq.pushBack(i)
+
+        END FOR
+
+        RETURN best
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    n = number of elements in nums
+    Make dp = list of n zeros   (dp[i] = best subseq sum ending at i)
+    Make dq = empty deque       (holds indices, dp values decreasing)
+    best = negative infinity
+
+    Repeat i from 0 to n - 1
+
+        Remove stale indices from the FRONT
+            While dq is not empty and dq.front < i - k
+                remove the front index   (it is more than k behind i)
+
+        Find the best predecessor still in reach
+            If dq is not empty
+                prev_best = dp[ dq.front ]   (front = window maximum)
+            Else
+                prev_best = 0
+
+        Decide dp[i]
+            dp[i] = nums[i] + max(0, prev_best)
+                 -> if prev_best is negative, max(0,..) drops it,
+                    so we START FRESH with just nums[i]
+
+        Update the global answer
+            best = max(best, dp[i])
+
+        Push i, keeping the deque decreasing from the BACK
+            While dq is not empty and dp[ dq.back ] <= dp[i]
+                remove the back index   (dp[i] beats it, so it is useless)
+            Add i to the back of dq
+
+    END Repeat
+
+    Return best
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +-----------------------+
+    | dp = zeros(n)         |
+    | dq = empty            |
+    | best = -infinity      |
+    | i = 0                 |
+    +-----------+-----------+
+                |
+                v
+         +--------------+
+         |   i < n ?    |<--------------------------+
+         +------+-------+                           |
+                | Yes                               |
+                v                                   |
+    +-------------------------------+               |
+    | while dq and dq[0] < i-k :    |               |
+    |     dq.popleft()   (too old)  |               |
+    +---------------+---------------+               |
+                    |                               |
+                    v                               |
+    +-------------------------------+               |
+    | prev_best = dp[dq[0]] if dq   |               |
+    |             else 0            |               |
+    | dp[i] = nums[i] + max(0,prev) |               |
+    | best  = max(best, dp[i])      |               |
+    +---------------+---------------+               |
+                    |                               |
+                    v                               |
+    +-------------------------------+               |
+    | while dq and dp[dq[-1]]<=dp[i]|               |
+    |     dq.pop()   (dominated)    |               |
+    | dq.append(i)                  |               |
+    +---------------+---------------+               |
+                    |                               |
+                    +----> i++ ---------------------+
+                (when i >= n)
+                    |
+                    v
+             +-------------+
+             | RETURN best |
+             +------+------+
+                    v
+                 +-----+
+                 | END |
+                 +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I define dp[i] as the best subsequence sum that ENDS at i, so
+ nums[i] is always included. The only decision is which
+ predecessor to attach, and it must be within the last k indices:
+ dp[i] = nums[i] + max(0, max dp[j] for i-k <= j < i). The
+ max(0, ..) lets me start fresh when every reachable dp is
+ negative. That inner 'max over the last k dp values' is a
+ sliding-window maximum, so I keep a monotonic DECREASING deque
+ of indices: I pop stale indices off the front once they fall
+ out of the window, read the front as the window max, and pop
+ dominated indices off the back before pushing i. The answer is
+ the max dp over all i, since the subsequence can end anywhere.
+
+ Time:  O(n)
+ Space: O(n)
+ It's the DP + MONOTONIC-DEQUE pattern."
+
+
+==================================================
+dp[i] = nums[i] + max(0, best dp in the last k);
+a decreasing deque gives that windowed max in O(1).
+==================================================

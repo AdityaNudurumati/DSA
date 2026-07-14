@@ -1,0 +1,375 @@
+==================================================
+SLIDING WINDOW MAXIMUM  —  Monotonic Deque (LC 239)
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an integer array nums and a window size k, return a
+list containing the MAXIMUM of every CONTIGUOUS window of
+size k as the window slides left to right.
+
+Example:
+    nums = [1, 3, -1, -3, 5, 3, 6, 7]   k = 3
+
+    windows of size 3:
+        [1, 3,-1]        -> 3
+        [3,-1,-3]        -> 3
+        [-1,-3, 5]       -> 5
+        [-3, 5, 3]       -> 5
+        [ 5, 3, 6]       -> 6
+        [ 3, 6, 7]       -> 7
+
+    Output = [3, 3, 5, 5, 6, 7]
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    from collections import deque
+
+    def maxSlidingWindow(nums, k):
+
+        dq = deque()        # holds indices; their nums values are decreasing
+        result = []
+
+        for i, x in enumerate(nums):
+
+            # drop the front index if it has slid out of the window
+            if dq and dq[0] <= i - k:
+                dq.popleft()
+
+            # drop smaller values from the back: they can never be the max now
+            while dq and nums[dq[-1]] < x:
+                dq.pop()
+
+            dq.append(i)
+
+            if i >= k - 1:
+                result.append(nums[dq[0]])   # front is always the window max
+
+        return result
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0  1   2   3  4  5  6  7
+    nums:  [  1, 3, -1, -3, 5, 3, 6, 7 ]   k = 3
+
+    dq     = deque()   (stores INDICES, not values)
+    result = []        (one max recorded per full window)
+
+    Invariant for dq:
+        - it stores INDICES that are still inside the window
+        - the nums[] values at those indices are DECREASING
+          front (dq[0]) = index of the current window's MAX
+          back  (dq[-1]) = index of the smallest still-useful value
+
+    The first full window ends at index k-1 = 2:
+
+         [ 1, 3, -1 ] -3  5  3  6  7
+           ^^^^^^^^^^
+           first window, max = 3
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Brute force  ->  O(n*k):
+    For every window, scan all k elements to find the max.
+    Overlapping windows re-scan the same elements again and
+    again, wasting most of the work.
+
+Monotonic deque  ->  O(n):
+    Keep a deque of INDICES whose values stay DECREASING.
+    Then the front is ALWAYS the max of the current window,
+    read in O(1). Two cheap maintenance steps per element:
+        - pop the FRONT if it slid out of the window
+        - pop from the BACK every value smaller than the
+          incoming one (a smaller value with a bigger value
+          to its right can never be a future maximum)
+    Each index is pushed once and popped once  ->  O(n).
+
+        incoming 5 kills -3 and -1 sitting behind it:
+            back: [..., -1(idx2), -3(idx3)]  + 5
+                  pop -3, pop -1  ->  [5]     (they're useless now)
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [1,3,-1,-3,5,3,6,7], k = 3)
+--------------------------------------------------
+Notation: dq shown as indices, with (value) next to each.
+Start: dq=[]  result=[]
+
+i=0  x=1
+    front slid out? dq[0] <= 0-3=-3 ? dq empty -> no
+    back < x? dq empty -> no
+    append 0                       dq=[0(1)]
+    0 >= 2 ? no
+
+i=1  x=3
+    front out? dq[0]=0 <= 1-3=-2 ? no
+    back < x? nums[0]=1 < 3 ? yes -> pop 0   dq=[]
+    append 1                       dq=[1(3)]
+    1 >= 2 ? no
+
+i=2  x=-1
+    front out? dq[0]=1 <= 2-3=-1 ? no
+    back < x? nums[1]=3 < -1 ? no
+    append 2                       dq=[1(3), 2(-1)]
+    2 >= 2 ? yes -> result += nums[dq[0]=1]=3    result=[3]
+
+i=3  x=-3
+    front out? dq[0]=1 <= 3-3=0 ? no
+    back < x? nums[2]=-1 < -3 ? no
+    append 3                       dq=[1(3), 2(-1), 3(-3)]
+    3 >= 2 ? yes -> result += nums[dq[0]=1]=3    result=[3,3]
+
+i=4  x=5
+    front out? dq[0]=1 <= 4-3=1 ? yes -> popleft   dq=[2(-1), 3(-3)]
+    back < x? nums[3]=-3 < 5 ? yes -> pop 3   dq=[2(-1)]
+             nums[2]=-1 < 5 ? yes -> pop 2   dq=[]
+    append 4                       dq=[4(5)]
+    4 >= 2 ? yes -> result += nums[dq[0]=4]=5    result=[3,3,5]
+
+i=5  x=3
+    front out? dq[0]=4 <= 5-3=2 ? no
+    back < x? nums[4]=5 < 3 ? no
+    append 5                       dq=[4(5), 5(3)]
+    5 >= 2 ? yes -> result += nums[dq[0]=4]=5    result=[3,3,5,5]
+
+i=6  x=6
+    front out? dq[0]=4 <= 6-3=3 ? no
+    back < x? nums[5]=3 < 6 ? yes -> pop 5   dq=[4(5)]
+             nums[4]=5 < 6 ? yes -> pop 4   dq=[]
+    append 6                       dq=[6(6)]
+    6 >= 2 ? yes -> result += nums[dq[0]=6]=6    result=[3,3,5,5,6]
+
+i=7  x=7
+    front out? dq[0]=6 <= 7-3=4 ? no
+    back < x? nums[6]=6 < 7 ? yes -> pop 6   dq=[]
+    append 7                       dq=[7(7)]
+    7 >= 2 ? yes -> result += nums[dq[0]=7]=7    result=[3,3,5,5,6,7]
+
+Output: [3, 3, 5, 5, 6, 7]
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+Keep a deque of INDICES whose nums values stay DECREASING.
+For each new index i (value x = nums[i]):
+
+    if dq[0] <= i - k:                 # front index left the window
+        dq.popleft()
+
+    while dq and nums[dq[-1]] < x:     # kill smaller values behind x
+        dq.pop()
+
+    dq.append(i)                       # x joins from the back
+
+    if i >= k - 1:                     # window is full
+        result.append(nums[dq[0]])     # FRONT is the window max
+
+Why the front is the max: everything smaller than a later
+element was already popped, so what survives is decreasing
+front-to-back. The largest sits at the front by construction.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [4,2,1,5], k = 2)
+--------------------------------------------------
+    windows of size 2:
+        [4,2] -> 4
+        [2,1] -> 2
+        [1,5] -> 5
+
+    i=0 x=4  front out? no  back<4? no          dq=[0(4)]      (0>=1? no)
+    i=1 x=2  front out? 0<=-1? no  nums[0]=4<2? no  dq=[0(4),1(2)]
+             1>=1 -> result += nums[0]=4         result=[4]
+    i=2 x=1  front out? 0<=0? yes popleft -> [1(2)]
+             nums[1]=2<1? no                     dq=[1(2),2(1)]
+             2>=1 -> result += nums[1]=2         result=[4,2]
+    i=3 x=5  front out? 1<=1? yes popleft -> [2(1)]
+             nums[2]=1<5? yes pop -> []          dq=[3(5)]
+             3>=1 -> result += nums[3]=5         result=[4,2,5]
+
+    Output = [4, 2, 5]
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Think of a line of people waiting to be "the tallest in view":
+
+    a taller newcomer makes every shorter person BEHIND them
+    irrelevant, so they leave from the BACK:
+
+        back:  [ 5 ] [ 3 ]  <- here comes 6
+               6 evicts 3, then evicts 5    ->  [ 6 ]
+
+    the person at the FRONT who walks past the window edge
+    leaves from the FRONT (they aged out):
+
+        front: [ 4 ] ...  window moved on  ->  drop 4
+
+    "Bigger from the back, expired from the front."
+    Front of the line is always the current champion (the max).
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach          | Time       | Space |
+    | ----------------- | ---------- | ----- |
+    | Brute force       | O(n*k)     | O(1)  |
+    | Max-heap          | O(n log k) | O(k)  |
+    | Monotonic deque   | O(n)       | O(k)  |
+
+Each index is pushed once and popped at most once, so the
+total deque work is O(n). The deque holds at most k indices,
+so O(k) space.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION maxSlidingWindow(nums, k)
+
+        dq     <- empty deque      (indices, values decreasing)
+        result <- empty list
+
+        FOR i FROM 0 TO length(nums) - 1
+
+            IF dq not empty AND dq.front <= i - k
+                dq.popFront()
+
+            WHILE dq not empty AND nums[dq.back] < nums[i]
+                dq.popBack()
+
+            dq.pushBack(i)
+
+            IF i >= k - 1
+                result.append(nums[dq.front])
+
+        END FOR
+
+        RETURN result
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Make an empty deque dq that will store INDICES
+    Make an empty list result
+
+    Repeat i from 0 to end of array   (x = nums[i])
+
+        Step 1 - throw away the front if it left the window
+            If dq is not empty and dq's front index <= i - k
+                remove the front index
+
+        Step 2 - throw away smaller values at the back
+            While dq is not empty and value at dq's back < x
+                remove the back index
+            (they can never be a maximum now, x beats them)
+
+        Step 3 - add the current index at the back
+            push i onto the back of dq
+
+        Step 4 - once the first full window is reached (i >= k-1)
+            the front index holds the window's maximum
+            append nums[front] to result
+
+    END Repeat
+
+    Return result
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +-----------------------+
+    | dq = empty deque      |
+    | result = []           |
+    | i = 0                  |
+    +-----------+-----------+
+                |
+                v
+         +--------------+
+         |  i < n ?     |<-----------------------+
+         +------+-------+                          |
+                | Yes                              |
+                v                                  |
+    +-------------------------------+              |
+    | if dq and dq[0] <= i - k :    |              |
+    |     dq.popleft()              |              |
+    +---------------+---------------+              |
+                    |                              |
+                    v                              |
+    +-------------------------------+              |
+    | while dq and nums[dq[-1]]<x : |              |
+    |     dq.pop()                  |              |
+    +---------------+---------------+              |
+                    |                              |
+                    v                              |
+         +--------------------+                    |
+         | dq.append(i)       |                    |
+         +---------+----------+                    |
+                   |                               |
+                   v                               |
+          +------------------+                     |
+          | i >= k - 1 ?     | No                  |
+          +----+--------+----+---> i++ ------------+
+               | Yes    |                          |
+               v        |                          |
+    +-------------------------------+              |
+    | result.append(nums[dq[0]])    |              |
+    +---------------+---------------+              |
+                    |                              |
+                    +----> i++ --------------------+
+                (when i >= n)
+                    |
+                    v
+             +---------------+
+             | RETURN result |
+             +------+--------+
+                    v
+                 +-----+
+                 | END |
+                 +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"I keep a deque of INDICES whose values stay decreasing, so
+ the front is always the maximum of the current window. For
+ each element I first drop the front index if it has slid out
+ of the window, then pop from the back every value smaller
+ than the incoming one, because a smaller value with a bigger
+ one to its right can never be a future max. I push the new
+ index and, once the first window is complete, I record
+ nums[front]. Each index is pushed and popped at most once.
+
+ Time:  O(n)
+ Space: O(k)
+ It's the classic MONOTONIC-DEQUE sliding window pattern."
+
+
+==================================================
+Deque of indices, kept decreasing: bigger from the
+back, expired from the front, front is the window max.
+==================================================

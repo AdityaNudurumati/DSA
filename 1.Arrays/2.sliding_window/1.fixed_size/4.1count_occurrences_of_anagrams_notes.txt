@@ -1,0 +1,392 @@
+==================================================
+COUNT OCCURRENCES OF ANAGRAMS  —  Fixed Sliding Window
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given a text string and a pattern string, count how many
+substrings of text are ANAGRAMS of pattern (same letters
+with the same frequencies, in any order).
+
+Example:
+    text = "forxxorfxdofr"   pattern = "for"
+
+    substrings of length 3 that are anagrams of "for":
+        "for" (index 0)
+        "orf" (index 4)
+        "ofr" (index 10)
+
+    Output = 3
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    from collections import Counter
+
+    def countAnagrams(text, pattern):
+
+        k = len(pattern)
+        if k > len(text):
+            return 0
+
+        need = Counter(pattern)     # target letter frequencies
+        window = Counter()          # letter frequencies in the current window
+        count = 0
+
+        for i in range(len(text)):
+
+            window[text[i]] += 1                # add the entering char
+
+            if i >= k:                          # window too big -> drop leftmost
+                left_char = text[i - k]
+                window[left_char] -= 1
+                if window[left_char] == 0:
+                    del window[left_char]       # keep the map clean for == compare
+
+            if i >= k - 1 and window == need:   # full window matches the pattern
+                count += 1
+
+        return count
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:   0  1  2  3  4  5  6  7  8  9 10 11 12
+    text:    f  o  r  x  x  o  r  f  x  d  o  f  r
+    pattern: "for"   ->   k = 3
+
+    need   = {f:1, o:1, r:1}   (frozen target frequencies)
+    window = {}                (frequencies of the current k chars)
+    count  = 0                 (anagrams found so far)
+
+    The window is the last k characters ending at index i.
+    It becomes "full" only once i reaches k-1 = 2:
+
+         [ f o r ] x x o r f x d o f r
+           ^^^^^^^
+           first full window
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Brute force  ->  O(n*k*log k) or O(n*k):
+    For every start index, take the k-length substring and
+    sort it (or build a fresh Counter) to compare with the
+    sorted/counted pattern. Re-scanning each window from
+    scratch repeats almost all the work of the previous one.
+
+Fixed window + frequency map  ->  O(n):
+    Neighbouring windows share k-1 characters. Instead of
+    rebuilding the count each time, SLIDE the window:
+        add the new char entering on the RIGHT
+        subtract the char leaving on the LEFT
+    Then just compare two small maps (<=26 keys). Each update
+    is O(1) and the compare is O(26)=O(1)  ->  O(n) overall.
+
+        need  = {f:1,o:1,r:1}
+
+        "for" window {f:1,o:1,r:1}   == need   -> anagram
+           \--- slide --->
+        "orx" window {o:1,r:1,x:1}   != need   (drop f, add x)
+
+
+--------------------------------------------------
+5. DRY RUN  (text = "forxxorfxdofr", pattern = "for", k = 3)
+--------------------------------------------------
+need = {f:1, o:1, r:1}
+Start: window={}  count=0
+
+i=0  add f  -> window={f:1}
+    i>=3? no (nothing to drop)
+    i>=2? no (window not full)
+
+i=1  add o  -> window={f:1,o:1}
+    i>=3? no
+    i>=2? no
+
+i=2  add r  -> window={f:1,o:1,r:1}     window = "for"
+    i>=3? no
+    i>=2? yes  window==need? {f:1,o:1,r:1}=={f:1,o:1,r:1} YES -> count=1
+
+i=3  add x  -> window={f:1,o:1,r:1,x:1}
+    i>=3? yes drop text[0]=f -> f:0 -> del f -> window={o:1,r:1,x:1}   "orx"
+    window==need? no
+
+i=4  add x  -> window={o:1,r:1,x:2}
+    drop text[1]=o -> o:0 -> del o -> window={r:1,x:2}                 "rxx"
+    window==need? no
+
+i=5  add o  -> window={r:1,x:2,o:1}
+    drop text[2]=r -> r:0 -> del r -> window={x:2,o:1}                 "xxo"
+    window==need? no
+
+i=6  add r  -> window={x:2,o:1,r:1}
+    drop text[3]=x -> x:1 -> window={x:1,o:1,r:1}                      "xor"
+    window==need? no (has x, missing f)
+
+i=7  add f  -> window={x:1,o:1,r:1,f:1}
+    drop text[4]=x -> x:0 -> del x -> window={o:1,r:1,f:1}             "orf"
+    window==need? {o:1,r:1,f:1}=={f:1,o:1,r:1} YES -> count=2
+
+i=8  add x  -> window={o:1,r:1,f:1,x:1}
+    drop text[5]=o -> o:0 -> del o -> window={r:1,f:1,x:1}             "rfx"
+    window==need? no
+
+i=9  add d  -> window={r:1,f:1,x:1,d:1}
+    drop text[6]=r -> r:0 -> del r -> window={f:1,x:1,d:1}             "fxd"
+    window==need? no
+
+i=10 add o  -> window={f:1,x:1,d:1,o:1}
+    drop text[7]=f -> f:0 -> del f -> window={x:1,d:1,o:1}            "xdo"
+    window==need? no
+
+i=11 add f  -> window={x:1,d:1,o:1,f:1}
+    drop text[8]=x -> x:0 -> del x -> window={d:1,o:1,f:1}           "dof"
+    window==need? no
+
+i=12 add r  -> window={d:1,o:1,f:1,r:1}
+    drop text[9]=d -> d:0 -> del d -> window={o:1,f:1,r:1}           "ofr"
+    window==need? {o:1,f:1,r:1}=={f:1,o:1,r:1} YES -> count=3
+
+Output: 3
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+A substring is an anagram of pattern EXACTLY when its
+letter-count map equals the pattern's letter-count map.
+Order does not matter - only "which letters, how many".
+
+    "orf" -> {o:1,r:1,f:1}  ==  {f:1,o:1,r:1} = need  -> anagram
+
+So freeze need = Counter(pattern), keep a rolling window map,
+and after every slide just ask:  window == need ?
+
+Each new index i:
+
+    window[text[i]] += 1               # char ENTERS on the right
+
+    once the window is oversized (i >= k):
+        window[text[i-k]] -= 1         # char LEAVES on the left
+        if it hit 0: del it            # so the map has no zero keys
+
+    once the window is full (i >= k-1):
+        if window == need: count += 1
+
+The del step is essential: {f:0,o:1,r:1} would NOT equal
+{o:1,r:1}, so a leftover zero key breaks the "==" compare.
+The left index leaving is always  i - k.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (text = "cbaebabacd", pattern = "abc", k = 3)
+--------------------------------------------------
+need = {a:1, b:1, c:1}
+
+    index:  0  1  2  3  4  5  6  7  8  9
+    text:   c  b  a  e  b  a  b  a  c  d
+
+    i=0  add c  window={c:1}                                (not full)
+    i=1  add b  window={c:1,b:1}                            (not full)
+    i=2  add a  window={c:1,b:1,a:1}  "cba"  ==need YES  count=1
+    i=3  add e  drop c  window={b:1,a:1,e:1}  "bae"  no
+    i=4  add b  drop b  window={b:1,a:1,e:1}  "aeb"  no
+    i=5  add a  drop a  window={b:1,a:1,e:1}  "eba"  no
+    i=6  add b  drop e  window={b:2,a:1}      "bab"  no
+    i=7  add a  drop b  window={b:1,a:2}      "aba"  no
+    i=8  add c  drop a  window={b:1,a:1,c:1}  "bac"  ==need YES  count=2
+    i=9  add d  drop b  window={a:1,c:1,d:1}  "acd"  no
+
+    Output = 2
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+A fixed-width window of size k sliding along the text, but
+this time you carry a TALLY of letters instead of a sum:
+
+    [ f o r ] x x o        add the char coming IN on the right,
+      f [ o r x ] x o       subtract the char going OUT on the left,
+      f o [ r x x ] o       then compare the tally to need.
+
+    "One in, one out" - width never changes. Match happens
+    when the window's letter tally == the pattern's tally.
+    Remember to DELETE any key whose count drops to zero,
+    otherwise the "==" lies.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach              | Time         | Space |
+    | --------------------- | ------------ | ----- |
+    | Sort each substring   | O(n*k*log k) | O(k)  |
+    | Fresh count each start| O(n*k)       | O(1)  |
+    | Sliding window + map  | O(n)         | O(1)  |
+
+Each character is added once and removed once, and each
+window==need compare is over at most 26 keys, so O(1).
+Total time O(n). The maps hold <=26 keys, so O(1) space.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION countAnagrams(text, pattern)
+
+        k <- length(pattern)
+        IF k > length(text)
+            RETURN 0
+
+        need   <- frequency map of pattern
+        window <- empty frequency map
+        count  <- 0
+
+        FOR i FROM 0 TO length(text) - 1
+
+            window[text[i]] <- window[text[i]] + 1
+
+            IF i >= k
+                left <- text[i - k]
+                window[left] <- window[left] - 1
+                IF window[left] = 0
+                    DELETE key left FROM window
+
+            IF i >= k - 1 AND window = need
+                count <- count + 1
+
+        END FOR
+
+        RETURN count
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Set k = length of pattern
+    If the pattern is longer than the text, return 0
+
+    Build need = count of each letter in pattern
+    Set window = empty letter count
+    Set count = 0
+
+    Repeat i from 0 to end of text
+
+        Add the current letter into the window
+            window[text[i]] = window[text[i]] + 1
+
+        If the window now holds more than k letters (i >= k)
+
+            Find the letter leaving on the left
+                left = text[i - k]
+            Remove one of it from the window
+                window[left] = window[left] - 1
+            If that letter's count is now 0
+                delete it from the window
+                (so no leftover zero breaks the compare)
+
+        If the window is full (i >= k - 1)
+            Compare the window map with need
+            If they are equal
+                count = count + 1
+
+    END Repeat
+
+    Return count
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +-----------------------+
+    | k = len(pattern)      |
+    | if k > len(text): 0   |
+    | need = Counter(patt)  |
+    | window = {} count = 0 |
+    | i = 0                 |
+    +-----------+-----------+
+                |
+                v
+         +--------------+
+         | i < len(text)|<--------------------+
+         +------+-------+                      |
+                | Yes                          |
+                v                              |
+     +--------------------------+              |
+     | window[text[i]] += 1     |              |
+     +------------+-------------+              |
+                  |                            |
+                  v                            |
+            +------------+ No                  |
+            |  i >= k ?  |-----------+         |
+            +-----+------+           |         |
+                  | Yes              |         |
+                  v                  |         |
+    +-------------------------------+|         |
+    | window[text[i-k]] -= 1        ||         |
+    | if == 0: del that key         ||         |
+    +---------------+---------------+|         |
+                    |                |         |
+                    v<---------------+         |
+            +----------------+ No              |
+            | i >= k - 1 AND |-----> i++ ------+
+            | window == need |                 |
+            +-------+--------+                 |
+                    | Yes                      |
+                    v                          |
+              +-----------+                    |
+              | count += 1|----> i++ ----------+
+              +-----------+
+                (when i >= len(text))
+                    |
+                    v
+             +--------------+
+             | RETURN count |
+             +------+-------+
+                    v
+                 +-----+
+                 | END |
+                 +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"A substring is an anagram of the pattern exactly when their
+ letter-frequency maps are equal, so I freeze a 'need' map for
+ the pattern and slide a fixed window of width k over the text.
+ As the right edge moves I add the entering character; once the
+ window is oversized I subtract the character leaving on the
+ left and delete its key if the count hits zero, which keeps
+ the map clean so an equality check is valid. Whenever the
+ window is full and its map equals need, I increment the count.
+ Each character enters and leaves once and the compare is over
+ at most 26 keys.
+
+ Time:  O(n)
+ Space: O(1)   (<=26 keys)
+ It's the FIXED-SIZE sliding window pattern with a frequency map."
+
+
+==================================================
+Fixed window of width k with a rolling letter count:
+add the entering char, drop the leaving one (delete
+zero keys), and count each time window == need.
+==================================================

@@ -1,0 +1,337 @@
+==================================================
+PERMUTATION IN STRING (LC 567)  —  Fixed Window
+of len(s1) + Frequency Map  (return on first match)
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given two strings s1 and s2, return True if s2 contains
+a PERMUTATION of s1 as a CONTIGUOUS substring (i.e. some
+window of s2 is an ANAGRAM of s1), else False.
+
+Example:
+    s1 = "ab"   s2 = "eidbaooo"
+
+    slide a width-2 window over s2:
+        "ei" "id" "db" "ba" "ao" "oo" "oo"
+                        ^^^
+        "ba" (index 3) is a permutation of "ab"
+
+    Output = True
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    from collections import Counter
+
+    def checkInclusion(s1, s2):
+
+        k = len(s1)
+        if k > len(s2):
+            return False
+
+        need   = Counter(s1)    # target letter frequencies
+        window = Counter()      # freqs in current width-k window
+
+        for i in range(len(s2)):
+
+            window[s2[i]] += 1                  # add entering char
+
+            if i >= k:                          # too wide -> drop leftmost
+                left_char = s2[i - k]
+                window[left_char] -= 1
+                if window[left_char] == 0:
+                    del window[left_char]
+
+            if i >= k - 1 and window == need:   # window is an anagram
+                return True
+
+        return False
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:  0 1 2 3 4 5 6 7
+    s2:   [ e i d b a o o o ]      s1 = "ab"   k = 2
+
+    need   = {a:1, b:1}     (what a valid window must contain)
+    window = {}             (letter counts of current window)
+
+    The window is the last k chars ending at index i.
+    It becomes exactly k wide once i reaches k-1 = 1, and
+    from then on it stays width k (add one, drop one):
+
+          e i d b a o o o
+          ^^^
+          first full window "ei"
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Brute force  ->  O(n*k) (or worse):
+    For every start index sort/compare the k-length substring
+    against s1. Re-checking overlapping windows repeats work.
+
+Fixed window of len(s1) + freq map  ->  O(n):
+    A permutation of s1 is JUST a length-k window with the SAME
+    letter counts as s1 - order does not matter. So keep a
+    Counter for the current window and slide it:
+        add the char ENTERING on the right
+        drop the char LEAVING on the left (once too wide)
+    Compare window == need each step. Return True on the FIRST
+    match - no need to scan the rest of s2.
+
+        "ei" -> slide -> "id" -> slide -> "db" -> ...
+        each slide is O(1); the map compare is <=26 keys.
+
+
+--------------------------------------------------
+5. DRY RUN  (s1 = "ab", s2 = "eidbaooo", k = 2)
+--------------------------------------------------
+need = {a:1, b:1}     window = {}
+
+i=0  add 'e'  window={e:1}
+    i>=k(2)? no
+    i>=k-1(1)? no  (window not full yet)
+
+i=1  add 'i'  window={e:1, i:1}          window "ei"
+    i>=2? no
+    i>=1? yes -> window==need? {e:1,i:1} != {a:1,b:1}  no
+
+i=2  add 'd'  window={e:1, i:1, d:1}
+    i>=2? yes -> drop s2[0]='e' -> window={i:1, d:1}   window "id"
+    i>=1? yes -> {i:1,d:1} != need  no
+
+i=3  add 'b'  window={i:1, d:1, b:1}
+    i>=2? yes -> drop s2[1]='i' -> window={d:1, b:1}   window "db"
+    i>=1? yes -> {d:1,b:1} != need  no
+
+i=4  add 'a'  window={d:1, b:1, a:1}
+    i>=2? yes -> drop s2[2]='d' -> window={b:1, a:1}   window "ba"
+    i>=1? yes -> {b:1,a:1} == {a:1,b:1}  MATCH -> return True
+
+Output: True     (matched at window "ba", s2[3..4])
+
+Note how deleting a key when its count hits 0 keeps the map
+clean, so the "==" compare sees exactly the same keys as need.
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+A permutation of s1 = a width-k window of s2 whose LETTER-COUNT
+map equals s1's map. Maintain that map as you slide:
+
+    window[s2[i]] += 1                 # char ENTERS on the right
+
+    if i >= k:                         # window grew past k
+        window[s2[i-k]] -= 1           # char LEAVES on the left
+        if window[...] == 0: del ...   # drop dead keys
+
+    if i >= k-1 and window == need:    # exact anagram -> done
+        return True
+
+Deleting zero-count keys is what makes "window == need" correct:
+without it, a leftover {x:0} would make two equal windows compare
+as different. The left index leaving is always i - k.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (s1 = "ab", s2 = "eidboaoo")  -> False
+--------------------------------------------------
+    need = {a:1, b:1}     window = {}
+
+    index:  0 1 2 3 4 5 6 7
+    s2:   [ e i d b o a o o ]
+
+    i=0  add 'e'  window={e:1}                        (i>=1? no)
+    i=1  add 'i'  window={e:1,i:1}      "ei"   != need
+    i=2  add 'd'  drop e -> {i:1,d:1}   "id"   != need
+    i=3  add 'b'  drop i -> {d:1,b:1}   "db"   != need
+    i=4  add 'o'  drop d -> {b:1,o:1}   "bo"   != need
+    i=5  add 'a'  drop b -> {o:1,a:1}   "oa"   != need
+    i=6  add 'o'  drop o -> {o:1,a:1}   "ao"   != need
+    i=7  add 'o'  drop a -> {o:2}       "oo"   != need
+
+    'a' and 'b' are never adjacent, so no width-2 window ever
+    equals {a:1,b:1}.
+
+    Output = False
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+"Same letters, any order, fixed width."
+
+    need   = fingerprint of s1   (letter counts)
+    window = fingerprint of the last k chars of s2
+
+    [ _ _ ] _ _        one char IN on the right,
+      _ [ _ _ ] _        one char OUT on the left,
+      _ _ [ _ _ ]        compare fingerprints each slide.
+
+    The moment window's fingerprint matches need's, s2 hides a
+    permutation of s1 -> shout True and stop.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach              | Time    | Space |
+    | --------------------- | ------- | ----- |
+    | Brute (sort each win) | O(n*k*  | O(k)  |
+    |                       |  log k) |       |
+    | Window + freq map     | O(n)    | O(1)  |
+
+Each char of s2 enters and leaves the window once -> O(n).
+The map holds at most 26 lowercase-letter keys, and each
+"window == need" compares <=26 entries -> O(1) work per step.
+Space is O(1): two maps of at most 26 keys.
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION checkInclusion(s1, s2)
+
+        k <- length(s1)
+        IF k > length(s2) THEN RETURN False
+
+        need   <- frequency map of s1
+        window <- empty map
+
+        FOR i FROM 0 TO length(s2) - 1
+
+            window[s2[i]] <- window[s2[i]] + 1
+
+            IF i >= k
+                window[s2[i-k]] <- window[s2[i-k]] - 1
+                IF window[s2[i-k]] == 0 THEN delete key
+
+            IF i >= k - 1 AND window == need
+                RETURN True
+
+        END FOR
+
+        RETURN False
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    Let k = length of s1
+    If s1 is longer than s2, no window can fit -> return False
+
+    Build need = how many of each letter s1 has
+    Start window = empty (letter counts of current window)
+
+    Repeat i from 0 to end of s2
+
+        Add the entering character to the window
+            window[s2[i]] = window[s2[i]] + 1
+
+        If the window is now wider than k characters (i >= k)
+
+            Remove the character leaving on the left
+                window[s2[i-k]] = window[s2[i-k]] - 1
+
+            If that count dropped to 0
+                delete the key (keeps the map clean for "==")
+
+        If the window is at least k wide (i >= k - 1)
+            and window's counts match need exactly
+                return True   (found a permutation, stop early)
+
+    END Repeat
+
+    Return False   (no window ever matched)
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +--------------------------+
+    | k = len(s1)              |
+    | if k > len(s2): False    |
+    | need = Counter(s1)       |
+    | window = {} ; i = 0      |
+    +------------+-------------+
+                 |
+                 v
+          +--------------+
+          | i < len(s2)? |<---------------------+
+          +------+-------+                       |
+                 | Yes                           |
+                 v                               |
+      +--------------------------+               |
+      | window[s2[i]] += 1       |               |
+      +------------+-------------+               |
+                   |                             |
+                   v                             |
+            +--------------+  No                 |
+            |  i >= k ?     |------------+        |
+            +------+-------+             |        |
+                   | Yes                 |        |
+                   v                     |        |
+      +------------------------------+   |        |
+      | window[s2[i-k]] -= 1         |   |        |
+      | if == 0: del key             |   |        |
+      +--------------+---------------+   |        |
+                     |                   |        |
+                     v<------------------+        |
+        +-----------------------------+           |
+        | i >= k-1 AND window==need ? | No        |
+        +----+-------------------+----+--> i++ ---+
+             | Yes               |
+             v                   |
+      +-------------+            |
+      | RETURN True |            |
+      +------+------+            |
+             v          (when i >= len(s2))
+          +-----+                |
+          | END |                v
+          +-----+         +--------------+
+             ^            | RETURN False |
+             |            +------+-------+
+             +-------------------+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"A permutation of s1 is just a length-len(s1) window of s2 with
+ the same letter counts, so order doesn't matter. I build a
+ frequency map 'need' for s1 and slide a fixed-width window over
+ s2, keeping a 'window' map: I add the char entering on the right,
+ and once the window is too wide I drop the char leaving on the
+ left, deleting any key that hits zero so the maps compare
+ cleanly. The instant window == need I return True. It's the same
+ machinery as Count Occurrences of Anagrams (../1.fixed_size/4),
+ but here I stop at the FIRST matching window instead of counting
+ them all.
+
+ Time:  O(n)   (each char enters/leaves once, <=26-key compare)
+ Space: O(1)   (two maps of at most 26 keys)"
+
+
+==================================================
+Fixed window of width len(s1): match the letter-count
+map. Same as Count Anagrams, but return True on the
+first window whose map equals s1's map.
+==================================================

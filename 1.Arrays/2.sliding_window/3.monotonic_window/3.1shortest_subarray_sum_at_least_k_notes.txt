@@ -1,0 +1,405 @@
+==================================================
+SHORTEST SUBARRAY WITH SUM AT LEAST K  —  Prefix Sums + Monotonic Deque
+==================================================
+
+--------------------------------------------------
+1. PROBLEM STATEMENT
+--------------------------------------------------
+Given an integer array nums (values may be NEGATIVE)
+and an integer k, return the LENGTH of the SHORTEST
+non-empty CONTIGUOUS subarray whose sum is at least k.
+If no such subarray exists, return -1.
+
+Example:
+    nums = [2, -1, 2]   k = 3
+
+    subarrays and their sums:
+        [2]        = 2
+        [2,-1]     = 1
+        [2,-1,2]   = 3   <- reaches k, length 3
+        [-1]       = -1
+        [-1,2]     = 1
+        [2]        = 2
+
+    Only the whole array reaches 3, so the shortest
+    length is 3.
+
+    Output = 3
+
+
+--------------------------------------------------
+2. CODE
+--------------------------------------------------
+    from collections import deque
+
+    def shortestSubarray(nums, k):
+
+        n = len(nums)
+
+        # prefix[i] = sum of first i elements
+        # subarray (l..r-1) sum = prefix[r] - prefix[l]
+        prefix = [0] * (n + 1)
+        for i in range(n):
+            prefix[i + 1] = prefix[i] + nums[i]
+
+        dq = deque()            # indices into prefix, INCREASING prefix values
+        best = n + 1
+
+        for i in range(n + 1):
+
+            # front: if prefix[i] - prefix[dq[0]] >= k, window qualifies.
+            # it can never be shorter for a later i, so record and pop front.
+            while dq and prefix[i] - prefix[dq[0]] >= k:
+                best = min(best, i - dq.popleft())
+
+            # back: a larger-or-equal earlier prefix is useless (this one is
+            # smaller AND more to the right), drop it to keep deque increasing.
+            while dq and prefix[i] <= prefix[dq[-1]]:
+                dq.pop()
+
+            dq.append(i)
+
+        return best if best <= n else -1
+
+
+--------------------------------------------------
+3. INITIAL SETUP
+--------------------------------------------------
+    index:    0   1   2
+    nums:  [  2, -1,  2 ]   k = 3
+
+    Build the prefix-sum array (length n+1):
+
+        prefix[0] = 0                (empty prefix)
+        prefix[1] = 0 + 2  = 2
+        prefix[2] = 2 + (-1) = 1
+        prefix[3] = 1 + 2  = 3
+
+    index:      0  1  2  3
+    prefix:  [  0, 2, 1, 3 ]
+
+    Any subarray sum (l..r-1) = prefix[r] - prefix[l].
+
+    dq   = deque()   (holds prefix INDICES, increasing prefix values)
+    best = n + 1 = 4 (sentinel "not found yet")
+
+
+--------------------------------------------------
+4. WHY THIS APPROACH
+--------------------------------------------------
+Plain sliding window  ->  FAILS with negatives:
+    The two-pointer window works only when growing the
+    window always grows the sum. That needs all values
+    >= 0. With a NEGATIVE number, extending the window
+    can DECREASE the sum, and shrinking it can INCREASE
+    the sum, so "shrink while sum >= k" is no longer safe
+    -- you can shrink past a valid answer or never find it.
+
+Prefix sums  ->  turn it into a difference problem:
+    subarray (l..r-1) sum = prefix[r] - prefix[l].
+    For a fixed right end i, we want the SMALLEST length
+    (i - l) such that prefix[i] - prefix[l] >= k, i.e. we
+    want the largest possible l with prefix[l] <= prefix[i] - k.
+
+Monotonic deque  ->  keeps only useful left ends:
+    We scan i left to right and hold candidate left ends l
+    in a deque whose prefix values are INCREASING.
+    Two pops keep it correct and O(n):
+        FRONT pop: once prefix[i] - prefix[dq[0]] >= k, that
+                   left end gives a valid window. i only grows
+                   from here, so this left end can never yield
+                   a SHORTER window later -> record length and
+                   remove it permanently.
+        BACK pop:  before appending i, drop any tail index whose
+                   prefix >= prefix[i]. That old index is both
+                   LARGER (worse as a subtractor) and FURTHER LEFT
+                   (longer window) -> strictly dominated, useless.
+
+    Each index is pushed once and popped once  ->  O(n).
+
+
+--------------------------------------------------
+5. DRY RUN  (nums = [2,-1,2], k = 3)
+--------------------------------------------------
+    prefix = [ 0, 2, 1, 3 ]     n = 3     best = 4
+
+Loop i from 0 to n (=3). dq holds prefix indices.
+
+i=0  prefix[0]=0
+    front: dq empty -> skip
+    back:  dq empty -> skip
+    append 0
+    dq = [0]                          (prefix values: [0])
+
+i=1  prefix[1]=2
+    front: 2 - prefix[0]=0  = 2 >= 3 ?  no
+    back:  prefix[1]=2 <= prefix[0]=0 ?  no
+    append 1
+    dq = [0, 1]                       (prefix values: [0,2])
+
+i=2  prefix[2]=1
+    front: 1 - prefix[0]=0  = 1 >= 3 ?  no
+    back:  prefix[2]=1 <= prefix[dq[-1]=1]=2 ?  yes -> pop 1
+           prefix[2]=1 <= prefix[dq[-1]=0]=0 ?  no
+    append 2
+    dq = [0, 2]                       (prefix values: [0,1])
+    (index 1 dropped: prefix 2 is bigger AND further left than
+     index 2's prefix 1 -> a strictly worse left end)
+
+i=3  prefix[3]=3
+    front: 3 - prefix[dq[0]=0]=0 = 3 >= 3 ?  yes
+           -> best = min(4, 3 - 0) = 3,  popleft 0
+           3 - prefix[dq[0]=2]=1 = 2 >= 3 ?  no
+    back:  prefix[3]=3 <= prefix[dq[-1]=2]=1 ?  no
+    append 3
+    dq = [2, 3]                       (prefix values: [1,3])
+
+End of loop. best = 3, and 3 <= n(=3) -> return 3.
+
+Output: 3
+
+
+--------------------------------------------------
+6. THE KEY IDEA
+--------------------------------------------------
+Work on prefix sums, not raw values:
+    subarray (l..r-1) sum = prefix[r] - prefix[l].
+
+For each right end i we want the LARGEST left index l
+with prefix[l] <= prefix[i] - k (that gives sum >= k with
+the shortest reach). Maintain a deque of left-end indices
+kept in INCREASING prefix order:
+
+    FRONT pop (record answer):
+        while prefix[i] - prefix[dq[0]] >= k:
+            best = min(best, i - dq.popleft())
+        # front satisfies k now; i only grows, so this left
+        # end is done -- its best window is exactly this one.
+
+    BACK pop (discard useless left ends):
+        while prefix[i] <= prefix[dq[-1]]:
+            dq.pop()
+        # any tail with prefix >= prefix[i] is bigger and to
+        # the left of i -> can never beat i as a left end.
+
+    then append i.
+
+The deque stays INCREASING (back-pop guarantees it), which
+is what makes the front the best-possible left end.
+
+
+--------------------------------------------------
+7. ANOTHER EXAMPLE  (nums = [84,-37,32,40,95], k = 167)
+--------------------------------------------------
+    prefix = [ 0, 84, 47, 79, 119, 214 ]     n = 5     best = 6
+
+    i=0 p=0    front - ; back - ; append 0   dq=[0]        p:[0]
+    i=1 p=84   84-0=84>=167? no
+               84<=p[0]=0? no ; append 1     dq=[0,1]      p:[0,84]
+    i=2 p=47   47-0=47>=167? no
+               47<=p[1]=84? yes pop1
+               47<=p[0]=0? no ; append 2     dq=[0,2]      p:[0,47]
+    i=3 p=79   79-0=79>=167? no
+               79<=p[2]=47? no ; append 3    dq=[0,2,3]    p:[0,47,79]
+    i=4 p=119  119-0=119>=167? no
+               119<=p[3]=79? no ; append 4   dq=[0,2,3,4]  p:[0,47,79,119]
+    i=5 p=214  214-p[0]=0 =214>=167? yes best=min(6,5-0)=5 pop0
+               214-p[2]=47=167>=167? yes best=min(5,5-2)=3 pop2
+               214-p[3]=79=135>=167? no
+               214<=p[4]=119? no ; append 5  dq=[3,4,5]    p:[79,119,214]
+
+    best = 3, 3 <= 5 -> Output = 3
+    (the subarray [32,40,95] = 167)
+
+
+--------------------------------------------------
+8. MEMORY TRICK
+--------------------------------------------------
+Think of the deque as a "staircase" of prefix values that
+only ever goes UP from front to back:
+
+    prefix:  low ......................... high
+    dq:     [ l0 ,  l1 ,  l2 , ... ]   increasing
+
+    NEW index i arrives:
+        FRONT  -> "am I already tall enough?"  if
+                  prefix[i] - front >= k, cash it in and
+                  discard the front (shortest for it is now).
+        BACK   -> "is the last step >= me?"  if so it's a
+                  worse, further-left choice -> knock it off,
+                  then step onto the staircase.
+
+    "Cash the front, trim the back, then step on."
+    Front = smallest prefix = best subtractor. Back-trim
+    keeps the staircase strictly climbing.
+
+
+--------------------------------------------------
+9. COMPLEXITY
+--------------------------------------------------
+    | Approach                 | Time    | Space |
+    | ------------------------ | ------- | ----- |
+    | Brute force (all pairs)  | O(n^2)  | O(1)  |
+    | Prefix + monotonic deque | O(n)    | O(n)  |
+
+Every index is pushed to the deque once and popped at most
+once, so the two inner while-loops are O(n) amortised total.
+The prefix array and deque each hold up to n+1 items -> O(n).
+
+
+--------------------------------------------------
+10. PSEUDOCODE
+--------------------------------------------------
+    FUNCTION shortestSubarray(nums, k)
+
+        n <- length(nums)
+
+        prefix[0] <- 0
+        FOR i FROM 0 TO n - 1
+            prefix[i+1] <- prefix[i] + nums[i]
+
+        dq   <- empty deque        # prefix indices, increasing prefix
+        best <- n + 1
+
+        FOR i FROM 0 TO n
+
+            WHILE dq not empty AND prefix[i] - prefix[dq.front] >= k
+                best <- min(best, i - dq.popFront())
+
+            WHILE dq not empty AND prefix[i] <= prefix[dq.back]
+                dq.popBack()
+
+            dq.pushBack(i)
+
+        END FOR
+
+        IF best <= n  RETURN best
+        ELSE          RETURN -1
+
+    END FUNCTION
+
+
+--------------------------------------------------
+11. DETAILED PSEUDOCODE  (beginner friendly)
+--------------------------------------------------
+    START
+
+    n = number of elements in nums
+
+    Build prefix sums:
+        prefix[0] = 0
+        For each i, prefix[i+1] = prefix[i] + nums[i]
+        (prefix[r] - prefix[l] is the sum of nums[l..r-1])
+
+    Create an empty deque dq that will store prefix INDICES.
+    Set best = n + 1   (a "too big / not found" marker)
+
+    Repeat i from 0 to n (inclusive):
+
+        Step A - can the current prefix close a window?
+            While dq is not empty AND
+                  prefix[i] - prefix[front of dq] >= k:
+                This left end reaches k. Record its length:
+                    best = min(best, i - front index)
+                Remove the front (a later i can only be longer,
+                so this left end is finished).
+
+        Step B - is the last stored prefix worthless now?
+            While dq is not empty AND
+                  prefix[i] <= prefix[back of dq]:
+                The back index has a bigger-or-equal prefix and
+                sits further left, so index i beats it as a
+                future left end. Remove the back.
+
+        Step C - add i as a new candidate left end.
+            Push i onto the back of dq.
+
+    END Repeat
+
+    If best <= n, return best (a valid subarray was found).
+    Otherwise return -1 (no subarray ever reached k).
+
+    STOP
+
+
+--------------------------------------------------
+12. FLOWCHART
+--------------------------------------------------
+     +---------+
+     |  START  |
+     +----+----+
+          |
+          v
+    +-----------------------------+
+    | build prefix[0..n]          |
+    | dq = empty ; best = n + 1   |
+    | i = 0                       |
+    +--------------+--------------+
+                   |
+                   v
+            +--------------+
+            |  i <= n ?    |<-------------------------+
+            +------+-------+                          |
+                   | Yes                              |
+                   v                                  |
+    +-------------------------------------+           |
+    | FRONT: while dq and                 |           |
+    |   prefix[i]-prefix[dq[0]] >= k :    |           |
+    |     best=min(best, i - popleft())   |           |
+    +------------------+------------------+           |
+                       |                              |
+                       v                              |
+    +-------------------------------------+           |
+    | BACK: while dq and                  |           |
+    |   prefix[i] <= prefix[dq[-1]] :     |           |
+    |     dq.pop()                        |           |
+    +------------------+------------------+           |
+                       |                              |
+                       v                              |
+             +-------------------+                    |
+             | dq.append(i)      |                    |
+             | i++               |--------------------+
+             +-------------------+
+                   |
+                   | (when i > n)
+                   v
+          +----------------------+
+          |  best <= n ?         |
+          +----+------------+----+
+               | Yes        | No
+               v            v
+        +-------------+  +-----------+
+        | RETURN best |  | RETURN -1 |
+        +------+------+  +-----+-----+
+               |               |
+               +-------+-------+
+                       v
+                    +-----+
+                    | END |
+                    +-----+
+
+
+--------------------------------------------------
+13. INTERVIEW EXPLANATION  (~30 seconds)
+--------------------------------------------------
+"Because the array has negatives, a plain sliding window
+ breaks, so I switch to prefix sums: a subarray sum is
+ prefix[i]-prefix[l], and for each right end i I want the
+ largest left index l with prefix[l] <= prefix[i]-k. I keep
+ candidate left ends in a deque ordered by increasing prefix.
+ At each i I first pop from the FRONT while it already
+ satisfies k, recording that length -- it can't get shorter
+ later -- then I pop from the BACK any prefix that's >= the
+ current one, since it's bigger and further left, hence
+ useless. Every index is pushed and popped once.
+
+ Time:  O(n)
+ Space: O(n)
+ It's the monotonic-deque-over-prefix-sums pattern."
+
+
+==================================================
+Negatives break sliding windows: use prefix sums,
+keep an INCREASING deque of left-end indices, cash
+the front when it hits k, trim the back that it beats.
+==================================================
