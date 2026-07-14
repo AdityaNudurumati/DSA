@@ -1,0 +1,35 @@
+==================================================
+ARRAYS — 11.advanced / 8. RANDOMIZED
+==================================================
+
+Randomized techniques that give uniform sampling without storing all data.
+
+When to think of this?
+- "pick k items at random from a stream of unknown / huge length"
+- "return a random element / index with equal probability"
+- shuffling, streaming datasets (very common in AI/ML data pipelines)
+
+--------------------------------------------------
+Template — reservoir sampling (Algorithm R)
+--------------------------------------------------
+reservoir = []
+for i, item in enumerate(stream):
+    if i < k:
+        reservoir.append(item)
+    else:
+        j = random.randint(0, i)      # 0..i inclusive
+        if j < k:
+            reservoir[j] = item        # keep with probability k/(i+1)
+# each of the N items ends selected with probability k/N
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Reservoir Sampling (k items + single sample) -> 1.reservoir_sampling.py
+☐ Shuffle an Array (Fisher-Yates, LC384)
+☐ Random Pick with Weight (prefix sum + binary search, LC528)
+
+AI/ML link: reservoir sampling is how you sample a fixed-size subset from a
+data stream too big for memory (shuffle buffers, replay buffers, streaming
+train sets). Fisher-Yates is the standard unbiased shuffle behind train/test
+splits and mini-batch ordering.

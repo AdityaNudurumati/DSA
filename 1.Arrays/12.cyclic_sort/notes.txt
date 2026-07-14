@@ -1,0 +1,41 @@
+==================================================
+ARRAYS — 12. CYCLIC SORT
+==================================================
+
+Use when the array holds numbers from a KNOWN small range (1..n or 0..n).
+Place each value at its "home" index (value v -> index v-1, or v for 0..n)
+by swapping. After one linear sweep, any slot NOT holding its expected value
+reveals a missing / duplicate / mismatched number.
+
+When to think of this?
+- "array of n numbers in the range 1..n"
+- find the missing / duplicate / all missing / all duplicates
+- first missing positive, set mismatch
+- O(n) time AND O(1) space required (no extra array, no sorting)
+
+--------------------------------------------------
+Template
+--------------------------------------------------
+i = 0
+while i < len(nums):
+    correct = nums[i] - 1          # for range 1..n  (use nums[i] for 0..n)
+    if 0 <= correct < len(nums) and nums[i] != nums[correct]:
+        nums[i], nums[correct] = nums[correct], nums[i]   # swap home
+    else:
+        i += 1                     # in place (or out of range) -> advance
+# then scan: the index where nums[idx] != idx+1 is the answer
+
+Key idea: each swap puts ONE number in its final spot, so total swaps are
+bounded by n -> O(n) overall despite the inner while.
+
+--------------------------------------------------
+Problems  (☐ = todo, ☑ = done)
+--------------------------------------------------
+☑ Cyclic Sort (sort 1..n in place)          -> 1.cyclic_sort.py
+☑ Missing Number (range 0..n, LC268)        -> 2.missing_number.py
+☑ Find All Numbers Disappeared (LC448)      -> 3.find_all_missing.py
+☑ Find All Duplicates (LC442)               -> 4.find_all_duplicates.py
+☑ First Missing Positive (LC41)             -> 5.first_missing_positive.py
+☑ Set Mismatch (LC645)                      -> 6.set_mismatch.py
+→ Find the Duplicate Number (LC287) also solvable with Floyd's cycle
+  see ../../6.LinkedList/2.pointer_techniques/

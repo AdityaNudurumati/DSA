@@ -278,6 +278,167 @@ Only a couple of scalars are stored, so O(1) space.
  It's the classic FIXED-SIZE sliding window pattern."
 
 
+--------------------------------------------------
+14. DEEP DIVE  —  FROM BRUTE FORCE TO SLIDING WINDOW
+--------------------------------------------------
+nums = [2,1,5,1,3,2]   k = 3
+    windows: [2,1,5]=8  [1,5,1]=7  [5,1,3]=9  [1,3,2]=6  ->  max = 9
+
+Step 1: Think like a beginner (brute force)
+    "Generate every window and sum it from scratch."
+
+        def maxSum(nums, k):
+            left = 0
+            right = k - 1
+            max_sum = float("-inf")
+            while right < len(nums):
+                window_sum = sum(nums[left:right+1])
+                max_sum = max(max_sum, window_sum)
+                left += 1
+                right += 1
+            return max_sum
+
+    Is it correct?  YES - nothing logically wrong. So why isn't it best?
+
+Step 2: Watch the WASTED work
+    window 1: 2 + 1 + 5
+    window 2:     1 + 5 + 1
+    window 3:         5 + 1 + 3
+    window 4:             1 + 3 + 2
+    The value 5 is added in windows 1, 2, AND 3. Adjacent windows
+    OVERLAP in k-1 elements, so re-summing repeats most of the work.
+
+    Cost: with n = 100000 and k = 500, sum(window) touches 500 numbers
+    and there are ~100000 windows  ->  ~50,000,000 additions.  O(n*k).
+
+Step 3: Compare two consecutive windows
+    old:  2 1 5        new:    1 5 1
+    The 1 and 5 are in BOTH windows. Only 2 LEFT, only 1 ENTERED.
+    So don't recompute 1+5+1. We already know 2+1+5 = 8:
+        remove the leaver:  8 - 2 = 6
+        add the enterer:    6 + 1 = 7
+    Done - in constant time. THIS is the sliding window idea.
+
+The formula:
+    new_sum = old_sum - (element leaving) + (element entering)
+    -> O(k) work per window collapses to O(1) per window.
+
+Step 4: Build the efficient version (walk it)
+    window_sum = 0   best = -inf
+    right=0  add 2  -> window_sum=2   [2]      size 1 < 3, wait
+    right=1  add 1  -> window_sum=3   [2,1]    size 2 < 3, wait
+    right=2  add 5  -> window_sum=8   [2,1,5]  full! best=8
+             remove nums[right-k+1]=nums[0]=2 -> window_sum=6
+    right=3  add 1  -> window_sum=7   [1,5,1]  best=8
+             remove nums[1]=1 -> window_sum=6
+    right=4  add 3  -> window_sum=9   [5,1,3]  best=9
+             remove nums[2]=5 -> window_sum=4
+    right=5  add 2  -> window_sum=6   [1,3,2]  best=9
+             remove nums[3]=1 -> window_sum=5
+    Answer = 9
+
+Why no explicit 'left' pointer?
+    Some write  left=0 ... window_sum -= nums[left]; left += 1.
+    That is equally correct. But the window width is FIXED, so the left
+    index is always exactly  right - k + 1  (check: right=2,k=3 -> 0).
+    We just compute it instead of storing an extra variable.
+
+Dry-run table:
+    right | added | window_sum | window   | max | remove
+    ------+-------+------------+----------+-----+--------
+      0   |   2   |     2      | [2]      |  -  | no
+      1   |   1   |     3      | [2,1]    |  -  | no
+      2   |   5   |     8      | [2,1,5]  |  8  | remove 2
+      3   |   1   |     7      | [1,5,1]  |  8  | remove 1
+      4   |   3   |     9      | [5,1,3]  |  9  | remove 5
+      5   |   2   |     6      | [1,3,2]  |  9  | remove 1
+    Final answer: 9
+
+Brute force vs sliding window:
+    | feature                       | brute force | sliding window |
+    | ----------------------------- | ----------- | -------------- |
+    | logic correct                 | yes         | yes            |
+    | re-sums each window from zero  | YES         | NO             |
+    | reuses previous window's sum   | NO          | YES            |
+    | time                          | O(n*k)      | O(n)           |
+    | space                         | O(1)        | O(1)           |
+    | preferred in interviews        | usually no  | YES            |
+
+Key takeaway:
+    When consecutive windows OVERLAP, don't recompute what you already
+    know. Update the previous sum: subtract the element that LEAVES, add
+    the element that ENTERS. That turns O(k)-per-window into O(1),
+    making the whole algorithm O(n) instead of O(n*k). This is the
+    Fixed-Size Sliding Window technique.
+
+
+--------------------------------------------------
+15. COMMON DOUBT  —  "WHERE IS THE WINDOW MAINTAINED?"
+--------------------------------------------------
+Doubt: "Are we even maintaining the current window? I don't see it."
+Answer: YES - but IMPLICITLY, not in a stored variable.
+
+What is a window?  Just a continuous range of indices.
+    nums = [2,1,5,1,3,2]   k = 3   right = 2
+        index:  0 1 2 3 4 5
+        array: [2 1 5 1 3 2]
+                |-----|              window = [2,1,5]
+
+Usually people keep BOTH pointers:
+    left = 0
+    for right in range(len(nums)):
+        window_sum += nums[right]
+        if right >= k - 1:
+            best = max(best, window_sum)
+            window_sum -= nums[left]
+            left += 1
+    Here the window [left .. right] is obvious.
+
+This code has NO 'left'; it does:
+    window_sum -= nums[right - k + 1]
+    At first glance: "where is the window?"  It's still there:
+
+    right=0  window [2]      indices 0..0
+    right=1  window [2,1]    indices 0..1
+    right=2  window [2,1,5]  indices 0..2   left = 2-3+1 = 0  OK
+    right=3  window [1,5,1]  indices 1..3   left = 3-3+1 = 1  OK
+    right=4  window [5,1,3]  indices 2..4   left = 4-3+1 = 2  OK
+
+    The left boundary isn't STORED - it's COMPUTED as right-k+1
+    whenever needed. Because k never changes, that formula always
+    gives the correct left edge.
+        window = [right-k+1 .. right]   instead of   [left .. right]
+
+Why don't we store the window itself?
+    The problem asks only for the MAXIMUM SUM. It never asks us to
+    return the actual subarray [5,1,3]. So we only keep:
+        - window_sum (sum inside the current window)
+        - best       (best sum so far)
+    No list, no left variable needed.
+
+Analogy - a train with exactly 3 coaches:
+    station A:  [A][B][C]
+    move ->
+    station B:  [B][C][D]
+    The train didn't disappear - it moved. The window always exists;
+    we just track its RIGHT end (right) and DERIVE its left (right-k+1).
+
+If you ever wanted the actual window, you could print it:
+    print(nums[right-k+1 : right+1])
+        [2,1,5]
+        [1,5,1]
+        [5,1,3]
+        [1,3,2]
+
+The realization:  we ARE maintaining the window - via three things:
+    1. right           -> the right boundary
+    2. right - k + 1   -> the left boundary (computed)
+    3. window_sum      -> the sum of elements between them
+The indices define the window; window_sum is its running total. The
+window is maintained IMPLICITLY, not by keeping a separate list or a
+left variable. This is a common fixed-size sliding-window optimization.
+
+
 ==================================================
 Fixed window of width k: add the entering element,
 drop the leaving one, record the best each slide.

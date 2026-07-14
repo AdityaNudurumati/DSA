@@ -1,0 +1,323 @@
+==================================================
+DSA MASTER ROADMAP  —  EVERY PATTERN, ONE BY ONE
+==================================================
+
+Follow the numbered steps top to bottom. Each step is ONE pattern
+(one module folder). Tick [x] when you have read its notes.txt and
+solved a few problems. Do LEVEL 1 fully, then LEVEL 2, then LEVEL 3.
+
+Levels:  L1 = learn every structure + core pattern (~Easy)
+         L2 = the interview workhorses (~Medium)  <- most of your time
+         L3 = advanced / specialized (~Hard)
+
+Path format:  <section>/<module folder>
+Run any file:  python "<path to a .py file>"
+
+##################################################
+LEVEL 1  —  FOUNDATIONS  (all structures + core patterns)
+##################################################
+
+--- ARRAYS (core) ---
+[ ]  1. Two Pointers: opposite ends    -> 1.Arrays/1.two_pointer_problems/1.opposite_ends
+[ ]  2. Two Pointers: same direction    -> 1.Arrays/1.two_pointer_problems/2.same_direction
+[ ]  3. Two Pointers: partition / Dutch flag -> 1.Arrays/1.two_pointer_problems/3.partition_dutch_flag
+[ ]  4. Sliding Window: fixed size      -> 1.Arrays/2.sliding_window/1.fixed_size
+[ ]  5. Prefix Sums (basic)             -> 1.Arrays/3.prefix_based
+
+--- SORTING + SEARCHING (foundational) ---
+[ ]  6. Comparison sorts (bubble/selection/insertion/merge/quick/heap) -> 15.Sorting/1.comparison
+[ ]  7. Binary Search: classic          -> 1.Arrays/5.binary_search/1.classic
+
+--- STRINGS (core) ---
+[ ]  8. String Two Pointers             -> 2.Strings/1.two_pointers
+[ ]  9. Palindrome checks               -> 2.Strings/5.palindrome
+
+--- HASHING (core) ---
+[ ] 10. Frequency counting              -> 3.Hashing/1.frequency_counting
+[ ] 11. Lookup (map/dict)               -> 3.Hashing/2.lookup
+[ ] 12. Set-based                       -> 3.Hashing/3.set_based
+
+--- STACK & QUEUE (basics) ---
+[ ] 13. Stack: basic operations         -> 4.Stack/1.basic_operations
+[ ] 14. Stack: parentheses matching     -> 4.Stack/6.parentheses
+[ ] 15. Queue: basic FIFO               -> 5.Queue/1.basic_fifo
+[ ] 16. Queue: BFS (concept)            -> 5.Queue/2.bfs
+
+--- LINKED LIST (basics) ---
+[ ] 17. Basic traversal                 -> 6.LinkedList/1.basic_traversal
+[ ] 18. Pointer techniques (fast/slow)  -> 6.LinkedList/2.pointer_techniques
+[ ] 19. Reversal                        -> 6.LinkedList/3.reversal
+
+--- RECURSION (basics) ---
+[ ] 20. Recursion basics                -> 8.Recursion/1.basic
+[ ] 21. Backtracking (intro: subsets/perms) -> 8.Recursion/2.backtracking
+
+--- TREES (basics) ---
+[ ] 22. Traversals (in/pre/post/level)  -> 7.Trees/1.traversal
+[ ] 23. Recursive thinking on trees     -> 7.Trees/2.recursive
+[ ] 24. Height / depth                  -> 7.Trees/4.height_depth
+
+--- HEAP / GRAPH / TRIE / BITS (intro) ---
+[ ] 25. Heap / priority queue: Top-K    -> 9.Heap/1.top_k
+[ ] 26. Graph traversal (BFS/DFS)       -> 10.Graphs/1.traversal
+[ ] 27. Trie (concept)                  -> 11.Trie/1.basic
+[ ] 28. Bit manipulation fundamentals   -> 14.BitManipulation/1.fundamentals
+
+>>> END OF LEVEL 1: you now know every structure + core pattern. <<<
+
+##################################################
+LEVEL 2  —  MEDIUM  (the interview workhorses)
+##################################################
+
+--- ARRAYS (deeper) ---
+[ ] 29. Sliding Window: variable size   -> 1.Arrays/2.sliding_window/2.variable_size
+[ ] 30. Sliding Window: monotonic deque -> 1.Arrays/2.sliding_window/3.monotonic_window
+[ ] 31. Subarray techniques (Kadane, max product, circular) -> 1.Arrays/4.subarray_techniques
+[ ] 32. Binary Search: search on answer -> 1.Arrays/5.binary_search/2.search_on_answer
+[ ] 33. Binary Search: rotated array    -> 1.Arrays/5.binary_search/3.rotated_array
+[ ] 34. Intervals (merge / insert / sweep) -> 1.Arrays/7.intervals
+[ ] 35. Matrix (traversal / rotation / simulation) -> 1.Arrays/8.matrix
+[ ] 36. Cyclic Sort (missing/duplicate in 1..n, first missing +ve) -> 1.Arrays/12.cyclic_sort
+
+--- STRINGS (deeper) ---
+[ ] 37. String sliding window           -> 2.Strings/2.sliding_window
+[ ] 38. String hashing                  -> 2.Strings/3.hashing
+[ ] 39. String + stack                  -> 2.Strings/8.stack
+[ ] 40. String greedy                   -> 2.Strings/9.greedy
+[ ] 41. Roman numerals & base/Excel conversion -> 2.Strings/6.construction/2.simulation + 1.Arrays/11.advanced/5.math
+
+--- HASHING (deeper) ---
+[ ] 42. Index mapping                   -> 3.Hashing/4.index_mapping
+[ ] 43. Grouping (anagrams, buckets)    -> 3.Hashing/5.grouping
+[ ] 44. Prefix hashing                  -> 3.Hashing/6.prefix_hashing
+[ ] 45. Hashing + sliding window        -> 3.Hashing/7.sliding_window
+[ ] 46. Ordered hashing                 -> 3.Hashing/8.ordered_hashing
+[ ] 47. Hash design (data structures)   -> 3.Hashing/9.design
+
+--- STACK (deeper) ---
+[ ] 48. Monotonic stack                 -> 4.Stack/2.monotonic_stack
+[ ] 49. Nearest greater/smaller         -> 4.Stack/3.nearest_element
+[ ] 50. Range / span (stock span)       -> 4.Stack/4.range_span
+[ ] 51. Histogram (largest rectangle)   -> 4.Stack/5.histogram
+[ ] 52. Expression evaluation           -> 4.Stack/7.expression
+[ ] 53. Min/Max stack                   -> 4.Stack/8.min_max_stack
+[ ] 54. Stack simulation                -> 4.Stack/9.simulation
+
+--- QUEUE (deeper) ---
+[ ] 55. Circular queue                  -> 5.Queue/3.circular_queue
+[ ] 56. Monotonic deque (window max/min) -> 5.Queue/4.monotonic_deque
+[ ] 57. Deque techniques                -> 5.Queue/5.deque
+[ ] 58. Scheduling                      -> 5.Queue/6.scheduling
+[ ] 59. Queue design                    -> 5.Queue/7.design
+[ ] 60. Priority queue                  -> 5.Queue/8.priority_queue
+
+--- LINKED LIST (deeper) ---
+[ ] 61. Merge lists                     -> 6.LinkedList/4.merge
+[ ] 62. Dummy node technique            -> 6.LinkedList/5.dummy_node
+[ ] 63. Intersection                    -> 6.LinkedList/6.intersection
+[ ] 64. Rearrangement                   -> 6.LinkedList/7.rearrangement
+[ ] 65. Circular list                   -> 6.LinkedList/9.circular
+
+--- RECURSION (deeper) ---
+[ ] 66. Divide & conquer                -> 8.Recursion/3.divide_conquer
+[ ] 67. Memoization (bridge to DP)      -> 8.Recursion/4.memoization
+
+--- TREES (deeper) ---
+[ ] 68. Root-to-leaf / path sums        -> 7.Trees/3.path
+[ ] 69. Binary Search Tree (BST)        -> 7.Trees/5.bst
+[ ] 70. Construction (from traversals)  -> 7.Trees/6.construction
+[ ] 71. Lowest Common Ancestor (LCA)    -> 7.Trees/7.lca
+[ ] 72. Tree views (left/right/top)     -> 7.Trees/9.views
+[ ] 73. Iterative traversal             -> 7.Trees/12.iterative_traversal
+
+--- HEAP (deeper) ---
+[ ] 74. K-way merge                     -> 9.Heap/2.k_way_merge
+[ ] 75. Streaming (median)              -> 9.Heap/3.streaming
+[ ] 76. Dual heap                       -> 9.Heap/4.dual_heap
+[ ] 77. Greedy + heap                   -> 9.Heap/5.greedy_heap
+
+--- GRAPHS (core algorithms) ---
+[ ] 78. Connected components            -> 10.Graphs/2.connected_components
+[ ] 79. Cycle detection                 -> 10.Graphs/3.cycle_detection
+[ ] 80. Topological sort                -> 10.Graphs/4.topological_sort
+[ ] 81. Shortest path (Dijkstra/Bellman/Floyd) -> 10.Graphs/5.shortest_path
+[ ] 82. Union-Find (DSU)                -> 10.Graphs/7.union_find
+[ ] 83. Bipartite check                 -> 10.Graphs/8.bipartite
+[ ] 84. Multi-source BFS                -> 10.Graphs/9.multi_source_bfs
+[ ] 85. Grid graphs                     -> 10.Graphs/11.grid_graphs
+
+--- GREEDY ---
+[ ] 86. Interval greedy                 -> 13.Greedy/1.interval
+[ ] 87. Scheduling                      -> 13.Greedy/2.scheduling
+[ ] 88. Resource allocation             -> 13.Greedy/3.resource_allocation
+[ ] 89. Jump game                       -> 13.Greedy/4.jump_game
+[ ] 90. Sort-then-greedy                -> 13.Greedy/6.sorting
+[ ] 91. String greedy                   -> 13.Greedy/7.string
+[ ] 92. Array greedy                    -> 13.Greedy/8.array
+[ ] 93. Greedy + heap                   -> 13.Greedy/9.heap
+
+--- DYNAMIC PROGRAMMING (start after memoization) ---
+[ ] 94. DP fundamentals (memo->tab)     -> 12.DynamicProgramming/0.fundamentals
+[ ] 95. Linear DP (stairs, house robber) -> 12.DynamicProgramming/1.linear
+[ ] 96. Sequence DP (LIS, LCS, edit)    -> 12.DynamicProgramming/2.sequence
+[ ] 97. Grid DP (paths, min path sum)   -> 12.DynamicProgramming/3.grid
+[ ] 98. Knapsack (0/1, unbounded)       -> 12.DynamicProgramming/4.knapsack
+[ ] 99. Decision DP                     -> 12.DynamicProgramming/5.decision
+[ ] 100. Stock DP                       -> 12.DynamicProgramming/8.stock
+
+--- SORTING / BITS / TRIE / RANGE (deeper) ---
+[ ] 101. Non-comparison sorts (counting/radix/bucket) -> 15.Sorting/2.non_comparison
+[ ] 102. Sort patterns (coordinate compression) -> 15.Sorting/3.sort_patterns
+[ ] 103. Custom sort (comparators)      -> 15.Sorting/4.custom
+[ ] 104. Sort stability                 -> 15.Sorting/5.stability
+[ ] 105. Bit XOR tricks                 -> 14.BitManipulation/2.xor
+[ ] 106. Bit masking                    -> 14.BitManipulation/3.masking
+[ ] 107. Subset enumeration (bitmask)   -> 14.BitManipulation/4.subset_enumeration
+[ ] 108. Bit counting                   -> 14.BitManipulation/5.counting
+[ ] 109. Bit shift tricks               -> 14.BitManipulation/6.shift
+[ ] 110. Trie prefix queries            -> 11.Trie/2.prefix
+[ ] 111. Trie dictionary (word search)  -> 11.Trie/3.dictionary
+[ ] 112. Trie + DFS/backtracking        -> 11.Trie/4.dfs_backtracking
+[ ] 113. Prefix sums for range queries  -> 16.RangeQueries/1.prefix_based
+[ ] 114. Fenwick tree (BIT)             -> 16.RangeQueries/2.fenwick_tree
+[ ] 115. Segment tree                   -> 16.RangeQueries/3.segment_tree
+
+>>> END OF LEVEL 2: this is ~70% of interview questions. <<<
+
+##################################################
+LEVEL 3  —  HARD  (advanced / specialized)
+##################################################
+
+--- ARRAYS / STRINGS (advanced) ---
+[ ] 116. Monotonic stack (hard variants) -> 1.Arrays/9.monotonic_stack
+[ ] 117. Arrays advanced (bit tricks, D&C, trie, math) -> 1.Arrays/11.advanced
+[ ] 118. Pattern matching (KMP, Z, Rabin-Karp) -> 2.Strings/4.pattern_matching
+[ ] 119. String construction            -> 2.Strings/6.construction
+[ ] 120. String trie                    -> 2.Strings/7.trie
+[ ] 121. String DP                      -> 2.Strings/10.dynamic_programming
+[ ] 122. String rolling hash            -> 2.Strings/11.rolling_hash
+
+--- STACK / QUEUE / HASHING / RANDOMIZED (advanced) ---
+[ ] 123. Stack design (min stack, etc.) -> 4.Stack/10.design
+[ ] 124. Advanced monotonic stack       -> 4.Stack/11.advanced_monotonic
+[ ] 125. Advanced BFS (0-1, bidirectional) -> 5.Queue/9.advanced_bfs
+[ ] 126. Rolling hash (hashing)         -> 3.Hashing/10.rolling_hash
+[ ] 127. Reservoir sampling (stream sampling; AI-relevant) -> 1.Arrays/11.advanced/8.randomized
+
+--- LINKED LIST / RECURSION (advanced) ---
+[ ] 128. Linked list sorting (merge sort) -> 6.LinkedList/8.sorting
+[ ] 129. Linked list design (LRU/LFU)   -> 6.LinkedList/10.design
+[ ] 130. Advanced pointer manipulation  -> 6.LinkedList/11.advanced_pointer
+[ ] 131. Tree recursion (advanced)      -> 8.Recursion/5.tree_recursion
+[ ] 132. Mathematical recursion (fast power, matrix fib, sqrt) -> 8.Recursion/6.mathematical
+
+--- TREES (advanced) ---
+[ ] 133. Tree modification              -> 7.Trees/8.modification
+[ ] 134. Ancestor / binary lifting      -> 7.Trees/10.ancestor
+[ ] 135. Tree DP                        -> 7.Trees/11.tree_dp
+[ ] 136. Advanced structures (segment/fenwick on trees) -> 7.Trees/13.advanced_structures
+[ ] 137. Serialization                  -> 7.Trees/14.serialization
+
+--- HEAP (advanced) ---
+[ ] 138. Interval heap                  -> 9.Heap/6.interval_heap
+[ ] 139. Range heap                     -> 9.Heap/7.range
+[ ] 140. Graph + heap (Dijkstra/Prim)   -> 9.Heap/8.graph_heap
+[ ] 141. Heap design                    -> 9.Heap/9.design
+[ ] 142. Advanced heap                  -> 9.Heap/10.advanced
+
+--- GRAPHS (advanced) ---
+[ ] 143. Minimum Spanning Tree (Kruskal/Prim) -> 10.Graphs/6.mst
+[ ] 144. 0-1 BFS                        -> 10.Graphs/10.zero_one_bfs
+[ ] 145. Strongly Connected Components  -> 10.Graphs/12.scc
+[ ] 146. Bridges & articulation points  -> 10.Graphs/13.bridges_articulation
+[ ] 147. Graph DP                       -> 10.Graphs/14.graph_dp
+[ ] 148. State-space search             -> 10.Graphs/15.state_space
+[ ] 149. Advanced shortest path         -> 10.Graphs/16.advanced_shortest_path
+[ ] 150. Network flow                   -> 10.Graphs/17.network_flow
+
+--- DYNAMIC PROGRAMMING (advanced) ---
+[ ] 151. Partition DP                   -> 12.DynamicProgramming/6.partition
+[ ] 152. Interval DP                    -> 12.DynamicProgramming/7.interval
+[ ] 153. Tree DP                        -> 12.DynamicProgramming/9.tree
+[ ] 154. Bitmask DP                     -> 12.DynamicProgramming/10.bitmask
+[ ] 155. Digit DP                       -> 12.DynamicProgramming/11.digit
+[ ] 156. Graph DP                       -> 12.DynamicProgramming/12.graph
+[ ] 157. Probability DP                 -> 12.DynamicProgramming/13.probability
+[ ] 158. Monotonic-queue DP             -> 12.DynamicProgramming/14.monotonic_queue
+[ ] 159. DP optimization (SOS, etc.)    -> 12.DynamicProgramming/15.optimization
+
+--- GREEDY / BITS (advanced) ---
+[ ] 160. Merge cost (Huffman-style)     -> 13.Greedy/5.merge_cost
+[ ] 161. Monotonic greedy               -> 13.Greedy/10.monotonic
+[ ] 162. Exchange argument              -> 13.Greedy/11.exchange_argument
+[ ] 163. Advanced greedy (skyline)      -> 13.Greedy/12.advanced
+[ ] 164. Prefix XOR                     -> 14.BitManipulation/7.prefix_xor
+[ ] 165. Bitmask DP (bits)              -> 14.BitManipulation/8.bitmask_dp
+[ ] 166. Bitwise trie                   -> 14.BitManipulation/9.bitwise_trie
+[ ] 167. Bit math tricks                -> 14.BitManipulation/10.math_tricks
+[ ] 168. Greedy bit construction        -> 14.BitManipulation/11.greedy_bits
+[ ] 169. Advanced bit manipulation      -> 14.BitManipulation/12.advanced
+
+--- TRIE (advanced) ---
+[ ] 170. Bitwise trie (max XOR)         -> 11.Trie/5.bitwise
+[ ] 171. Trie counting                  -> 11.Trie/6.counting
+[ ] 172. Lexicographical (trie)         -> 11.Trie/7.lexicographical
+[ ] 173. Compressed trie (radix)        -> 11.Trie/8.compressed
+[ ] 174. Suffix structures              -> 11.Trie/9.suffix
+[ ] 175. Advanced trie                  -> 11.Trie/10.advanced
+
+--- SORTING / RANGE QUERIES (advanced) ---
+[ ] 176. External / k-way merge sort    -> 15.Sorting/6.advanced
+[ ] 177. Lazy propagation (segment tree) -> 16.RangeQueries/4.lazy_propagation
+[ ] 178. Sparse table                   -> 16.RangeQueries/5.sparse_table
+[ ] 179. Mo's algorithm                 -> 16.RangeQueries/6.mos_algorithm
+[ ] 180. Advanced segment trees         -> 16.RangeQueries/7.advanced_segment_trees
+[ ] 181. Interval structures            -> 16.RangeQueries/8.interval_structures
+[ ] 182. Multidimensional queries       -> 16.RangeQueries/9.multidimensional
+
+>>> END OF LEVEL 3: you have covered every pattern in the repo. <<<
+
+##################################################
+CROSS-REFERENCES  (already covered above)
+##################################################
+    1.Arrays/6.hashing   -> same as steps 10-12 + 42-47 (section 3.Hashing)
+    1.Arrays/10.greedy   -> same as steps 86-93 (section 13.Greedy)
+    Roman numerals live in 2.Strings/6.construction/2.simulation (step 41).
+    Base/Excel & primes/happy live in 1.Arrays/11.advanced/5.math (step 41/117).
+    Reservoir sampling lives in 1.Arrays/11.advanced/8.randomized (step 127).
+
+##################################################
+DEPENDENCY MAP  (what needs what)
+##################################################
+    Recursion      -> Trees, Graphs (DFS), DP, Backtracking
+    BFS (Queue)    -> Graphs, Trees (level order)
+    Heap           -> Graphs (Dijkstra), Greedy
+    Union-Find     -> Graphs (MST, components)
+    Memoization    -> Dynamic Programming
+    Trees          -> Range Queries (segment / fenwick trees)
+    Two Pointers   -> Sliding Window
+    Prefix Sums    -> Range Queries
+
+##################################################
+USEFUL FOR LEARNING AI/ML NEXT
+##################################################
+    Probability & sampling -> reservoir sampling (step 127), Probability DP (157)
+    Optimization           -> Dynamic Programming (94-100, 151-159), Greedy
+    Graphs                 -> computation graphs, GNNs (78-85, 143-150)
+    Math                   -> steps 117 (math), 132 (fast power/matrix), combinatorics
+    Complexity analysis    -> reasoning about model / data scaling (all levels)
+
+##################################################
+HOW TO USE THIS ROADMAP
+##################################################
+    1. Go strictly top to bottom. Don't skip ahead a level.
+    2. For each step: open the module's notes.txt, read the pattern,
+       then solve its problems:  python "<path>/<file>.py"
+    3. Tick [ ] -> [x] when you can re-solve 2-3 of its problems alone.
+    4. After each LEVEL, do a mixed-review day (random problems from
+       that level across all topics).
+    5. Spend the MOST time in LEVEL 2 - it wins interviews.
+
+==================================================
+182 patterns total. Start at step 1 and go one by one.
+==================================================
