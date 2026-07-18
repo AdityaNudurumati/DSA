@@ -689,7 +689,7 @@ Each number is a wall.
     | |   | |       |
     | |   | |       |
     -------------------
-    4 2 0 3 2 5
+    4 2 0 3 2       5
 
 Frame 0: Start
                     |
@@ -699,7 +699,7 @@ Frame 0: Start
     | |   | |       |
     -------------------
     L               R
-    4 2 0 3 2 5
+    4 2 0 3 2       5
 
     left = 0   right = 5   left_max = 4   right_max = 5   water = 0
     Compare 4 < 5  ->  left wall is shorter  ->  MOVE LEFT
@@ -711,8 +711,8 @@ Frame 1: Visit index 1
     | |   | |       |
     | |   | |       |
     -------------------
-        L           R
-    4 2 0 3 2 5
+      L             R
+    4 2 0 3 2       5
 
     height[1] = 2,  left_max = 4
     Water can rise to 4, wall is 2  ->  stored 4 - 2 = 2
@@ -723,7 +723,7 @@ Frame 1: Visit index 1
     |~|~~ | |       |
     |~|~~ | |       |
     -------------------
-    4 2 0 3 2 5
+    4 2 0 3 2       5
 
     water += 2   ->   water = 2
 
