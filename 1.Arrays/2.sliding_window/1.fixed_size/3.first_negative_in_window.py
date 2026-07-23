@@ -18,7 +18,15 @@ Explanation:
 '''
 
 from collections import deque
-
+''' A deque (pronounced deck) stands for Double Ended Queue.
+ A normal queue allows:
+ Insert at the back
+ Remove from the front
+ A deque allows:
+ Insert at the front ✅
+ Insert at the back ✅
+ Remove from the front ✅
+ Remove from the back ✅ '''
 def firstNegativeInWindow(nums, k):
 
     result = []
@@ -26,15 +34,15 @@ def firstNegativeInWindow(nums, k):
 
     for i in range(len(nums)):
 
-        # drop the front index if it has slid out of the window
+        # drop the front index if it has slid out of the window //Remove expired negatives
         if dq and dq[0] <= i - k:
             dq.popleft()
 
-        # record the current index only if it is negative
+        # record the current index only if it is negative //current number negative?
         if nums[i] < 0:
             dq.append(i)
 
-        # once the first full window is formed, the front is the answer
+        # once the first full window is formed, the front is the answer //window formed?
         if i >= k - 1:
             result.append(nums[dq[0]] if dq else 0)
 

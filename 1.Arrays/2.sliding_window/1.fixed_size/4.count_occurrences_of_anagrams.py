@@ -15,7 +15,9 @@ Explanation:
 "for" (index 0), "orf" (index 4), "ofr" (index 10) are anagrams of "for".
 '''
 
-from collections import Counter
+from collections import Counter 
+#Counter is a class from Python's collections module. It counts how many times each element appears.
+# Ex:Counter("aabcab") -> Counter({'a': 3, 'b': 2, 'c': 1})  //Acts as a dictionary
 
 def countAnagrams(text, pattern):
 
